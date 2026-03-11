@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatCurrency, getMyAppointments, updateMyAppointment } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/components/auth-provider'
@@ -31,17 +31,21 @@ export default function AppointmentsManager() {
   const [editingId, setEditingId] = useState(null)
   const [draft, setDraft] = useState({ date: '', time: '', status: 'confirmed' })
 
-  const loadAppointments = async () => {
+  const loadAppointments = useCallback(async () => {
     setLoading(true)
     const data = await getMyAppointments()
     setAppointments(Array.isArray(data) ? data : [])
     setSelectedDate(toLocalDate(data?.[0]?.date) || new Date())
     setLoading(false)
-  }
+  }, [])
 
   useEffect(() => {
-    loadAppointments()
-  }, [])
+    async function init() {
+      await loadAppointments()
+    }
+
+    init()
+  }, [loadAppointments])
 
   useEffect(() => {
     if (!barber?._id) return undefined
@@ -60,7 +64,7 @@ export default function AppointmentsManager() {
       socket?.emit('unsubscribe:barber', barber._id)
       socket?.disconnect()
     }
-  }, [barber?._id])
+  }, [barber?._id, loadAppointments])
 
   const filteredAppointments = useMemo(() => {
     const dateKey = selectedDate ? toDateKey(selectedDate) : ''

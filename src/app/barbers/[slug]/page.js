@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatCurrency, getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
+import { buildDescription, getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
 import LiveBarberCalendar from '@/components/live-barber-calendar';
 
 export async function generateStaticParams() {
@@ -77,8 +78,8 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${barber.name} Barber Shop in ${barber.location || 'Nigeria'} | Book Online | StyleVault8. Important SEO Trick (for your SaaS growth)`,
-    description: barber.bio || `Book haircuts online with ${barber.name} in ${barber.location || 'Nigeria'}. Explore services, prices, working hours, and easy booking on StyleVault.`,
+    title: `${barber.name} Barber Shop in ${barber.location || 'Nigeria'} | Book Online | StyleVault`,
+    description: buildDescription(barber.bio, `Book haircuts online with ${barber.name} in ${barber.location || 'Nigeria'}. Explore services, prices, working hours, and easy booking on StyleVault.`),
     keywords: [
       `${barber.name} barber`,
       `barber in ${barber.location || 'nigeria'}`,
@@ -86,12 +87,12 @@ export async function generateMetadata({ params }) {
       'skin fade barber',
     ],
     alternates: {
-      canonical: `/barbers/${barber.slug}`,
+      canonical: getBarberStoreUrl(barber.slug),
     },
     openGraph: {
-      title: `${barber.name} Barber Shop in ${barber.location || 'Nigeria'} | Book Online | StyleVault8. Important SEO Trick (for your SaaS growth)`,
-      description: barber.bio || `Book haircuts online with ${barber.name} in ${barber.location || 'Nigeria'}. Explore services, prices, working hours, and easy booking on StyleVault.`,
-      url: `/barbers/${barber.slug}`,
+      title: `${barber.name} Barber Shop in ${barber.location || 'Nigeria'} | Book Online | StyleVault`,
+      description: buildDescription(barber.bio, `Book haircuts online with ${barber.name} in ${barber.location || 'Nigeria'}. Explore services, prices, working hours, and easy booking on StyleVault.`),
+      url: getBarberStoreUrl(barber.slug),
     },
   };
 }
@@ -119,7 +120,7 @@ export default async function BarberShopPage({ params }) {
     },
     areaServed: barber.location || 'Nigeria',
     priceRange: barber.subscriptionPlan === 'pro' ? '$$$' : '$$',
-    url: `https://stylevault.store/barbers/${barber.slug}`,
+    url: getBarberStoreUrl(barber.slug),
     makesOffer: services.map((service) => ({
       '@type': 'Offer',
       itemOffered: {
@@ -148,7 +149,7 @@ export default async function BarberShopPage({ params }) {
             </div>
 
             <div className="flex flex-wrap gap-3 pt-2">
-              <Link href={`/barbers/${barber.slug}/book`} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
+              <Link href={getBarberBookingUrl(barber.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
                 Book with {barber.name}
               </Link>
             </div>
@@ -169,7 +170,7 @@ export default async function BarberShopPage({ params }) {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-amber-300">Services</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight">What {barber.name}'s barber shop offers</h2>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight">What {barber.name}&rsquo;s barber shop offers</h2>
             </div>
           </div>
 
@@ -184,7 +185,7 @@ export default async function BarberShopPage({ params }) {
                   {(service.sampleImage || service.catalogId?.image) ? (
                     <div className="mb-5 overflow-hidden rounded-2xl border border-orange-100 dark:border-stone-800">
                       <div className="w-full overflow-hidden">
-                        <div className="aspect-[3/4] w-full overflow-hidden">
+                        <div className="aspect-3/4 w-full overflow-hidden">
                           <img src={service.sampleImage || service.catalogId?.image} alt={service.name} className="h-full w-full object-cover" />
                         </div>
                       </div>
@@ -201,7 +202,7 @@ export default async function BarberShopPage({ params }) {
                   </div>
                       <div className="mt-4">
                         <Link
-                          href={`/barbers/${barber.slug}/book?service=${service._id}`}
+                          href={getBarberBookingUrl(barber.slug, { service: service._id })}
                           className="inline-flex rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400"
                         >
                           Book this service

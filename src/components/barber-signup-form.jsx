@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { registerBarber, slugify } from "@/lib/barber-api"
@@ -70,7 +71,7 @@ export default function BarberSignupForm() {
         {error && <div className="text-sm text-destructive">{error}</div>}
 
         <div className="flex items-center justify-between">
-          <div className="text-sm text-stone-600 dark:text-amber-300">Already have an account? <a href="/barbers/login" className="text-primary underline">Sign in</a></div>
+          <div className="text-sm text-stone-600 dark:text-amber-300">Already have an account? <Link href="/barbers/login" className="text-primary underline">Sign in</Link></div>
           <Button type="submit" disabled={loading}>{loading ? 'Creating…' : 'Create account'}</Button>
         </div>
       </form>

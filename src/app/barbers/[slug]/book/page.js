@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import BarberBookingForm from '@/components/barber-booking-form';
 import { getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
+import { buildDescription, getBarberBookingUrl } from '@/lib/seo';
 
 export async function generateStaticParams() {
   const { getBarbers } = await import('@/lib/barber-api');
@@ -20,15 +21,15 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `Book ${barber.name} | ${barber.location || 'Nigeria'} | StyleVault`,
-    description: `Book a haircut online with ${barber.name} in ${barber.location || 'Nigeria'}. Choose a service, pick a time, and confirm your appointment on StyleVault.`,
+    description: buildDescription(barber.bio, `Book a haircut online with ${barber.name} in ${barber.location || 'Nigeria'}. Choose a service, pick a time, and confirm your appointment on StyleVault.`),
     keywords: [`${barber.name} booking`, `barber in ${barber.location || 'nigeria'}`, 'book haircut online'],
     alternates: {
-      canonical: `/barbers/${barber.slug}/book`,
+      canonical: getBarberBookingUrl(barber.slug),
     },
     openGraph: {
       title: `Book ${barber.name} | ${barber.location || 'Nigeria'} | StyleVault`,
-      description: `Book a haircut online with ${barber.name} in ${barber.location || 'Nigeria'}. Choose a service, pick a time, and confirm your appointment on StyleVault.`,
-      url: `/barbers/${barber.slug}/book`,
+      description: buildDescription(barber.bio, `Book a haircut online with ${barber.name} in ${barber.location || 'Nigeria'}. Choose a service, pick a time, and confirm your appointment on StyleVault.`),
+      url: getBarberBookingUrl(barber.slug),
     },
   };
 }

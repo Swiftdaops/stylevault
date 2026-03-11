@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getBarbers } from '@/lib/barber-api';
+import { getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
 
 export const metadata = {
   title: 'Barbers in Nigeria | Book Haircuts Online | StyleVault',
@@ -53,10 +54,10 @@ export default async function BarbersPage() {
                 </div>
 
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Link href={`/barbers/${barber.slug}`} className="inline-flex rounded-full border border-orange-300 px-4 py-2 text-sm font-medium transition hover:bg-orange-100 dark:border-stone-700 dark:hover:bg-stone-900">
+                  <Link href={getBarberStoreUrl(barber.slug)} className="inline-flex rounded-full border border-orange-300 px-4 py-2 text-sm font-medium transition hover:bg-orange-100 dark:border-stone-700 dark:hover:bg-stone-900">
                     View shop
                   </Link>
-                  <Link href={`/barbers/${barber.slug}/book`} className="inline-flex rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
+                  <Link href={getBarberBookingUrl(barber.slug)} className="inline-flex rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
                     Book now
                   </Link>
                 </div>

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import ModeToggle from '@/components/mode-toggle'
 import { Check } from 'lucide-react'
+import { getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo'
 
 const messages = [
   "Clean. Precise. Professional.",
@@ -27,7 +28,7 @@ export default function BarberNavbar({ barber }) {
     <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-black/70 border-b border-stone-200 dark:border-stone-800">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
 
-        <Link href={`/barbers/${barber.slug}`} className="flex items-center gap-3">
+        <Link href={getBarberStoreUrl(barber.slug)} className="flex items-center gap-3">
           {(barber?.verified || barber?.subscriptionPlan === 'pro') && (
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100/80 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" title="Verified barber">
               <Check className="h-3 w-3" />
@@ -45,7 +46,7 @@ export default function BarberNavbar({ barber }) {
         <div className="flex items-center gap-3">
           <ModeToggle />
           <Link
-            href={`/barbers/${barber.slug}/book`}
+            href={getBarberBookingUrl(barber.slug)}
             className="rounded-full bg-black px-4 py-2 text-white text-sm dark:bg-amber-500 dark:text-black"
           >
             Book

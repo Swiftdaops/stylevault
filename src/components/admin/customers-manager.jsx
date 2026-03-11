@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { getMyCustomers, updateMyCustomer } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
 
@@ -10,16 +10,20 @@ export default function CustomersManager() {
   const [editingId, setEditingId] = useState(null)
   const [draft, setDraft] = useState({ name: '', phone: '' })
 
-  const loadCustomers = async () => {
+  const loadCustomers = useCallback(async () => {
     setLoading(true)
     const data = await getMyCustomers()
     setCustomers(Array.isArray(data) ? data : [])
     setLoading(false)
-  }
+  }, [])
 
   useEffect(() => {
-    loadCustomers()
-  }, [])
+    async function init() {
+      await loadCustomers()
+    }
+
+    init()
+  }, [loadCustomers])
 
   const startEdit = (customer) => {
     setEditingId(customer._id)

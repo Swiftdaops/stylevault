@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getMyAppointments, getMyCustomers, getMyServices, formatCurrency } from "@/lib/barber-api"
 import { Button } from "@/components/ui/button"
@@ -8,6 +8,7 @@ import { Copy, Check } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { useAuth } from "@/components/auth-provider"
 import { connectBarberSocket } from "@/lib/barber-socket"
+import { getBarberStoreUrl } from "@/lib/seo"
 
 function toLocalDate(dateString) {
   if (!dateString) return null
@@ -36,8 +37,7 @@ export default function BarberDashboard() {
 
   const profileUrl = useMemo(() => {
     if (!barber?.slug) return ''
-    if (typeof window === 'undefined') return `/barbers/${barber.slug}`
-    return `${window.location.origin}/barbers/${barber.slug}`
+    return getBarberStoreUrl(barber.slug)
   }, [barber])
 
   const bookedDates = useMemo(() => {
@@ -55,7 +55,7 @@ export default function BarberDashboard() {
     return appointments.filter((item) => item.date === key)
   }, [appointments, selectedDate])
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!barber) return
 
     setLoading(true)
@@ -70,7 +70,7 @@ export default function BarberDashboard() {
     setCustomersCount(Array.isArray(customers) ? customers.length : 0)
     setSelectedDate((current) => current || toLocalDate(appts?.[0]?.date) || new Date())
     setLoading(false)
-  }
+  }, [barber])
 
   useEffect(() => {
     let mounted = true
@@ -81,25 +81,13 @@ export default function BarberDashboard() {
         return
       }
 
-      setLoading(true)
-
-      const [appts, services, customers] = await Promise.all([
-        getMyAppointments(),
-        getMyServices(),
-        getMyCustomers(),
-      ])
-
+      await loadDashboardData()
       if (!mounted) return
-      setAppointments(Array.isArray(appts) ? appts : [])
-      setServicesCount(Array.isArray(services) ? services.length : 0)
-      setCustomersCount(Array.isArray(customers) ? customers.length : 0)
-      setSelectedDate(toLocalDate(appts?.[0]?.date) || new Date())
-      setLoading(false)
     }
 
     init()
     return () => { mounted = false }
-  }, [barber, authLoading, router])
+  }, [barber, authLoading, loadDashboardData, router])
 
   useEffect(() => {
     if (!barber?._id) return undefined
@@ -116,7 +104,7 @@ export default function BarberDashboard() {
       socket?.emit('unsubscribe:barber', barber._id)
       socket?.disconnect()
     }
-  }, [barber?._id])
+  }, [barber?._id, loadDashboardData])
 
   const handleLogout = async () => {
     await logout()

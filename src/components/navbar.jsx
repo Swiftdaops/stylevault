@@ -5,9 +5,14 @@ import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import ModeToggle from "@/components/mode-toggle"
 import { usePathname } from 'next/navigation'
+import { isTenantBrowserHost } from '@/lib/seo'
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  if (isTenantBrowserHost()) return null
+
   // hide the public navbar on admin pages
   if (pathname && pathname.startsWith('/barbers/admin')) return null
 
@@ -27,7 +32,6 @@ export default function Navbar() {
     }
   }
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const navItems = [
     { label: "Barbers", href: "/barbers" },
     { label: "Get Started", href: "/barbers/register" },

@@ -1,32 +1,23 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useAuth } from '@/components/auth-provider'
 import { updateMyBarberProfile } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
 
 export default function ProfileManager() {
   const { barber, refresh } = useAuth()
-  const [form, setForm] = useState({
-    name: '',
-    bio: '',
-    location: '',
-    profileImage: '',
-    currency: 'USD',
-  })
+  const [overrides, setOverrides] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
-  useEffect(() => {
-    if (!barber) return
-    setForm({
-      name: barber.name || '',
-      bio: barber.bio || '',
-      location: barber.location || '',
-      profileImage: barber.profileImage || '',
-      currency: barber.currency || 'USD',
-    })
-  }, [barber])
+  const form = useMemo(() => ({
+    name: overrides.name ?? barber?.name ?? '',
+    bio: overrides.bio ?? barber?.bio ?? '',
+    location: overrides.location ?? barber?.location ?? '',
+    profileImage: overrides.profileImage ?? barber?.profileImage ?? '',
+    currency: overrides.currency ?? barber?.currency ?? 'USD',
+  }), [barber, overrides.bio, overrides.currency, overrides.location, overrides.name, overrides.profileImage])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -34,6 +25,7 @@ export default function ProfileManager() {
     setSaved(false)
     await updateMyBarberProfile(form)
     await refresh()
+    setOverrides({})
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
@@ -50,7 +42,7 @@ export default function ProfileManager() {
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <label className="block text-sm font-medium">Name</label>
-            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
+            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.name} onChange={(e) => setOverrides((current) => ({ ...current, name: e.target.value }))} required />
           </div>
           <div>
             <label className="block text-sm font-medium">Slug</label>
@@ -60,17 +52,17 @@ export default function ProfileManager() {
 
         <div>
           <label className="block text-sm font-medium">Bio</label>
-          <textarea className="mt-1 min-h-28 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} />
+          <textarea className="mt-1 min-h-28 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.bio} onChange={(e) => setOverrides((current) => ({ ...current, bio: e.target.value }))} />
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
           <div>
             <label className="block text-sm font-medium">Location</label>
-            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} />
+            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.location} onChange={(e) => setOverrides((current) => ({ ...current, location: e.target.value }))} />
           </div>
           <div>
             <label className="block text-sm font-medium">Currency</label>
-            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value.toUpperCase() }))} maxLength={3} />
+            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.currency} onChange={(e) => setOverrides((current) => ({ ...current, currency: e.target.value.toUpperCase() }))} maxLength={3} />
           </div>
           <div>
             <label className="block text-sm font-medium">Subscription</label>
@@ -80,7 +72,7 @@ export default function ProfileManager() {
 
         <div>
           <label className="block text-sm font-medium">Profile image URL</label>
-          <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.profileImage} onChange={(e) => setForm((f) => ({ ...f, profileImage: e.target.value }))} />
+          <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.profileImage} onChange={(e) => setOverrides((current) => ({ ...current, profileImage: e.target.value }))} />
         </div>
 
         <div className="flex items-center gap-3">

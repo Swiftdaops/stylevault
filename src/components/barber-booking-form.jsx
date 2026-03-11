@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { API_BASE_URL, formatCurrency } from '@/lib/barber-api';
+import { getBarberStoreUrl } from '@/lib/seo';
 import { format as formatDate } from 'date-fns';
 import DatePickerDemo from './date-picker-demo';
 import TimePickerDemo from './time-picker-demo';
@@ -249,7 +250,7 @@ export default function BarberBookingForm({ barber, services }) {
 
         <div>
           <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-amber-300">Need more details?</p>
-          <Link href={`/barbers/${barber.slug}`} className="mt-3 inline-flex rounded-full border border-orange-300 px-4 py-2 text-sm font-medium transition hover:bg-orange-100 dark:border-stone-700 dark:hover:bg-stone-900">
+          <Link href={getBarberStoreUrl(barber.slug)} className="mt-3 inline-flex rounded-full border border-orange-300 px-4 py-2 text-sm font-medium transition hover:bg-orange-100 dark:border-stone-700 dark:hover:bg-stone-900">
             View barber shop page
           </Link>
         </div>

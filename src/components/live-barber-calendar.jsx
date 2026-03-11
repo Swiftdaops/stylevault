@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { getBarberAvailability, getBarberCalendarAppointments } from '@/lib/barber-api'
 import { connectBarberSocket } from '@/lib/barber-socket'
+import { getBarberBookingUrl } from '@/lib/seo'
 
 function toLocalDate(dateString) {
   if (!dateString) return null
@@ -70,32 +71,33 @@ export default function LiveBarberCalendar({ barber }) {
     [selectedDate],
   )
 
-  const workingHours = barber?.workingHours?.[weekdayLabel] || []
+  const barberWorkingHours = barber?.workingHours
+  const workingHours = useMemo(() => barberWorkingHours?.[weekdayLabel] || [], [barberWorkingHours, weekdayLabel])
   const allSlots = useMemo(() => buildSlots(workingHours, 30), [workingHours])
   const availableSlots = useMemo(
     () => allSlots.filter((slot) => !bookedTimes.includes(slot)),
     [allSlots, bookedTimes],
   )
 
-  const loadAppointments = async () => {
-    if (!barber?._id) return
-    const data = await getBarberCalendarAppointments(barber._id)
-    setAppointments(Array.isArray(data) ? data : [])
-  }
-
-  const loadAvailability = async (dateKey) => {
-    if (!barber?._id || !dateKey) return
-    const result = await getBarberAvailability(barber._id, dateKey)
-    setBookedTimes(Array.isArray(result?.bookedTimes) ? result.bookedTimes : [])
-  }
-
   useEffect(() => {
     let mounted = true
 
     async function init() {
+      if (!barber?._id) {
+        if (mounted) setLoading(false)
+        return
+      }
+
       setLoading(true)
-      await loadAppointments()
-      await loadAvailability(toDateKey(new Date()))
+      const [appointmentsData, availabilityData] = await Promise.all([
+        getBarberCalendarAppointments(barber._id),
+        getBarberAvailability(barber._id, toDateKey(new Date())),
+      ])
+
+      if (!mounted) return
+
+      setAppointments(Array.isArray(appointmentsData) ? appointmentsData : [])
+      setBookedTimes(Array.isArray(availabilityData?.bookedTimes) ? availabilityData.bookedTimes : [])
       if (mounted) setLoading(false)
     }
 
@@ -104,16 +106,40 @@ export default function LiveBarberCalendar({ barber }) {
   }, [barber?._id])
 
   useEffect(() => {
-    loadAvailability(selectedDateKey)
-  }, [selectedDateKey, barber?._id])
+    let mounted = true
+
+    async function syncAvailability() {
+      if (!barber?._id || !selectedDateKey) return
+
+      const result = await getBarberAvailability(barber._id, selectedDateKey)
+      if (!mounted) return
+
+      setBookedTimes(Array.isArray(result?.bookedTimes) ? result.bookedTimes : [])
+    }
+
+    syncAvailability()
+
+    return () => {
+      mounted = false
+    }
+  }, [barber?._id, selectedDateKey])
 
   useEffect(() => {
     if (!barber?._id) return undefined
 
+    async function refreshCalendar() {
+      const [appointmentsData, availabilityData] = await Promise.all([
+        getBarberCalendarAppointments(barber._id),
+        getBarberAvailability(barber._id, selectedDateKey),
+      ])
+
+      setAppointments(Array.isArray(appointmentsData) ? appointmentsData : [])
+      setBookedTimes(Array.isArray(availabilityData?.bookedTimes) ? availabilityData.bookedTimes : [])
+    }
+
     const socket = connectBarberSocket(barber._id)
     const handleUpdate = () => {
-      loadAppointments()
-      loadAvailability(selectedDateKey)
+      refreshCalendar()
     }
 
     socket?.on('barber:data-updated', handleUpdate)
@@ -153,7 +179,7 @@ export default function LiveBarberCalendar({ barber }) {
           </div>
 
           <Link
-            href={`/barbers/${barber.slug}/book?date=${selectedDateKey}`}
+            href={getBarberBookingUrl(barber.slug, { date: selectedDateKey })}
             className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400"
           >
             Book this date
@@ -170,7 +196,7 @@ export default function LiveBarberCalendar({ barber }) {
               {availableSlots.map((slot) => (
                 <Link
                   key={slot}
-                  href={`/barbers/${barber.slug}/book?date=${selectedDateKey}&time=${encodeURIComponent(slot)}`}
+                  href={getBarberBookingUrl(barber.slug, { date: selectedDateKey, time: slot })}
                   aria-label={`Book ${selectedDate.toDateString()} at ${slot}`}
                   className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm text-emerald-800 transition hover:scale-105 hover:shadow-sm dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300"
                 >

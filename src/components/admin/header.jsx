@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
+import { getBarberStoreUrl } from '@/lib/seo'
 
 export default function AdminHeader({ isSidebarOpen = false, onMenuToggle }) {
   const { barber, logout } = useAuth()
@@ -35,7 +36,7 @@ export default function AdminHeader({ isSidebarOpen = false, onMenuToggle }) {
 
         <div className="flex flex-wrap items-center gap-2 lg:justify-end">
           <Button asChild variant="outline">
-            <Link href={`/barbers/${barber?.slug || ''}`}>View profile</Link>
+            <Link href={getBarberStoreUrl(barber?.slug)}>View profile</Link>
           </Button>
           <Button variant="destructive" onClick={logout}>Logout</Button>
         </div>
