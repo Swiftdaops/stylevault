@@ -168,9 +168,14 @@ export default function LiveBarberCalendar({ barber }) {
           ) : availableSlots.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {availableSlots.map((slot) => (
-                <span key={slot} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
+                <Link
+                  key={slot}
+                  href={`/barbers/${barber.slug}/book?date=${selectedDateKey}&time=${encodeURIComponent(slot)}`}
+                  aria-label={`Book ${selectedDate.toDateString()} at ${slot}`}
+                  className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm text-emerald-800 transition hover:scale-105 hover:shadow-sm dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300"
+                >
                   {slot}
-                </span>
+                </Link>
               ))}
             </div>
           ) : (

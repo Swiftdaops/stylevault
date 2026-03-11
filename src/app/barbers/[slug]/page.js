@@ -151,9 +151,6 @@ export default async function BarberShopPage({ params }) {
               <Link href={`/barbers/${barber.slug}/book`} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
                 Book with {barber.name}
               </Link>
-              <Link href="/barbers" className="inline-flex rounded-full border border-orange-300 px-5 py-3 text-sm font-medium transition hover:bg-orange-100 dark:border-stone-700 dark:hover:bg-stone-900">
-                Back to all barbers
-              </Link>
             </div>
           </div>
 
@@ -172,7 +169,7 @@ export default async function BarberShopPage({ params }) {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-amber-300">Services</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight">What this barber shop offers</h2>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight">What {barber.name}'s barber shop offers</h2>
             </div>
           </div>
 

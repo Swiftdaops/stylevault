@@ -1,5 +1,5 @@
 import BarberNavbar from '@/components/barbernav'
-import Footer from '@/components/footer'
+import BarberFooter from '@/components/barber-footer'
 import { getBarberBySlug } from '@/lib/barber-api'
 import { notFound } from 'next/navigation'
 
@@ -19,7 +19,7 @@ export default async function BarberSlugLayout({ children, params }) {
         {children}
       </div>
 
-      <Footer />
+      <BarberFooter barber={barber} />
     </>
   )
 }

@@ -26,10 +26,12 @@ export default function BarberBookingForm({ barber, services }) {
   useEffect(() => {
     const date = searchParams.get('date');
     const serviceId = searchParams.get('service');
+    const time = searchParams.get('time');
 
     setForm((current) => {
       const next = { ...current };
       if (date) next.date = date;
+      if (time) next.time = time;
       if (serviceId && services.some((s) => s._id === serviceId)) {
         next.service = serviceId;
       }

@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Use the public NEXT_PUBLIC_API_URL when provided. Do not hardcode a server URL here.
+// If unset, fall back to a relative path (empty string) so requests stay same-origin.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
