@@ -157,7 +157,7 @@ Manage Appointment
 
 <div class="footer">
 
-<p>Need help? Contact support@stylevault.store</p>
+<p>Need help? Contact support@stylevault.site</p>
 
 <p>© ${new Date().getFullYear()} StyleVault</p>
 

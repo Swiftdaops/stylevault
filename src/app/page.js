@@ -1,20 +1,39 @@
 import Link from 'next/link';
+import { headers } from 'next/headers';
+import BarberShopPage, { generateMetadata as generateBarberShopMetadata } from '@/app/barbers/[slug]/page';
+import { extractTenantSlugFromHost } from '@/lib/seo';
 
-export const metadata = {
-  title: 'StyleVault | Book Barbers Online in Nigeria',
-  description: 'Find a barber in Nigeria, compare grooming services, and book haircuts online with dedicated barber pages built for discovery and fast booking.',
-  keywords: ['barber in nigeria', 'book haircut online', 'skin fade barber', 'barber marketplace'],
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
+export async function generateMetadata() {
+  const headersList = await headers();
+  const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '');
+
+  if (tenantSlug) {
+    return generateBarberShopMetadata({ params: Promise.resolve({ slug: tenantSlug }) });
+  }
+
+  return {
     title: 'StyleVault | Book Barbers Online in Nigeria',
     description: 'Find a barber in Nigeria, compare grooming services, and book haircuts online with dedicated barber pages built for discovery and fast booking.',
-    url: '/',
-  },
-};
+    keywords: ['barber in nigeria', 'book haircut online', 'skin fade barber', 'barber marketplace'],
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title: 'StyleVault | Book Barbers Online in Nigeria',
+      description: 'Find a barber in Nigeria, compare grooming services, and book haircuts online with dedicated barber pages built for discovery and fast booking.',
+      url: '/',
+    },
+  };
+}
 
-export default function Home() {
+export default async function Home() {
+  const headersList = await headers();
+  const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '');
+
+  if (tenantSlug) {
+    return <BarberShopPage params={Promise.resolve({ slug: tenantSlug })} />;
+  }
+
   return (
     <section className="min-h-screen bg-orange-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-amber-500">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">

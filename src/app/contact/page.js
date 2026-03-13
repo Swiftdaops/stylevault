@@ -9,7 +9,7 @@ export default function ContactPage() {
       <div className="mx-auto max-w-4xl">
         <h1 className="text-4xl font-bold">Contact</h1>
         <p className="mt-4 text-lg text-stone-700 dark:text-amber-200">
-          For support or partnership inquiries, email us at <a href="mailto:hello@stylevault.store" className="underline">hello@stylevault.store</a>.
+          For support or partnership inquiries, email us at <a href="mailto:hello@stylevault.site" className="underline">hello@stylevault.site</a>.
         </p>
       </div>
     </section>
