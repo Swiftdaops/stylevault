@@ -29,6 +29,14 @@ function buildTenantFallbackPath(slug, path = '/', query = {}) {
   return `${basePath}${buildQueryString(query)}`;
 }
 
+function buildMarketplacePath(baseSegment, slug, path = '/', query = {}) {
+  if (!slug) return `/${baseSegment}`;
+
+  const pathname = normalizePath(path);
+  const basePath = pathname === '/' ? `/${baseSegment}/${slug}` : `/${baseSegment}/${slug}${pathname}`;
+  return `${basePath}${buildQueryString(query)}`;
+}
+
 export function absoluteUrl(path = '/') {
   return new URL(path, SITE_URL).toString();
 }
@@ -93,6 +101,14 @@ export function getBarberBookingUrl(slug, query = {}) {
   });
 
   return url.toString();
+}
+
+export function getHairSpecialistStoreUrl(slug) {
+  return buildMarketplacePath('hair-specialists', slug);
+}
+
+export function getHairSpecialistBookingUrl(slug, query = {}) {
+  return buildMarketplacePath('hair-specialists', slug, '/book', query);
 }
 
 export function buildDescription(text, fallback) {

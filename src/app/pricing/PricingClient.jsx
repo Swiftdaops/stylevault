@@ -89,7 +89,7 @@ export default function PricingClient() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <article className="border rounded-xl p-8 bg-red-50 dark:bg-stone-900">
+          <article className="border rounded-xl p-8 bg-fuchsia-50 dark:bg-stone-900">
             <h2 className="text-2xl font-semibold mb-2 text-stone-900 dark:text-amber-50">Free</h2>
             <p className="text-3xl font-bold mb-6 text-lime-500">{billing === 'monthly' ? '₦0 / month' : '₦0 / year'}</p>
             <ul className="text-left space-y-2 mb-8 text-stone-700 dark:text-amber-200">
@@ -103,7 +103,7 @@ export default function PricingClient() {
             <button className="w-full bg-lime-500 dark:bg-stone-800 py-3 rounded-lg">Get Started</button>
           </article>
 
-          <article className="border-2 border-black rounded-xl p-8 shadow-lg bg-red-50 dark:bg-stone-900">
+          <article className="border-2 border-black rounded-xl p-8 shadow-lg bg-fuchsia-50 dark:bg-stone-900">
             <h2 className="text-2xl font-semibold mb-2 text-stone-900 dark:text-amber-50">Pro</h2>
             <p className="text-3xl font-bold mb-6 text-lime-500">{price[billing]} {billing === 'monthly' ? '/ month' : '/ year'}</p>
             <ul className="text-left space-y-2 mb-8 text-stone-700 dark:text-amber-200">

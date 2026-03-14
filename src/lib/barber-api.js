@@ -116,10 +116,10 @@ export async function logoutBarber() {
   }
 }
 
-export async function registerBarber(name, email, password, slug) {
+export async function registerBarber(name, email, password, slug, whatsapp, country, currency) {
   return authedJson('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ name, email, password, slug }),
+    body: JSON.stringify({ name, email, password, slug, whatsapp, country, currency }),
   });
 }
 

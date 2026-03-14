@@ -5,14 +5,19 @@ import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { registerBarber, slugify } from "@/lib/barber-api"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { countryOptions, getCurrencyForCountry } from "@/lib/profile-options"
 
 export default function BarberSignupForm() {
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [whatsapp, setWhatsapp] = useState("")
+  const [country, setCountry] = useState("NG")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const currency = getCurrencyForCountry(country)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,7 +26,7 @@ export default function BarberSignupForm() {
 
     try {
       const slug = slugify(name || email.split('@')[0] || 'barber')
-      await registerBarber(name, email, password, slug)
+      await registerBarber(name, email, password, slug, whatsapp, country, currency)
       router.push('/barbers/admin')
     } catch (err) {
       setError(err?.message || 'Registration failed')
@@ -65,6 +70,42 @@ export default function BarberSignupForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">WhatsApp number</label>
+          <input
+            type="tel"
+            required
+            value={whatsapp}
+            onChange={(e) => setWhatsapp(e.target.value)}
+            className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
+            placeholder="2348012345678"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">Country</label>
+          <Select value={country} onValueChange={setCountry}>
+            <SelectTrigger className="mt-1 h-10 w-full rounded-md border border-orange-200 bg-white px-3 dark:border-stone-700 dark:bg-stone-900">
+              <SelectValue placeholder="Select country" />
+            </SelectTrigger>
+            <SelectContent className="bg-orange-50">
+              {countryOptions.map((option) => (
+                <SelectItem key={option.code} value={option.code} className="bg-orange-50">{option.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">Currency</label>
+          <input
+            type="text"
+            value={currency}
+            readOnly
+            className="mt-1 w-full rounded-md border px-3 py-2 opacity-80 shadow-sm dark:bg-stone-900 dark:border-stone-700"
           />
         </div>
 

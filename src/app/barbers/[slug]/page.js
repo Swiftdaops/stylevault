@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatCurrency, getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
+import { getSocialLinksList } from '@/lib/social-links';
 import { buildDescription, getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
 import LiveBarberCalendar from '@/components/live-barber-calendar';
 
@@ -107,6 +108,7 @@ export default async function BarberShopPage({ params }) {
 
   const services = await getServicesForBarber(barber._id);
   const rating = barber.subscriptionPlan === 'pro' ? 5 : 4.5;
+  const socialLinks = getSocialLinksList(barber.socialLinks);
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -121,6 +123,7 @@ export default async function BarberShopPage({ params }) {
     areaServed: barber.location || 'Nigeria',
     priceRange: barber.subscriptionPlan === 'pro' ? '$$$' : '$$',
     url: getBarberStoreUrl(barber.slug),
+    sameAs: socialLinks.map((platform) => platform.href),
     makesOffer: services.map((service) => ({
       '@type': 'Offer',
       itemOffered: {
@@ -147,6 +150,22 @@ export default async function BarberShopPage({ params }) {
             <div className="flex flex-wrap gap-3 text-sm text-stone-600 dark:text-amber-200">
               {barber.location ? <span className="rounded-full border border-orange-200 px-3 py-1 dark:border-stone-700">{barber.location}</span> : null}
             </div>
+
+            {socialLinks.length ? (
+              <div className="flex flex-wrap gap-3 text-sm">
+                {socialLinks.map((platform) => (
+                  <a
+                    key={platform.key}
+                    href={platform.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex rounded-full border border-orange-200 bg-white px-4 py-2 font-medium transition hover:bg-orange-100 dark:border-stone-700 dark:bg-stone-950 dark:hover:bg-stone-900"
+                  >
+                    {platform.label}
+                  </a>
+                ))}
+              </div>
+            ) : null}
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getBarberBookingUrl(barber.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">

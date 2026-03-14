@@ -111,12 +111,12 @@ export default function ServicesManager() {
 
         {/* Create service card with Add image button */}
         <div className="overflow-hidden rounded-xl border border-dashed border-orange-200/60 bg-white/80 p-5 dark:border-stone-800 dark:bg-black/60">
-          <div className="aspect-[4/3] mb-4 flex items-center justify-center overflow-hidden bg-orange-100 dark:bg-stone-900">
+          <div className="aspect-4/3 mb-4 flex items-center justify-center overflow-hidden bg-orange-100 dark:bg-stone-900">
             <div className="text-center">
               <div className="mb-2 text-sm font-medium text-stone-600 dark:text-amber-300">Create</div>
               <div className="flex items-center justify-center gap-2">
                 <Button type="button" onClick={() => { setShowForm(true); setEditingId(null); setEditingService(null); setError('') }}>Create service</Button>
-                <Button type="button" variant="outline" onClick={() => { setShowForm(true); setEditingId(null); setEditingService(null); setError('') }}>Add image</Button>
+                <Button type="button" variant="outline" className="border-2 border-orange-300 bg-white text-stone-950 hover:bg-orange-50 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-300" onClick={() => { setShowForm(true); setEditingId(null); setEditingService(null); setError('') }}>Add image</Button>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function ServicesManager() {
         {!loading && services.length === 0 && <div className="rounded-xl border border-dashed border-orange-200/60 bg-white/80 p-5 text-sm dark:border-stone-800 dark:bg-black/60">No services yet.</div>}
         {services.map((service) => (
           <div key={service._id} className="overflow-hidden rounded-xl border border-orange-200/60 bg-white/80 dark:border-stone-800 dark:bg-black/60">
-            <div className="aspect-[4/3] overflow-hidden bg-orange-100 dark:bg-stone-900">
+            <div className="aspect-4/3 overflow-hidden bg-orange-100 dark:bg-stone-900">
               {service.sampleImage || service.catalogId?.image ? (
                 <img src={service.sampleImage || service.catalogId?.image} alt={service.name} className="h-full w-full object-cover" />
               ) : null}

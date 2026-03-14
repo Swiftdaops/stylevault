@@ -4,10 +4,18 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { API_BASE_URL, formatCurrency } from '@/lib/barber-api';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { getBarberStoreUrl } from '@/lib/seo';
 import { format as formatDate } from 'date-fns';
 import DatePickerDemo from './date-picker-demo';
 import TimePickerDemo from './time-picker-demo';
+
+function buildWhatsAppUrl(rawPhone, customerName) {
+  const phone = String(rawPhone || '').replace(/\D/g, '');
+  if (!phone) return '';
+  const message = `Hi, I'm ${customerName}. Nice to meet you.`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
 
 export default function BarberBookingForm({ barber, services }) {
   const searchParams = useSearchParams();
@@ -117,6 +125,12 @@ export default function BarberBookingForm({ barber, services }) {
         setEmailNotice(`Confirmation email sent to ${form.customerEmail}.`);
       }
 
+      const whatsappUrl = buildWhatsAppUrl(barber?.whatsapp, form.customerName)
+      if (whatsappUrl) {
+        window.location.assign(whatsappUrl)
+        return
+      }
+
       setForm({
         customerName: '',
         customerEmail: '',
@@ -161,13 +175,18 @@ export default function BarberBookingForm({ barber, services }) {
 
           <label className="space-y-2 sm:col-span-2">
             <span className="text-sm font-medium">Service</span>
-            <select id="service" value={form.service} onChange={handleChange} className="w-full rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 outline-none transition focus:border-orange-400 dark:border-stone-700 dark:bg-stone-900">
-              {serviceOptions.map((service) => (
-                <option key={service._id} value={service._id}>
-                  {service.label}
-                </option>
-              ))}
-            </select>
+            <div className="w-full">
+              <Select value={form.service} onValueChange={(value) => setForm((c) => ({ ...c, service: value }))}>
+                <SelectTrigger className="w-full rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 outline-none">
+                  <SelectValue placeholder={serviceOptions.length ? serviceOptions[0].label : 'No services available'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {serviceOptions.map((service) => (
+                    <SelectItem key={service._id} value={service._id}>{service.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </label>
 
           <label className="space-y-2">

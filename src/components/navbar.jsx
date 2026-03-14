@@ -14,7 +14,7 @@ export default function Navbar() {
   if (isTenantBrowserHost()) return null
 
   // hide the public navbar on admin pages
-  if (pathname && pathname.startsWith('/barbers/admin')) return null
+  if (pathname && (pathname.startsWith('/barbers/admin') || pathname.startsWith('/hair-specialists/admin'))) return null
 
   // hide the navbar for barber profile pages like /barbers/nnamdi
   // but keep it for static pages such as /barbers/register or /barbers/login
@@ -30,13 +30,19 @@ export default function Navbar() {
       // hide the navbar on a barber's booking page: /barbers/:slug/book
       if (parts.length >= 3 && parts[2] === 'book') return null
     }
+
+    if (parts[0] === 'hair-specialists') {
+      if (parts.length === 2) {
+        const exceptions = new Set(['register', 'login', 'admin'])
+        if (!exceptions.has(parts[1])) return null
+      }
+
+      if (parts.length >= 3 && parts[2] === 'book') return null
+    }
   }
 
   const navItems = [
-    { label: "Barbers", href: "/barbers" },
-    { label: "Get Started", href: "/barbers/register" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "About", href: "/about" },
+    { label: "Get Started", href: "/get-started" },
   ]
 
   return (

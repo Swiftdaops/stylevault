@@ -3,6 +3,10 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { getServiceCatalog, API_BASE_URL } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+
+const inputClassName = 'mt-2 h-11 w-full rounded-xl border border-orange-200 bg-white/90 px-4 text-sm shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-amber-500 dark:focus:ring-amber-500/20'
+const textareaClassName = 'mt-2 min-h-24 w-full rounded-xl border border-orange-200 bg-white/90 px-4 py-3 text-sm shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-amber-500 dark:focus:ring-amber-500/20'
 
 const initialForm = {
   catalogId: '',
@@ -130,7 +134,7 @@ export default function ServiceForm({ barber, mode = 'create', initialValue = nu
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-orange-200/60 bg-white/80 p-5 dark:border-stone-800 dark:bg-black/60">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-3xl border border-orange-200/70 bg-white/90 p-6 shadow-sm dark:border-stone-800 dark:bg-stone-950/70">
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="text-lg font-semibold">{mode === 'edit' ? 'Edit service' : 'Create service'}</div>
@@ -141,42 +145,46 @@ export default function ServiceForm({ barber, mode = 'create', initialValue = nu
 
       <div>
         <label className="block text-sm font-medium">Catalog service</label>
-        <select className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.catalogId} onChange={(e) => handleCatalogChange(e.target.value)} required>
-          <option value="">{loadingCatalog ? 'Loading services…' : 'Select a service template'}</option>
-          {catalog.map((item) => (
-            <option key={item._id} value={item._id}>{item.category} — {item.name}</option>
-          ))}
-        </select>
+        <Select value={form.catalogId} onValueChange={handleCatalogChange}>
+          <SelectTrigger className="mt-2 h-11 w-full rounded-xl border-orange-200 bg-white/90 px-4 dark:border-stone-700 dark:bg-stone-900">
+            <SelectValue placeholder={loadingCatalog ? 'Loading services…' : 'Select a service template'} />
+          </SelectTrigger>
+          <SelectContent className="bg-red-50">
+            {catalog.map((item) => (
+              <SelectItem key={item._id} value={item._id} className="bg-red-50">{item.category} — {item.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium">Service name</label>
-            <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
+            <input className={inputClassName} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium">Price ({barber?.currency || 'USD'})</label>
-              <input type="number" step="0.01" min="0" className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} required />
+              <input type="number" step="0.01" min="0" className={inputClassName} value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} required />
             </div>
             <div>
               <label className="block text-sm font-medium">Duration (min)</label>
-              <input type="number" min="5" step="5" className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.duration} onChange={(e) => setForm((f) => ({ ...f, duration: e.target.value }))} required />
+              <input type="number" min="5" step="5" className={inputClassName} value={form.duration} onChange={(e) => setForm((f) => ({ ...f, duration: e.target.value }))} required />
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium">Description</label>
-            <textarea className="mt-1 min-h-24 w-full rounded-md border px-3 py-2 dark:bg-stone-900" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+            <textarea className={textareaClassName} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
           </div>
 
           <div>
             <label className="block text-sm font-medium">Sample image</label>
             <div className="mt-1 flex items-center gap-3">
               <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-              <Button type="button" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+              <Button type="button" className="border-2 border-orange-300 bg-white text-stone-950 hover:bg-orange-50 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-300" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
                 {uploading ? 'Uploading…' : previewImage ? 'Change image' : 'Add image'}
               </Button>
               {uploading ? <span className="text-sm text-stone-600">Uploading…</span> : null}
@@ -191,7 +199,7 @@ export default function ServiceForm({ barber, mode = 'create', initialValue = nu
           </label>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-orange-200/60 bg-orange-50/80 p-3 dark:border-stone-800 dark:bg-stone-950">
+        <div className="space-y-3 rounded-2xl border border-orange-200/60 bg-orange-50/80 p-4 dark:border-stone-800 dark:bg-stone-950">
           <div className="text-sm font-medium">Preview</div>
           <div className="overflow-hidden rounded-lg border border-orange-200/60 bg-white dark:border-stone-800 dark:bg-stone-900">
             {previewImage ? (

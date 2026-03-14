@@ -5,6 +5,12 @@ import { API_BASE_URL } from '@/lib/barber-api';
 const DEFAULT_SERVICE_VALUE = 'premium-barbing';
 
 const slugify = (value = '') => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const buildWhatsAppUrl = (rawPhone, customerName) => {
+  const phone = String(rawPhone || '').replace(/\D/g, '');
+  if (!phone) return '';
+  const message = `Hi, I'm ${customerName}. Nice to meet you.`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+};
 
 export default function BookPageClient() {
   const [barbers, setBarbers] = useState([]);
@@ -197,6 +203,12 @@ export default function BookPageClient() {
       }
 
       setSuccess('Booking created successfully.');
+
+      const whatsappUrl = buildWhatsAppUrl(selectedBarber?.whatsapp, form.customerName);
+      if (whatsappUrl) {
+        window.location.assign(whatsappUrl);
+        return;
+      }
     } catch (submitError) {
       setError(submitError.message || 'Booking failed');
     } finally {

@@ -1,17 +1,51 @@
+import AboutHero from '@/components/about-hero'
+import { AboutPlatform, WhoItsFor } from '@/components/Aboutpage'
+import { SITE_URL } from '@/lib/seo'
+
 export const metadata = {
   title: 'About | StyleVault',
-  description: 'About StyleVault — discover and book barbers online in Nigeria.',
-};
+  description: 'Learn how StyleVault helps barbers and hair stylists create storefronts, accept bookings, manage customers, and grow modern beauty businesses online.',
+  keywords: [
+    'about StyleVault',
+    'barber booking platform',
+    'hair stylist booking platform',
+    'beauty business software',
+    'digital storefront for barbers',
+    'salon booking system',
+  ],
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About StyleVault',
+    description: 'StyleVault helps barbers and stylists run their businesses online with storefronts, booking tools, customer management, and service listings.',
+    url: `${SITE_URL}/about`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About StyleVault',
+    description: 'Discover how StyleVault supports modern barber and beauty businesses online.',
+  },
+}
 
 export default function AboutPage() {
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'StyleVault',
+    url: SITE_URL,
+    sameAs: [SITE_URL],
+    description:
+      'StyleVault is a digital platform that helps barbers and stylists create online storefronts, manage bookings, services, and customers.',
+  }
+
   return (
-    <section className="min-h-screen bg-orange-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-amber-500">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold">About StyleVault</h1>
-        <p className="mt-4 text-lg text-stone-700 dark:text-amber-200">
-          StyleVault helps customers find local barbers, compare services and book appointments online. We build tools that connect customers and barbers with real-time availability and simple scheduling.
-        </p>
-      </div>
-    </section>
-  );
+    <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <AboutHero />
+      <AboutPlatform />
+      <WhoItsFor />
+    </main>
+  )
 }

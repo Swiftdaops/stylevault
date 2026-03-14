@@ -2,16 +2,16 @@
 
 import React, { useMemo, useRef, useState } from 'react'
 import { ExternalLink, ImagePlus } from 'lucide-react'
-import { useAuth } from '@/components/auth-provider'
-import { API_BASE_URL, updateMyBarberProfile } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
+import { useHairSpecialistAuth } from '@/components/hair-specialist-auth-provider'
+import { updateMyHairSpecialistProfile, API_BASE_URL } from '@/lib/hair-specialist-api'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { buildWhatsAppUrl, currencyOptions, normalizeCurrencyCode } from '@/lib/profile-options'
 import { getSocialLinksList, normalizeSocialLinks, SOCIAL_PLATFORMS } from '@/lib/social-links'
 
-const inputClassName = 'mt-2 h-11 w-full rounded-xl border border-orange-200 bg-white/90 px-4 text-sm shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-amber-500 dark:focus:ring-amber-500/20'
-const textareaClassName = 'mt-2 min-h-32 w-full rounded-xl border border-orange-200 bg-white/90 px-4 py-3 text-sm shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-amber-500 dark:focus:ring-amber-500/20'
-const panelClassName = 'rounded-3xl border border-orange-200/70 bg-white/90 p-6 shadow-sm dark:border-stone-800 dark:bg-stone-950/70'
+const inputClassName = 'mt-2 h-11 w-full rounded-xl border border-rose-200 bg-white/90 px-4 text-sm shadow-sm outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-rose-400 dark:focus:ring-rose-400/20'
+const textareaClassName = 'mt-2 min-h-32 w-full rounded-xl border border-rose-200 bg-white/90 px-4 py-3 text-sm shadow-sm outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-rose-400 dark:focus:ring-rose-400/20'
+const panelClassName = 'rounded-3xl border border-rose-200/70 bg-white/90 p-6 shadow-sm dark:border-stone-800 dark:bg-stone-950/70'
 
 function buildSocialState(currentLinks = {}, existingLinks = {}) {
   return SOCIAL_PLATFORMS.reduce((result, platform) => {
@@ -20,8 +20,8 @@ function buildSocialState(currentLinks = {}, existingLinks = {}) {
   }, {})
 }
 
-export default function ProfileManager() {
-  const { barber, refresh } = useAuth()
+export default function HairProfileManager() {
+  const { hairSpecialist, refresh } = useHairSpecialistAuth()
   const [overrides, setOverrides] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -31,14 +31,15 @@ export default function ProfileManager() {
   const fileInputRef = useRef(null)
 
   const form = useMemo(() => ({
-    name: overrides.name ?? barber?.name ?? '',
-    bio: overrides.bio ?? barber?.bio ?? '',
-    location: overrides.location ?? barber?.location ?? '',
-    whatsapp: overrides.whatsapp ?? barber?.whatsapp ?? '',
-    profileImage: overrides.profileImage ?? barber?.profileImage ?? '',
-    currency: normalizeCurrencyCode(overrides.currency ?? barber?.currency ?? 'USD'),
-    socialLinks: buildSocialState(overrides.socialLinks, barber?.socialLinks),
-  }), [barber, overrides])
+    name: overrides.name ?? hairSpecialist?.name ?? '',
+    bio: overrides.bio ?? hairSpecialist?.bio ?? '',
+    location: overrides.location ?? hairSpecialist?.location ?? '',
+    whatsapp: overrides.whatsapp ?? hairSpecialist?.whatsapp ?? '',
+    profileImage: overrides.profileImage ?? hairSpecialist?.profileImage ?? '',
+    currency: normalizeCurrencyCode(overrides.currency ?? hairSpecialist?.currency ?? 'USD'),
+    specialties: overrides.specialties ?? (hairSpecialist?.specialties || []).join(', '),
+    socialLinks: buildSocialState(overrides.socialLinks, hairSpecialist?.socialLinks),
+  }), [hairSpecialist, overrides])
 
   const socialLinks = useMemo(() => getSocialLinksList(form.socialLinks), [form.socialLinks])
   const previewImage = localPreview || form.profileImage || ''
@@ -48,7 +49,7 @@ export default function ProfileManager() {
       const next = { ...current, [key]: value }
       if (key === 'whatsapp') {
         next.socialLinks = {
-          ...buildSocialState(current.socialLinks, barber?.socialLinks),
+          ...buildSocialState(current.socialLinks, hairSpecialist?.socialLinks),
           whatsapp: buildWhatsAppUrl(value),
         }
       }
@@ -60,7 +61,7 @@ export default function ProfileManager() {
     setOverrides((current) => ({
       ...current,
       socialLinks: {
-        ...buildSocialState(current.socialLinks, barber?.socialLinks),
+        ...buildSocialState(current.socialLinks, hairSpecialist?.socialLinks),
         [key]: value,
       },
     }))
@@ -114,9 +115,10 @@ export default function ProfileManager() {
     setUploadError('')
 
     try {
-      await updateMyBarberProfile({
+      await updateMyHairSpecialistProfile({
         ...form,
         currency: normalizeCurrencyCode(form.currency),
+        specialties: form.specialties.split(',').map((item) => item.trim()).filter(Boolean),
         socialLinks: normalizeSocialLinks({ ...form.socialLinks, whatsapp: form.whatsapp }),
       })
       await refresh()
@@ -133,12 +135,12 @@ export default function ProfileManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
-        <span className="inline-flex w-fit rounded-full border border-orange-300/80 bg-orange-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-orange-700 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-300">
+        <span className="inline-flex w-fit rounded-full border border-rose-300/80 bg-rose-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-700 dark:border-stone-700 dark:bg-stone-900 dark:text-rose-300">
           Public storefront profile
         </span>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
-          <p className="mt-2 text-sm text-stone-600 dark:text-amber-300">Make your barber storefront feel premium with a strong bio, image, and social links clients can tap easily.</p>
+          <p className="mt-2 text-sm text-stone-600 dark:text-rose-300">Make your stylist storefront feel polished with a strong bio, image, specialties, and social links clients can tap instantly.</p>
         </div>
       </div>
 
@@ -148,9 +150,9 @@ export default function ProfileManager() {
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">Basic details</h2>
-                <p className="mt-1 text-sm text-stone-600 dark:text-amber-300">These details appear at the top of your public barber page.</p>
+                <p className="mt-1 text-sm text-stone-600 dark:text-rose-300">These details power the headline section of your public stylist storefront.</p>
               </div>
-              <div className="rounded-full border border-orange-200 px-3 py-1 text-xs text-stone-600 dark:border-stone-700 dark:text-amber-300">/{barber?.slug || 'your-slug'}</div>
+              <div className="rounded-full border border-rose-200 px-3 py-1 text-xs text-stone-600 dark:border-stone-700 dark:text-rose-300">/{hairSpecialist?.slug || 'your-slug'}</div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -160,19 +162,19 @@ export default function ProfileManager() {
               </div>
               <div>
                 <label className="block text-sm font-medium">Slug</label>
-                <input className={`${inputClassName} cursor-not-allowed opacity-70`} value={barber?.slug || ''} disabled />
+                <input className={`${inputClassName} cursor-not-allowed opacity-70`} value={hairSpecialist?.slug || ''} disabled />
               </div>
             </div>
 
             <div className="mt-4">
               <label className="block text-sm font-medium">Bio</label>
-              <textarea className={textareaClassName} value={form.bio} onChange={(event) => setField('bio', event.target.value)} placeholder="Tell clients about your signature cuts, experience, and what makes your shop stand out." />
+              <textarea className={textareaClassName} value={form.bio} onChange={(event) => setField('bio', event.target.value)} placeholder="Tell clients about your signature styles, salon experience, and what makes your work special." />
             </div>
 
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               <div>
                 <label className="block text-sm font-medium">Location</label>
-                <input className={inputClassName} value={form.location} onChange={(event) => setField('location', event.target.value)} placeholder="Lagos, Nigeria" />
+                <input className={inputClassName} value={form.location} onChange={(event) => setField('location', event.target.value)} placeholder="Abuja, Nigeria" />
               </div>
               <div>
                 <label className="block text-sm font-medium">WhatsApp</label>
@@ -181,27 +183,33 @@ export default function ProfileManager() {
               <div>
                 <label className="block text-sm font-medium">Currency</label>
                 <Select value={form.currency} onValueChange={(value) => setField('currency', value)}>
-                  <SelectTrigger className="mt-2 h-11 w-full rounded-xl border-orange-200 bg-white/90 px-4 dark:border-stone-700 dark:bg-stone-900">
+                  <SelectTrigger className="mt-2 h-11 w-full rounded-xl border-rose-200 bg-white/90 px-4 dark:border-stone-700 dark:bg-stone-900">
                     <SelectValue placeholder="Select currency" />
                   </SelectTrigger>
-                  <SelectContent className="bg-orange-50">
+                  <SelectContent className="bg-red-50">
                     {currencyOptions.map((option) => (
-                      <SelectItem key={option.code} value={option.code} className="bg-orange-50">{option.code} — {option.label}</SelectItem>
+                      <SelectItem key={option.code} value={option.code} className="bg-red-50">{option.code} — {option.label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="md:col-span-3 lg:col-span-1">
                 <label className="block text-sm font-medium">Subscription</label>
-                <input className={`${inputClassName} cursor-not-allowed opacity-70`} value={barber?.subscriptionPlan || ''} disabled />
+                <input className={`${inputClassName} cursor-not-allowed opacity-70`} value={hairSpecialist?.subscriptionPlan || ''} disabled />
               </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium">Specialties</label>
+              <input className={inputClassName} value={form.specialties} onChange={(event) => setField('specialties', event.target.value)} placeholder="Wig installation, Knotless braids, Silk press" />
+              <p className="mt-2 text-xs text-stone-500 dark:text-rose-400">Separate specialties with commas.</p>
             </div>
           </section>
 
           <section className={panelClassName}>
             <div className="mb-5">
               <h2 className="text-lg font-semibold">Social links</h2>
-              <p className="mt-1 text-sm text-stone-600 dark:text-amber-300">Add your Facebook, Instagram, TikTok, Twitter, and LinkedIn links so clients can connect from your storefront.</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-rose-300">Add your Facebook, Instagram, TikTok, Twitter, and LinkedIn profiles so clients can follow your work and contact your brand easily.</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -223,7 +231,7 @@ export default function ProfileManager() {
                         target="_blank"
                         rel="noreferrer"
                         aria-disabled={!href}
-                        className={`inline-flex h-11 min-w-11 items-center justify-center rounded-xl border px-3 transition ${href ? 'border-orange-200 bg-orange-50 text-stone-950 hover:bg-orange-100 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-300 dark:hover:bg-stone-800' : 'pointer-events-none border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-stone-500'}`}
+                        className={`inline-flex h-11 min-w-11 items-center justify-center rounded-xl border px-3 transition ${href ? 'border-rose-200 bg-rose-50 text-stone-950 hover:bg-rose-100 dark:border-stone-700 dark:bg-stone-900 dark:text-rose-300 dark:hover:bg-stone-800' : 'pointer-events-none border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-stone-500'}`}
                       >
                         <ExternalLink className="h-4 w-4" />
                       </a>
@@ -239,14 +247,14 @@ export default function ProfileManager() {
           <section className={panelClassName}>
             <div className="mb-5">
               <h2 className="text-lg font-semibold">Profile image</h2>
-              <p className="mt-1 text-sm text-stone-600 dark:text-amber-300">Upload a clear photo so clients recognize your brand instantly.</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-rose-300">Upload a clean portrait or salon brand image for a stronger storefront first impression.</p>
             </div>
 
-            <div className="overflow-hidden rounded-3xl border border-orange-200 bg-orange-50/70 dark:border-stone-800 dark:bg-stone-900/70">
+            <div className="overflow-hidden rounded-3xl border border-rose-200 bg-rose-50/70 dark:border-stone-800 dark:bg-stone-900/70">
               {previewImage ? (
-                <img src={previewImage} alt="Barber profile preview" className="w-full object-cover" style={{ aspectRatio: '4 / 5' }} />
+                <img src={previewImage} alt="Hair specialist profile preview" className="aspect-4/5 w-full object-cover" />
               ) : (
-                <div className="flex items-center justify-center px-6 text-center text-sm text-stone-500 dark:text-amber-300" style={{ aspectRatio: '4 / 5' }}>
+                <div className="flex aspect-4/5 items-center justify-center px-6 text-center text-sm text-stone-500 dark:text-rose-300">
                   Upload a storefront image or paste an image URL below.
                 </div>
               )}
@@ -254,7 +262,7 @@ export default function ProfileManager() {
 
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button type="button" className="rounded-xl border-2 border-orange-300 bg-white text-stone-950 hover:bg-orange-50 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-300" onClick={() => fileInputRef.current?.click()}>
+              <Button type="button" className="rounded-xl border-2 border-rose-300 bg-white text-stone-950 hover:bg-rose-50 dark:border-stone-700 dark:bg-stone-900 dark:text-rose-300" onClick={() => fileInputRef.current?.click()}>
                 <ImagePlus className="mr-2 h-4 w-4" />
                 {uploading ? 'Uploading…' : previewImage ? 'Change image' : 'Upload image'}
               </Button>
@@ -270,21 +278,26 @@ export default function ProfileManager() {
           <section className={panelClassName}>
             <div className="mb-4">
               <h2 className="text-lg font-semibold">Quick preview</h2>
-              <p className="mt-1 text-sm text-stone-600 dark:text-amber-300">This is how clients will discover and click into your storefront.</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-rose-300">See the contact and social touchpoints your clients will click on your public page.</p>
             </div>
 
-            <div className="rounded-2xl border border-orange-200 bg-orange-50/70 p-4 dark:border-stone-800 dark:bg-stone-900/60">
-              <div className="text-lg font-semibold">{form.name || 'Your barber brand'}</div>
-              <p className="mt-1 text-sm text-stone-600 dark:text-amber-300">{form.location || 'Add your location'} · {barber?.slug || 'your-slug'}</p>
-              {form.whatsapp ? <p className="mt-1 text-sm text-stone-600 dark:text-amber-300">WhatsApp: {form.whatsapp}</p> : null}
-              <p className="mt-3 text-sm text-stone-700 dark:text-amber-200">{form.bio || 'Your bio will appear here on your public storefront.'}</p>
+            <div className="rounded-2xl border border-rose-200 bg-rose-50/70 p-4 dark:border-stone-800 dark:bg-stone-900/60">
+              <div className="text-lg font-semibold">{form.name || 'Your salon brand'}</div>
+              <p className="mt-1 text-sm text-stone-600 dark:text-rose-300">{form.location || 'Add your location'} · {hairSpecialist?.slug || 'your-slug'}</p>
+              {form.whatsapp ? <p className="mt-1 text-sm text-stone-600 dark:text-rose-300">WhatsApp: {form.whatsapp}</p> : null}
+              <p className="mt-3 text-sm text-stone-700 dark:text-rose-200">{form.bio || 'Your bio will appear here on your public storefront.'}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {String(form.specialties || '').split(',').map((item) => item.trim()).filter(Boolean).slice(0, 4).map((item) => (
+                  <span key={item} className="rounded-full border border-rose-200 bg-white px-3 py-1 text-xs font-medium dark:border-stone-700 dark:bg-stone-950">{item}</span>
+                ))}
+              </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {socialLinks.length ? socialLinks.map((platform) => (
-                  <a key={platform.key} href={platform.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-3 py-2 text-xs font-medium text-stone-950 transition hover:bg-orange-100 dark:border-stone-700 dark:bg-stone-950 dark:text-amber-300 dark:hover:bg-stone-800">
+                  <a key={platform.key} href={platform.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white px-3 py-2 text-xs font-medium text-stone-950 transition hover:bg-rose-100 dark:border-stone-700 dark:bg-stone-950 dark:text-rose-300 dark:hover:bg-stone-800">
                     {platform.label}
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
-                )) : <span className="text-xs text-stone-500 dark:text-amber-300">Add social links to show clickable profile buttons.</span>}
+                )) : <span className="text-xs text-stone-500 dark:text-rose-300">Add social links to show clickable profile buttons.</span>}
               </div>
             </div>
 

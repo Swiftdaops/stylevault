@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navbar";
-import PublicFooter from '@/components/public-footer'
+import FooterSwitcher from '@/components/footer-switcher'
 import { SITE_URL } from "@/lib/seo";
 
 const geistSans = Geist({
@@ -47,7 +47,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} bg-orange-50 text-stone-950 antialiased dark:bg-black dark:text-amber-600`}>
+      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} bg-orange-50 text-stone-950 antialiased dark:bg-stone-950 dark:text-amber-600`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -58,7 +58,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main className="pt-16">{children}</main>
           </div>
-          <PublicFooter />
+          <FooterSwitcher />
         </ThemeProvider>
       </body>
     </html>
