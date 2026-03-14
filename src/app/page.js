@@ -1,13 +1,28 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
+import { notFound } from 'next/navigation';
 import BarberShopPage, { generateMetadata as generateBarberShopMetadata } from '@/app/barbers/[slug]/page';
+import HairSpecialistPage, { generateMetadata as generateHairSpecialistMetadata } from '@/app/hair-specialists/[slug]/page';
 import { extractTenantSlugFromHost } from '@/lib/seo';
+import { resolveTenantProfileBySlug } from '@/lib/tenant';
 
 export async function generateMetadata() {
   const headersList = await headers();
   const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '');
 
   if (tenantSlug) {
+    const tenant = await resolveTenantProfileBySlug(tenantSlug);
+
+    if (!tenant) {
+      return {
+        title: 'Profile not found | StyleVault',
+      };
+    }
+
+    if (tenant.type === 'hair-specialist') {
+      return generateHairSpecialistMetadata({ params: Promise.resolve({ slug: tenantSlug }) });
+    }
+
     return generateBarberShopMetadata({ params: Promise.resolve({ slug: tenantSlug }) });
   }
 
@@ -31,6 +46,16 @@ export default async function Home() {
   const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '');
 
   if (tenantSlug) {
+    const tenant = await resolveTenantProfileBySlug(tenantSlug);
+
+    if (!tenant) {
+      notFound();
+    }
+
+    if (tenant.type === 'hair-specialist') {
+      return <HairSpecialistPage params={Promise.resolve({ slug: tenantSlug })} />;
+    }
+
     return <BarberShopPage params={Promise.resolve({ slug: tenantSlug })} />;
   }
 
@@ -57,7 +82,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-orange-200 bg-white p-8 shadow-xl dark:border-stone-800 dark:bg-stone-950">
+        <div className="rounded-4xl border border-orange-200 bg-white p-8 shadow-xl dark:border-stone-800 dark:bg-stone-950">
           <div className="space-y-5">
             <div className="rounded-3xl border border-orange-200 bg-orange-50 p-5 dark:border-stone-800 dark:bg-stone-900">
               <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-amber-300">Shop pages</p>

@@ -23,10 +23,23 @@ function buildQueryString(query = {}) {
   return queryString ? `?${queryString}` : '';
 }
 
-function buildTenantFallbackPath(slug, path = '/', query = {}) {
+function buildTenantFallbackPath(baseSegment, slug, path = '/', query = {}) {
   const pathname = normalizePath(path);
-  const basePath = pathname === '/' ? `/barbers/${slug}` : `/barbers/${slug}${pathname}`;
+  const basePath = pathname === '/' ? `/${baseSegment}/${slug}` : `/${baseSegment}/${slug}${pathname}`;
   return `${basePath}${buildQueryString(query)}`;
+}
+
+function buildTenantSubdomainUrl(slug, path = '/', query = {}) {
+  const siteUrl = new URL(SITE_URL);
+  const host = `${slug}.${ROOT_DOMAIN}${siteUrl.port ? `:${siteUrl.port}` : ''}`;
+  const url = new URL(normalizePath(path), `${siteUrl.protocol}//${host}`);
+
+  Object.entries(query).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') return;
+    url.searchParams.set(key, String(value));
+  });
+
+  return url.toString();
 }
 
 function buildMarketplacePath(baseSegment, slug, path = '/', query = {}) {
@@ -76,39 +89,40 @@ export function getBarberStoreUrl(slug) {
   if (!slug) return '/barbers';
 
   if (process.env.NODE_ENV !== 'production') {
-    return buildTenantFallbackPath(slug);
+    return buildTenantFallbackPath('barbers', slug);
   }
 
-  const siteUrl = new URL(SITE_URL);
-  const host = `${slug}.${ROOT_DOMAIN}${siteUrl.port ? `:${siteUrl.port}` : ''}`;
-  return new URL('/', `${siteUrl.protocol}//${host}`).toString();
+  return buildTenantSubdomainUrl(slug);
 }
 
 export function getBarberBookingUrl(slug, query = {}) {
   if (!slug) return '/book';
 
   if (process.env.NODE_ENV !== 'production') {
-    return buildTenantFallbackPath(slug, '/book', query);
+    return buildTenantFallbackPath('barbers', slug, '/book', query);
   }
 
-  const siteUrl = new URL(SITE_URL);
-  const host = `${slug}.${ROOT_DOMAIN}${siteUrl.port ? `:${siteUrl.port}` : ''}`;
-  const url = new URL('/book', `${siteUrl.protocol}//${host}`);
-
-  Object.entries(query).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === '') return;
-    url.searchParams.set(key, String(value));
-  });
-
-  return url.toString();
+  return buildTenantSubdomainUrl(slug, '/book', query);
 }
 
 export function getHairSpecialistStoreUrl(slug) {
-  return buildMarketplacePath('hair-specialists', slug);
+  if (!slug) return '/hair-specialists';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('hair-specialists', slug);
+  }
+
+  return buildTenantSubdomainUrl(slug);
 }
 
 export function getHairSpecialistBookingUrl(slug, query = {}) {
-  return buildMarketplacePath('hair-specialists', slug, '/book', query);
+  if (!slug) return '/book';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('hair-specialists', slug, '/book', query);
+  }
+
+  return buildTenantSubdomainUrl(slug, '/book', query);
 }
 
 export function buildDescription(text, fallback) {
