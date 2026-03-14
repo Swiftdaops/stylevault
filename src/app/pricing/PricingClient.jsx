@@ -9,8 +9,8 @@ export default function PricingClient() {
   const { barber } = useAuth()
 
   const price = {
-    monthly: "₦30,000",
-    yearly: "₦100,000",
+    monthly: "₦35,000",
+    yearly: "₦350,000",
   }
 
   const [showForm, setShowForm] = useState(false)

@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import BarberBookPage, { generateMetadata as generateBarberBookingMetadata } from '@/app/barbers/[slug]/book/page';
 import HairSpecialistBookPage, { generateMetadata as generateHairSpecialistBookingMetadata } from '@/app/hair-specialists/[slug]/book/page';
+import TenantShell from '@/components/tenant-shell';
 import { extractTenantSlugFromHost } from '@/lib/seo';
 import { resolveTenantProfileBySlug } from '@/lib/tenant';
 
@@ -47,10 +48,18 @@ export default async function BookPage() {
     }
 
     if (tenant.type === 'hair-specialist') {
-      return <HairSpecialistBookPage params={Promise.resolve({ slug: tenantSlug })} />;
+      return (
+        <TenantShell tenant={tenant}>
+          <HairSpecialistBookPage params={Promise.resolve({ slug: tenantSlug })} />
+        </TenantShell>
+      );
     }
 
-    return <BarberBookPage params={Promise.resolve({ slug: tenantSlug })} />;
+    return (
+      <TenantShell tenant={tenant}>
+        <BarberBookPage params={Promise.resolve({ slug: tenantSlug })} />
+      </TenantShell>
+    );
   }
 
   return (

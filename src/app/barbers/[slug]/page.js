@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatCurrency, getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { buildDescription, getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
+import { getBarberBookingUrl } from '@/lib/seo';
+import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 import LiveBarberCalendar from '@/components/live-barber-calendar';
 
 export async function generateStaticParams() {
@@ -78,24 +79,13 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  return {
-    title: `${barber.name} Barber Shop in ${barber.location || 'Nigeria'} | Book Online | StyleVault`,
-    description: buildDescription(barber.bio, `Book haircuts online with ${barber.name} in ${barber.location || 'Nigeria'}. Explore services, prices, working hours, and easy booking on StyleVault.`),
-    keywords: [
-      `${barber.name} barber`,
-      `barber in ${barber.location || 'nigeria'}`,
-      'book haircut online',
-      'skin fade barber',
-    ],
-    alternates: {
-      canonical: getBarberStoreUrl(barber.slug),
-    },
-    openGraph: {
-      title: `${barber.name} Barber Shop in ${barber.location || 'Nigeria'} | Book Online | StyleVault`,
-      description: buildDescription(barber.bio, `Book haircuts online with ${barber.name} in ${barber.location || 'Nigeria'}. Explore services, prices, working hours, and easy booking on StyleVault.`),
-      url: getBarberStoreUrl(barber.slug),
-    },
-  };
+  const services = await getServicesForBarber(barber._id);
+
+  return buildTenantMetadata({
+    type: 'barber',
+    profile: barber,
+    services,
+  });
 }
 
 export default async function BarberShopPage({ params }) {
@@ -109,30 +99,11 @@ export default async function BarberShopPage({ params }) {
   const services = await getServicesForBarber(barber._id);
   const rating = barber.subscriptionPlan === 'pro' ? 5 : 4.5;
   const socialLinks = getSocialLinksList(barber.socialLinks);
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: barber.name,
-    image: barber.profileImage || services[0]?.sampleImage || services[0]?.catalogId?.image || undefined,
-    description: barber.bio || `Professional barber in ${barber.location || 'Nigeria'}`,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: barber.location || 'Nigeria',
-      addressCountry: 'NG',
-    },
-    areaServed: barber.location || 'Nigeria',
-    priceRange: barber.subscriptionPlan === 'pro' ? '$$$' : '$$',
-    url: getBarberStoreUrl(barber.slug),
-    sameAs: socialLinks.map((platform) => platform.href),
-    makesOffer: services.map((service) => ({
-      '@type': 'Offer',
-      itemOffered: {
-        '@type': 'Service',
-        name: service.name,
-        description: service.description || 'Professional grooming service',
-      },
-    })),
-  };
+  const structuredData = buildTenantStructuredData({
+    type: 'barber',
+    profile: barber,
+    services,
+  });
 
   return (
     <section className="min-h-screen bg-orange-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-amber-500">

@@ -3,11 +3,16 @@ import { getHairSpecialists } from '@/lib/hair-specialist-api';
 import { getHairSpecialistBookingUrl, getHairSpecialistStoreUrl } from '@/lib/seo';
 
 export const metadata = {
-  title: 'Hair Specialists | Braids, Wigs & Salon Services | StyleVault',
-  description: 'Browse professional hair specialists, compare specialties, locations, and salon services, then book braids, wigs, styling, and treatments online on StyleVault.',
-  keywords: ['hair specialist near me', 'wig installation', 'knotless braids stylist', 'salon booking'],
+  title: 'Hair Specialists by Country | Braids, Wigs & Salon Services | StyleVault',
+  description: 'Browse professional hair specialists across cities and countries, compare specialties and salon services, then book braids, wigs, styling, and treatments online on StyleVault.',
+  keywords: ['best hair specialist near me', 'wig installation by country', 'knotless braids stylist', 'salon booking'],
   alternates: {
     canonical: '/hair-specialists',
+  },
+  openGraph: {
+    title: 'Hair Specialists by Country | Braids, Wigs & Salon Services | StyleVault',
+    description: 'Browse professional hair specialists across cities and countries, compare specialties and salon services, then book braids, wigs, styling, and treatments online on StyleVault.',
+    url: '/hair-specialists',
   },
 };
 

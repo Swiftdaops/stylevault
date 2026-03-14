@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import LiveHairSpecialistCalendar from '@/components/live-hair-specialist-calendar';
 import { formatCurrency, getHairSpecialistBySlug, getServicesForHairSpecialist } from '@/lib/hair-specialist-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { buildDescription, getHairSpecialistBookingUrl, getHairSpecialistStoreUrl } from '@/lib/seo';
+import { getHairSpecialistBookingUrl } from '@/lib/seo';
+import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
   const specialists = await getHairSpecialistsSafe();
@@ -41,19 +42,13 @@ export async function generateMetadata({ params }) {
     return { title: 'Hair specialist not found | StyleVault' };
   }
 
-  return {
-    title: `${hairSpecialist.name} Hair Specialist in ${hairSpecialist.location || 'Nigeria'} | Book Online | StyleVault`,
-    description: buildDescription(hairSpecialist.bio, `Book premium hair services with ${hairSpecialist.name} in ${hairSpecialist.location || 'Nigeria'}. Explore wigs, braids, treatments, prices, and easy online booking on StyleVault.`),
-    keywords: [
-      `${hairSpecialist.name} hair specialist`,
-      `wig installation in ${hairSpecialist.location || 'nigeria'}`,
-      'knotless braids booking',
-      'salon booking online',
-    ],
-    alternates: {
-      canonical: getHairSpecialistStoreUrl(hairSpecialist.slug),
-    },
-  };
+  const services = await getServicesForHairSpecialist(hairSpecialist._id);
+
+  return buildTenantMetadata({
+    type: 'hair-specialist',
+    profile: hairSpecialist,
+    services,
+  });
 }
 
 export default async function HairSpecialistPage({ params }) {
@@ -64,29 +59,11 @@ export default async function HairSpecialistPage({ params }) {
 
   const services = await getServicesForHairSpecialist(hairSpecialist._id);
   const socialLinks = getSocialLinksList(hairSpecialist.socialLinks);
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'HairSalon',
-    name: hairSpecialist.name,
-    image: hairSpecialist.profileImage || services[0]?.sampleImage || services[0]?.catalogId?.image || undefined,
-    description: hairSpecialist.bio || `Professional hair specialist in ${hairSpecialist.location || 'Nigeria'}`,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: hairSpecialist.location || 'Nigeria',
-      addressCountry: 'NG',
-    },
-    areaServed: hairSpecialist.location || 'Nigeria',
-    url: getHairSpecialistStoreUrl(hairSpecialist.slug),
-    sameAs: socialLinks.map((platform) => platform.href),
-    makesOffer: services.map((service) => ({
-      '@type': 'Offer',
-      itemOffered: {
-        '@type': 'Service',
-        name: service.name,
-        description: service.description || 'Premium salon service',
-      },
-    })),
-  };
+  const structuredData = buildTenantStructuredData({
+    type: 'hair-specialist',
+    profile: hairSpecialist,
+    services,
+  });
 
   return (
     <section className="min-h-screen bg-rose-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-rose-400">

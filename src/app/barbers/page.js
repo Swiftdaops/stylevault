@@ -3,15 +3,15 @@ import { getBarbers } from '@/lib/barber-api';
 import { getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
 
 export const metadata = {
-  title: 'Barbers in Nigeria | Book Haircuts Online | StyleVault',
-  description: 'Browse barber profiles in Nigeria, compare services, locations, and prices, then book haircuts online directly with each barber on StyleVault.',
-  keywords: ['barber in anambra', 'book haircut online', 'barber in nigeria'],
+  title: 'Barbers by Country | Find the Best Barber Near You | StyleVault',
+  description: 'Browse barber profiles across cities and countries, compare services and prices, and book haircuts online directly with each barber on StyleVault.',
+  keywords: ['best barber near me', 'best barber by country', 'book haircut online', 'barber marketplace'],
   alternates: {
     canonical: '/barbers',
   },
   openGraph: {
-    title: 'Barbers in Nigeria | Book Haircuts Online | StyleVault',
-    description: 'Browse barber profiles in Nigeria, compare services, locations, and prices, then book haircuts online directly with each barber on StyleVault.',
+    title: 'Barbers by Country | Find the Best Barber Near You | StyleVault',
+    description: 'Browse barber profiles across cities and countries, compare services and prices, and book haircuts online directly with each barber on StyleVault.',
     url: '/barbers',
   },
 };

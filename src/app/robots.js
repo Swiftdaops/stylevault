@@ -6,7 +6,14 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/barbers/admin', '/barbers/login', '/barbers/register'],
+        disallow: [
+          '/barbers/admin',
+          '/barbers/login',
+          '/barbers/register',
+          '/hair-specialists/admin',
+          '/hair-specialists/login',
+          '/hair-specialists/register',
+        ],
       },
     ],
     sitemap: absoluteUrl('/sitemap.xml'),

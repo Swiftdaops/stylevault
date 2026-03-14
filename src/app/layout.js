@@ -18,30 +18,43 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: [{ url: '/icon', type: 'image/png' }],
+    shortcut: ['/icon'],
+    apple: [{ url: '/icon', type: 'image/png' }],
+  },
   title: {
-    default: "StyleVault | Book Barbers Online in Nigeria",
+    default: "StyleVault | Find the Best Barbers and Hair Specialists Worldwide",
     template: "%s",
   },
-  description: "Discover barbers in Nigeria, compare grooming services, and book haircuts online through dedicated barber pages on StyleVault.",
+  description: "Discover barbers and hair specialists across multiple countries, compare services and pricing, and book appointments online through dedicated storefronts on StyleVault.",
   keywords: [
-    "barber in nigeria",
-    "barber in anambra",
-    "book haircut online",
-    "skin fade barber",
+    "best barbers worldwide",
+    "book barber online",
+    "best hair specialist",
+    "find barber by country",
     "barber booking platform",
   ],
   openGraph: {
     type: "website",
-    locale: "en_NG",
     siteName: "StyleVault",
     url: SITE_URL,
-    title: "StyleVault | Book Barbers Online in Nigeria",
-    description: "Discover barbers in Nigeria, compare grooming services, and book haircuts online through dedicated barber pages on StyleVault.",
+    title: "StyleVault | Find the Best Barbers and Hair Specialists Worldwide",
+    description: "Discover barbers and hair specialists across multiple countries, compare services and pricing, and book appointments online through dedicated storefronts on StyleVault.",
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 1200,
+        alt: 'StyleVault share image',
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "StyleVault | Book Barbers Online in Nigeria",
-    description: "Discover barbers in Nigeria, compare grooming services, and book haircuts online through dedicated barber pages on StyleVault.",
+    title: "StyleVault | Find the Best Barbers and Hair Specialists Worldwide",
+    description: "Discover barbers and hair specialists across multiple countries, compare services and pricing, and book appointments online through dedicated storefronts on StyleVault.",
+    images: ['/twitter-image'],
   },
 };
 

@@ -1,14 +1,18 @@
 import { getBarbers } from '@/lib/barber-api';
+import { getHairSpecialists } from '@/lib/hair-specialist-api';
 import { absoluteUrl } from '@/lib/seo';
 
 export default async function sitemap() {
   const now = new Date();
-  const barbers = await getBarbers();
+  const [barbers, hairSpecialists] = await Promise.all([getBarbers(), getHairSpecialists()]);
 
   const staticRoutes = [
     '/',
+    '/about',
+    '/get-started',
     '/pricing',
     '/barbers',
+    '/hair-specialists',
     '/book',
   ].map((path) => ({
     url: absoluteUrl(path),
@@ -36,5 +40,24 @@ export default async function sitemap() {
     ];
   });
 
-  return [...staticRoutes, ...barberRoutes];
+  const hairSpecialistRoutes = hairSpecialists.flatMap((hairSpecialist) => {
+    if (!hairSpecialist?.slug) return [];
+
+    return [
+      {
+        url: absoluteUrl(`/hair-specialists/${hairSpecialist.slug}`),
+        lastModified: hairSpecialist.updatedAt ? new Date(hairSpecialist.updatedAt) : now,
+        changeFrequency: 'daily',
+        priority: 0.9,
+      },
+      {
+        url: absoluteUrl(`/hair-specialists/${hairSpecialist.slug}/book`),
+        lastModified: hairSpecialist.updatedAt ? new Date(hairSpecialist.updatedAt) : now,
+        changeFrequency: 'daily',
+        priority: 0.8,
+      },
+    ];
+  });
+
+  return [...staticRoutes, ...barberRoutes, ...hairSpecialistRoutes];
 }

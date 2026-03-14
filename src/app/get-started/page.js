@@ -72,7 +72,7 @@ export default function GetStartedPage() {
             </div>
 
             <Link
-              href="/signup/barber"
+              href="/barbers/register"
               className="inline-flex items-center justify-center rounded-lg bg-black text-white px-5 py-3 text-sm font-medium hover:bg-neutral-800 transition"
             >
               Start as Barber
@@ -98,7 +98,7 @@ export default function GetStartedPage() {
             </div>
 
             <Link
-              href="/signup/stylist"
+              href="/hair-specialists/register"
               className="inline-flex items-center justify-center rounded-lg bg-black text-white px-5 py-3 text-sm font-medium hover:bg-neutral-800 transition"
             >
               Start as Hair Stylist
