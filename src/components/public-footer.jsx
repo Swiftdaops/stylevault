@@ -2,11 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { isTenantBrowserHost } from '@/lib/seo'
 
 export default function PublicFooter() {
   const pathname = usePathname()
-  if (isTenantBrowserHost()) return null
 
   // hide the public footer on admin pages
   if (pathname && pathname.startsWith('/barbers/admin')) return null

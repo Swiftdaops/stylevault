@@ -3,7 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navbar";
 import FooterSwitcher from '@/components/footer-switcher'
-import { SITE_URL } from "@/lib/seo";
+import { extractTenantSlugFromHost, SITE_URL } from "@/lib/seo";
+import { headers } from 'next/headers'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +45,10 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+	const headersList = await headers()
+	const isTenantHost = Boolean(extractTenantSlugFromHost(headersList.get('host') || ''))
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} bg-orange-50 text-stone-950 antialiased dark:bg-stone-950 dark:text-amber-600`}>
@@ -55,10 +59,10 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <div className="min-h-screen">
-            <Navbar />
-            <main className="pt-16">{children}</main>
+            <Navbar isTenantHost={isTenantHost} />
+            <main className={isTenantHost ? undefined : 'pt-16'}>{children}</main>
           </div>
-          <FooterSwitcher />
+          <FooterSwitcher isTenantHost={isTenantHost} />
         </ThemeProvider>
       </body>
     </html>

@@ -49,7 +49,7 @@ function buildSlots(hoursRange, interval = 30) {
 
 export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
   const [appointments, setAppointments] = useState([])
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(null)
   const [bookedTimes, setBookedTimes] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -78,6 +78,10 @@ export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
   )
 
   useEffect(() => {
+    setSelectedDate((currentValue) => currentValue || new Date())
+  }, [])
+
+  useEffect(() => {
     let mounted = true
 
     async function init() {
@@ -87,13 +91,16 @@ export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
       }
 
       setLoading(true)
+      const initialDate = selectedDate || new Date()
+      const initialDateKey = toDateKey(initialDate)
       const [appointmentsData, availabilityData] = await Promise.all([
         getHairSpecialistCalendarAppointments(hairSpecialist._id),
-        getHairSpecialistAvailability(hairSpecialist._id, toDateKey(new Date())),
+        getHairSpecialistAvailability(hairSpecialist._id, initialDateKey),
       ])
 
       if (!mounted) return
 
+      setSelectedDate((currentValue) => currentValue || initialDate)
       setAppointments(Array.isArray(appointmentsData) ? appointmentsData : [])
       setBookedTimes(Array.isArray(availabilityData?.bookedTimes) ? availabilityData.bookedTimes : [])
       setLoading(false)
@@ -154,7 +161,7 @@ export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
         <div className="mt-5">
           <Calendar
             mode="single"
-            selected={selectedDate}
+            selected={selectedDate || undefined}
             onSelect={(value) => value && setSelectedDate(value)}
             modifiers={{ booked: bookedDates }}
             modifiersClassNames={{ booked: 'bg-rose-100 text-stone-900 font-semibold rounded-md' }}
@@ -167,12 +174,12 @@ export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-rose-300">Selected date</p>
-            <h3 className="mt-2 text-2xl font-bold tracking-tight">{selectedDate.toDateString()}</h3>
+            <h3 className="mt-2 text-2xl font-bold tracking-tight">{selectedDate ? selectedDate.toDateString() : 'Loading date…'}</h3>
             <p className="mt-2 text-sm text-stone-600 dark:text-rose-200">{workingHours.length >= 2 ? `${workingHours[0]} - ${workingHours[1]}` : 'This stylist is not available on this day.'}</p>
           </div>
 
           <Link
-            href={getHairSpecialistBookingUrl(hairSpecialist.slug, { date: selectedDateKey })}
+            href={getHairSpecialistBookingUrl(hairSpecialist.slug, selectedDateKey ? { date: selectedDateKey } : {})}
             className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300"
           >
             Book this date
@@ -190,7 +197,7 @@ export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
                 <Link
                   key={slot}
                   href={getHairSpecialistBookingUrl(hairSpecialist.slug, { date: selectedDateKey, time: slot })}
-                  aria-label={`Book ${selectedDate.toDateString()} at ${slot}`}
+                  aria-label={`Book ${selectedDate ? selectedDate.toDateString() : 'selected date'} at ${slot}`}
                   className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm text-emerald-800 transition hover:scale-105 hover:shadow-sm dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300"
                 >
                   {slot}

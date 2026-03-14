@@ -49,7 +49,7 @@ function buildSlots(hoursRange, interval = 30) {
 
 export default function LiveBarberCalendar({ barber }) {
   const [appointments, setAppointments] = useState([])
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(null)
   const [bookedTimes, setBookedTimes] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -80,6 +80,10 @@ export default function LiveBarberCalendar({ barber }) {
   )
 
   useEffect(() => {
+    setSelectedDate((currentValue) => currentValue || new Date())
+  }, [])
+
+  useEffect(() => {
     let mounted = true
 
     async function init() {
@@ -89,13 +93,16 @@ export default function LiveBarberCalendar({ barber }) {
       }
 
       setLoading(true)
+      const initialDate = selectedDate || new Date()
+      const initialDateKey = toDateKey(initialDate)
       const [appointmentsData, availabilityData] = await Promise.all([
         getBarberCalendarAppointments(barber._id),
-        getBarberAvailability(barber._id, toDateKey(new Date())),
+        getBarberAvailability(barber._id, initialDateKey),
       ])
 
       if (!mounted) return
 
+      setSelectedDate((currentValue) => currentValue || initialDate)
       setAppointments(Array.isArray(appointmentsData) ? appointmentsData : [])
       setBookedTimes(Array.isArray(availabilityData?.bookedTimes) ? availabilityData.bookedTimes : [])
       if (mounted) setLoading(false)
@@ -161,7 +168,7 @@ export default function LiveBarberCalendar({ barber }) {
         <div className="mt-5">
           <Calendar
             mode="single"
-            selected={selectedDate}
+            selected={selectedDate || undefined}
             onSelect={(value) => value && setSelectedDate(value)}
             modifiers={{ booked: bookedDates }}
             modifiersClassNames={{ booked: 'bg-orange-100 text-stone-900 font-semibold rounded-md' }}
@@ -174,12 +181,12 @@ export default function LiveBarberCalendar({ barber }) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-amber-300">Selected date</p>
-            <h3 className="mt-2 text-2xl font-bold tracking-tight">{selectedDate.toDateString()}</h3>
+            <h3 className="mt-2 text-2xl font-bold tracking-tight">{selectedDate ? selectedDate.toDateString() : 'Loading date…'}</h3>
             <p className="mt-2 text-sm text-stone-600 dark:text-amber-200">{workingHours.length >= 2 ? `${workingHours[0]} - ${workingHours[1]}` : 'This barber is not available on this day.'}</p>
           </div>
 
           <Link
-            href={getBarberBookingUrl(barber.slug, { date: selectedDateKey })}
+            href={getBarberBookingUrl(barber.slug, selectedDateKey ? { date: selectedDateKey } : {})}
             className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400"
           >
             Book this date
@@ -197,7 +204,7 @@ export default function LiveBarberCalendar({ barber }) {
                 <Link
                   key={slot}
                   href={getBarberBookingUrl(barber.slug, { date: selectedDateKey, time: slot })}
-                  aria-label={`Book ${selectedDate.toDateString()} at ${slot}`}
+                  aria-label={`Book ${selectedDate ? selectedDate.toDateString() : 'selected date'} at ${slot}`}
                   className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm text-emerald-800 transition hover:scale-105 hover:shadow-sm dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300"
                 >
                   {slot}

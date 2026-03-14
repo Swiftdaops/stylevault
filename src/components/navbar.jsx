@@ -5,13 +5,12 @@ import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import ModeToggle from "@/components/mode-toggle"
 import { usePathname } from 'next/navigation'
-import { isTenantBrowserHost } from '@/lib/seo'
 
-export default function Navbar() {
+export default function Navbar({ isTenantHost = false }) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  if (isTenantBrowserHost()) return null
+  if (isTenantHost) return null
 
   // hide the public navbar on admin pages
   if (pathname && (pathname.startsWith('/barbers/admin') || pathname.startsWith('/hair-specialists/admin'))) return null
