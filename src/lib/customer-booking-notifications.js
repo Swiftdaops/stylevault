@@ -1,5 +1,6 @@
 import { getToken } from 'firebase/messaging'
 import { firebaseVapidKey, getBrowserMessaging, isFirebaseMessagingConfigured } from '@/lib/firebase-client'
+import { isIOSBrowser, isStandaloneDisplayMode } from '@/lib/device'
 
 const CUSTOMER_NOTIFICATION_SCOPE = 'customer-booking'
 
@@ -15,6 +16,9 @@ export async function requestCustomerBookingNotificationPreference() {
     }
   }
 
+  const iosBrowser = isIOSBrowser()
+  const standalone = isStandaloneDisplayMode()
+
   const basePreference = {
     supported: isFirebaseMessagingConfigured(),
     permission: Notification.permission || 'default',
@@ -22,6 +26,23 @@ export async function requestCustomerBookingNotificationPreference() {
     platform: window.navigator?.platform || '',
     language: window.navigator?.language || '',
     scope: CUSTOMER_NOTIFICATION_SCOPE,
+    standalone,
+  }
+
+  if (!('serviceWorker' in navigator)) {
+    return {
+      ...basePreference,
+      supported: false,
+      error: 'service-worker-unsupported',
+    }
+  }
+
+  if (iosBrowser && !standalone) {
+    return {
+      ...basePreference,
+      supported: false,
+      error: 'ios-requires-home-screen-install',
+    }
   }
 
   let permission = basePreference.permission
@@ -79,6 +100,10 @@ export async function requestCustomerBookingNotificationPreference() {
 export async function showBookingConfirmedNotification({ providerName = 'StyleVault', serviceName = 'Appointment', appointmentDate = '', appointmentTime = '' }) {
   if (typeof window === 'undefined' || !('Notification' in window)) {
     return { shown: false, reason: 'unsupported' }
+  }
+
+  if (isIOSBrowser() && !isStandaloneDisplayMode()) {
+    return { shown: false, reason: 'ios-requires-home-screen-install' }
   }
 
   let permission = Notification.permission
