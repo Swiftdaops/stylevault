@@ -1,169 +1,185 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useAuth } from "@/components/auth-provider"
-import { API_BASE_URL } from "@/lib/barber-api"
+import React, { useState } from 'react';
 
-export default function PricingClient({ initialPricing }) {
-  const [billing, setBilling] = useState("monthly")
-  const { barber } = useAuth()
+export default function PricingClient({ initialPricing = {} }) {
+  const [billing, setBilling] = useState('monthly');
+  const [showForm, setShowForm] = useState(false);
 
   const price = {
-    monthly: initialPricing?.monthlyDisplay || "$30",
-    yearly: initialPricing?.yearlyDisplay || "$100",
-  }
-
-  const [showForm, setShowForm] = useState(false)
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [whatsapp, setWhatsapp] = useState("")
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState("")
-
-  useEffect(() => {
-    if (barber) {
-      setName(barber.name || '')
-      setEmail(barber.email || '')
-      setWhatsapp(barber.whatsapp || '')
-    }
-  }, [barber])
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setSubmitting(true)
-
-    try {
-      const resp = await fetch(`${API_BASE_URL}/pro-request`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, whatsapp }),
-      })
-
-      const data = await resp.json()
-      if (!resp.ok) throw new Error(data?.message || 'Request failed')
-
-      // If admin WhatsApp is provided, redirect to WhatsApp chat
-      if (data?.adminWhatsApp) {
-        const phone = String(data.adminWhatsApp).replace(/\D/g, '')
-        const message = `New Pro request from ${name}. Email: ${email}. WhatsApp: ${whatsapp || ''}`
-        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
-        // open WhatsApp in a new tab/window
-        window.open(url, '_blank')
-      }
-
-      setShowForm(false)
-      // Optionally show a toast — here we just clear fields
-      setName('')
-      setEmail('')
-      setWhatsapp('')
-    } catch (err) {
-      setError(err.message || 'Failed to submit')
-    } finally {
-      setSubmitting(false)
-    }
-  }
+    monthly: initialPricing.monthlyDisplay || (initialPricing.monthlyAmount ? String(initialPricing.monthlyAmount) : '₦0'),
+    yearly: initialPricing.yearlyDisplay || (initialPricing.yearlyAmount ? String(initialPricing.yearlyAmount) : '₦0'),
+  };
 
   return (
-    <section className="py-20 bg-orange-50 dark:bg-stone-950 text-center">
-      <div className="max-w-5xl mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-4 text-stone-900 dark:text-amber-50">StyleVault Pricing</h1>
-        <p className="text-sm text-stone-600 dark:text-amber-300 mb-2">Start free and upgrade when your barber business grows.</p>
-       
+    <section className="relative py-28 bg-orange-50 text-stone-950 dark:bg-stone-950 dark:text-amber-600 overflow-hidden">
 
-        <div className="flex justify-center gap-4 mb-10">
-          <button
-            onClick={() => setBilling("monthly")}
-            aria-pressed={billing === "monthly"}
-            className={`px-6 py-2 rounded-full ${billing === "monthly" ? "bg-stone-950 text-white dark:bg-amber-500 dark:text-black" : "bg-gray-200 dark:bg-stone-800"}`}
-          >
-            Monthly
-          </button>
+      <div className="max-w-6xl mx-auto px-6">
 
-          <button
-            onClick={() => setBilling("yearly")}
-            aria-pressed={billing === "yearly"}
-            className={`px-6 py-2 rounded-full ${billing === "yearly" ? "bg-stone-950 text-white dark:bg-amber-500 dark:text-black" : "bg-gray-200 dark:bg-stone-800"}`}
-          >
-            Yearly (Save {initialPricing?.yearlySavingsDisplay || '$260'})
-          </button>
+        {/* HERO */}
+
+        <div className="text-center mb-20">
+
+          <span className="inline-block px-4 py-1.5 mb-5 text-xs font-bold tracking-widest uppercase bg-orange-200 text-orange-800 dark:bg-amber-900/40 dark:text-amber-400 rounded-full">
+            StyleVault Pricing
+          </span>
+
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight mb-6">
+            Build Your
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
+              Barber Business Online
+            </span>
+          </h1>
+
+          <p className="max-w-2xl mx-auto text-lg text-stone-700 dark:text-amber-400">
+            StyleVault gives barbers and hair stylists the tools to manage bookings,
+            build credibility, and grow a modern grooming brand.
+          </p>
+
+          <p className="mt-4 text-sm font-medium text-stone-500 dark:text-amber-500">
+            Start free. Upgrade when you're ready to scale.
+          </p>
+
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <article className="border rounded-xl p-8 bg-fuchsia-50 dark:bg-stone-900">
-            <h2 className="text-2xl font-semibold mb-2 text-stone-900 dark:text-amber-50">Free</h2>
-            <p className="text-3xl font-bold mb-6 text-lime-500">{billing === 'monthly' ? '₦0 / month' : '₦0 / year'}</p>
-            <ul className="text-left space-y-2 mb-8 text-stone-700 dark:text-amber-200">
-              <li>✔ Barber profile page</li>
-              <li>✔ Online booking</li>
-              <li>✔ Service listing</li>
-              <li>✔ Booking calendar</li>
-              <li>✔ Email notifications</li>
-              <li>✔ Verified badge after 10 satisfied customers</li>
-            </ul>
-          <button
-            className="w-full bg-lime-500 dark:bg-stone-800 py-3 rounded-lg"
-            onClick={() => window.location.href = "/get-started"}
-          >
-            Get Started
-          </button>
-          </article>
+        {/* BILLING TOGGLE */}
 
-          <article className="border-2 border-black rounded-xl p-8 shadow-lg bg-fuchsia-50 dark:bg-stone-900">
-            <h2 className="text-2xl font-semibold mb-2 text-stone-900 dark:text-amber-50">Pro</h2>
-            <p className="text-3xl font-bold mb-6 text-lime-500">{price[billing]} {billing === 'monthly' ? '/ month' : '/ year'}</p>
-            <p className="mb-6 text-xs text-stone-500 dark:text-amber-300">
-              {initialPricing?.countryCode === 'NG'
-                ? 'Nigeria pricing applied.'
-                : initialPricing?.countryCode === 'US'
-                  ? 'United States pricing applied.'
-                  : `Equivalent local pricing applied for ${initialPricing?.countryLabel || 'your region'}.`}
+        <div className="flex justify-center mb-14">
+
+          <div className="flex p-1 rounded-2xl bg-white/70 dark:bg-stone-900 border border-orange-200 dark:border-stone-800 shadow-sm">
+
+            <button
+              onClick={() => setBilling("monthly")}
+              className={`px-8 py-3 rounded-xl text-sm font-bold transition ${
+                billing === "monthly"
+                  ? "bg-white shadow text-stone-950"
+                  : "text-stone-500"
+              }`}
+            >
+              Monthly
+            </button>
+
+            <button
+              onClick={() => setBilling("yearly")}
+              className={`px-8 py-3 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
+                billing === "yearly"
+                  ? "bg-white shadow text-stone-950"
+                  : "text-stone-500"
+              }`}
+            >
+              Yearly
+              <span className="text-[10px] bg-lime-500 text-white px-2 py-0.5 rounded-full uppercase font-bold">
+                Save 20%
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* PRICING CARDS */}
+
+        <div className="grid lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
+
+          {/* FREE PLAN */}
+
+          <div className="p-8 rounded-3xl bg-white border border-orange-200 dark:bg-stone-900 dark:border-stone-800 shadow-sm">
+
+            <h2 className="text-xl font-bold mb-2">
+              Free Plan
+            </h2>
+
+            <p className="text-sm text-stone-600 dark:text-amber-500 mb-6">
+              Perfect for barbers starting their online presence.
             </p>
-            <ul className="text-left space-y-2 mb-8 text-stone-700 dark:text-amber-200">
-              <li>✔ Everything in Free</li>
-              <li>✔ Custom barber domain</li>
-              <li>✔ SEO optimization</li>
-              <li>✔ Automated email confirmations</li>
-              <li>✔ Customer reviews & comments</li>
-              <li>✔ Rating system</li>
-              <li>✔ Mini barber shop</li>
-              <li>✔ Sell hair products</li>
-              <li>✔ Advanced analytics</li>
+
+            <div className="flex items-end gap-1 mb-8">
+              <span className="text-4xl font-black">₦0</span>
+              <span className="text-sm text-stone-500">/ forever</span>
+            </div>
+
+            <ul className="space-y-4 text-sm mb-10">
+
+              <li>✔ Professional Barber Profile</li>
+              <li>✔ Online Appointment Booking</li>
+              <li>✔ Service Menu</li>
+              <li>✔ Smart Booking Calendar</li>
+              <li>✔ Email Notifications</li>
+              <li>✔ Verified Badge after 10 satisfied clients</li>
+
             </ul>
-            <button className="w-full bg-stone-950 text-white py-3 rounded-lg dark:bg-amber-500 dark:text-black" onClick={() => setShowForm(true)}>Upgrade to Pro</button>
-          </article>
+
+            <button
+              onClick={() => window.location.href = "/get-started"}
+              className="w-full py-4 rounded-xl border border-orange-300 font-semibold hover:bg-orange-100 transition"
+            >
+              Create Free Store
+            </button>
+
+          </div>
+
+          {/* PRO PLAN */}
+
+          <div className="relative p-8 rounded-3xl bg-stone-900 text-white border-2 border-orange-500 shadow-xl shadow-orange-500/20">
+
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-orange-600 to-amber-500 text-xs font-bold uppercase tracking-widest">
+              Most Popular
+            </div>
+
+            <h2 className="text-xl font-bold mb-2">
+              Pro Plan
+            </h2>
+
+            <p className="text-sm text-stone-400 mb-6">
+              For professionals ready to grow their brand and income.
+            </p>
+
+            <div className="flex items-end gap-1 mb-2">
+
+              <span className="text-4xl font-black">
+                {price[billing]}
+              </span>
+
+              <span className="text-sm text-stone-400">
+                /{billing === "monthly" ? "mo" : "yr"}
+              </span>
+
+            </div>
+
+            <p className="text-xs text-orange-400 mb-8">
+              Local pricing optimized for Nigeria
+            </p>
+
+            <ul className="space-y-4 text-sm mb-10">
+
+              <li>✔ Everything in Free</li>
+              <li>✔ Custom Professional Domain</li>
+              <li>✔ SEO Optimized Barber Page</li>
+              <li>✔ Automated Booking Confirmations</li>
+              <li>✔ Customer Reviews & Ratings</li>
+              <li>✔ Accept Tips from Clients</li>
+              <li>✔ Mini Barber Shop (Sell Products)</li>
+              <li>✔ Advanced Business Analytics</li>
+
+            </ul>
+
+            <button
+              onClick={() => setShowForm(true)}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold hover:opacity-90 transition shadow-lg"
+            >
+              Upgrade to Pro
+            </button>
+
+            <p className="text-center text-xs text-stone-400 mt-4">
+              Trusted by barbers building modern grooming businesses.
+            </p>
+
+          </div>
+
         </div>
+
       </div>
 
-      {/* Modal form */}
-      {showForm ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg dark:bg-stone-900">
-            <h3 className="text-lg font-semibold mb-4 text-stone-900 dark:text-amber-50">Request Pro plan</h3>
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div>
-                <label className="text-sm">Name</label>
-                <input className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-800" value={name} onChange={(e) => setName(e.target.value)} required />
-              </div>
-              <div>
-                <label className="text-sm">Email</label>
-                <input type="email" className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-800" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-              <div>
-                <label className="text-sm">WhatsApp (optional)</label>
-                <input type="tel" className="mt-1 w-full rounded-md border px-3 py-2 dark:bg-stone-800" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
-              </div>
-
-              {error ? <div className="text-sm text-red-600">{error}</div> : null}
-
-              <div className="flex items-center justify-end gap-2">
-                <button type="button" className="px-4 py-2 rounded-md border" onClick={() => setShowForm(false)}>Cancel</button>
-                <button type="submit" className="px-4 py-2 rounded-md bg-stone-950 text-white" disabled={submitting}>{submitting ? 'Sending…' : 'Send request & WhatsApp'}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      ) : null}
     </section>
-  )
+  );
 }
