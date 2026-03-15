@@ -29,6 +29,25 @@ export const countryOptions = [
   { code: 'PT', label: 'Portugal', currency: 'EUR' },
 ]
 
+const phoneFormatByCountry = {
+  NG: { dialCode: '+234', example: '+234 801 234 5678' },
+  GH: { dialCode: '+233', example: '+233 24 123 4567' },
+  KE: { dialCode: '+254', example: '+254 712 345 678' },
+  ZA: { dialCode: '+27', example: '+27 82 123 4567' },
+  GB: { dialCode: '+44', example: '+44 7700 900123' },
+  US: { dialCode: '+1', example: '+1 (201) 555-0123' },
+  CA: { dialCode: '+1', example: '+1 (416) 555-0123' },
+  AE: { dialCode: '+971', example: '+971 50 123 4567' },
+  FR: { dialCode: '+33', example: '+33 6 12 34 56 78' },
+  DE: { dialCode: '+49', example: '+49 1512 3456789' },
+  ES: { dialCode: '+34', example: '+34 612 34 56 78' },
+  IT: { dialCode: '+39', example: '+39 312 345 6789' },
+  IE: { dialCode: '+353', example: '+353 85 123 4567' },
+  NL: { dialCode: '+31', example: '+31 6 12345678' },
+  BE: { dialCode: '+32', example: '+32 470 12 34 56' },
+  PT: { dialCode: '+351', example: '+351 912 345 678' },
+}
+
 export function isValidCurrencyCode(value = '') {
   return currencyOptions.some((option) => option.code === String(value || '').trim().toUpperCase())
 }
@@ -42,6 +61,26 @@ export function normalizeCurrencyCode(value = '', fallback = 'USD') {
 export function getCurrencyForCountry(countryCode = '') {
   const option = countryOptions.find((item) => item.code === String(countryCode || '').trim().toUpperCase())
   return option?.currency || 'USD'
+}
+
+export function getPhoneFormat(countryCode = '') {
+  const normalized = String(countryCode || '').trim().toUpperCase()
+  return phoneFormatByCountry[normalized] || { dialCode: '', example: '' }
+}
+
+export function getPhonePlaceholder(countryCode = '') {
+  return getPhoneFormat(countryCode).example || 'Include country code, for example +234 801 234 5678'
+}
+
+export function getPhoneHint(countryCode = '') {
+  const country = countryOptions.find((item) => item.code === String(countryCode || '').trim().toUpperCase())
+  const { dialCode, example } = getPhoneFormat(countryCode)
+
+  if (country?.label && dialCode && example) {
+    return `Use ${country.label}'s WhatsApp format with country code ${dialCode}, for example ${example}.`
+  }
+
+  return 'Use your full WhatsApp number with the correct country code so clients can reach you.'
 }
 
 export function buildWhatsAppUrl(value = '') {

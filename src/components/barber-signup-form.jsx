@@ -5,6 +5,8 @@ import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { registerBarber, slugify } from "@/lib/barber-api"
 import { Button } from "@/components/ui/button"
+import PasswordInput from "@/components/password-input"
+import PhoneNumberInput from "@/components/phone-number-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { countryOptions, getCurrencyForCountry } from "@/lib/profile-options"
 
@@ -13,6 +15,7 @@ export default function BarberSignupForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [whatsapp, setWhatsapp] = useState("")
   const [country, setCountry] = useState("NG")
   const [loading, setLoading] = useState(false)
@@ -22,6 +25,12 @@ export default function BarberSignupForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -61,29 +70,33 @@ export default function BarberSignupForm() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">Password</label>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
-          />
-        </div>
+        <PasswordInput
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          labelClassName="block text-sm font-medium text-stone-700 dark:text-amber-200"
+          inputClassName="w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:border-stone-700 dark:bg-stone-900"
+          helpText="Use at least 6 characters."
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">WhatsApp number</label>
-          <input
-            type="tel"
-            required
-            value={whatsapp}
-            onChange={(e) => setWhatsapp(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
-            placeholder="2348012345678"
-          />
-        </div>
+        <PasswordInput
+          label="Confirm password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          labelClassName="block text-sm font-medium text-stone-700 dark:text-amber-200"
+          inputClassName="w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:border-stone-700 dark:bg-stone-900"
+          autoComplete="new-password"
+          placeholder="Re-enter password"
+        />
+
+        <PhoneNumberInput
+          country={country}
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(e.target.value)}
+          labelClassName="block text-sm font-medium text-stone-700 dark:text-amber-200"
+          inputClassName="focus:ring-orange-300 dark:border-stone-700 dark:bg-stone-900"
+          hintClassName="mt-1 text-xs text-stone-500 dark:text-amber-300"
+        />
 
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">Country</label>
