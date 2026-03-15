@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getToken, onMessage } from 'firebase/messaging'
 import { firebaseVapidKey, getBrowserMessaging, isFirebaseMessagingConfigured } from '@/lib/firebase-client'
+import { isIOSBrowser, isStandaloneDisplayMode } from '@/lib/device'
 import { registerPushDeviceToken, savePushDevicePreference } from '@/lib/push-notifications'
 
 async function registerCurrentBrowser(messaging) {
@@ -29,13 +30,19 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [isRegistered, setIsRegistered] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
 
   const shouldRender = useMemo(() => (
     enabled
-    && supported
     && isFirebaseMessagingConfigured()
-    && permission !== 'granted'
-  ), [enabled, permission, supported])
+    && (
+      (isIOS && !isStandalone)
+      || permission !== 'granted'
+      || error
+      || (permission === 'granted' && !isRegistered)
+    )
+  ), [enabled, error, isIOS, isRegistered, isStandalone, permission])
 
   useEffect(() => {
     let isCancelled = false
@@ -48,6 +55,11 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
         return
       }
 
+      const ios = isIOSBrowser()
+      const standalone = isStandaloneDisplayMode()
+
+      setIsIOS(ios)
+      setIsStandalone(standalone)
       setPermission(Notification.permission)
 
       await savePushDevicePreference({
@@ -55,12 +67,21 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
         scope: 'owner-dashboard',
       }).catch(() => {})
 
-      const messaging = await getBrowserMessaging()
-      if (isCancelled || !messaging) {
+      if (ios && !standalone) {
+        setSupported(false)
         return
       }
 
-      setSupported(true)
+      const messaging = await getBrowserMessaging()
+      if (isCancelled) {
+        return
+      }
+
+      setSupported(Boolean(messaging))
+
+      if (!messaging) {
+        return
+      }
 
       if (Notification.permission === 'granted') {
         try {
@@ -113,6 +134,10 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
     setError('')
 
     try {
+      if (isIOS && !isStandalone) {
+        throw new Error('Install this app on your Home Screen in Safari before enabling push notifications on iPhone or iPad')
+      }
+
       const nextPermission = await Notification.requestPermission()
       setPermission(nextPermission)
 
@@ -132,6 +157,7 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
 
       await registerCurrentBrowser(messaging)
       setIsRegistered(true)
+      setSupported(true)
     } catch (registrationError) {
       setError(registrationError.message)
     } finally {
@@ -143,13 +169,19 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
     return null
   }
 
-  if (!supported && permission !== 'granted') {
-    return null
-  }
-
   if (!shouldRender) {
     return null
   }
+
+  const installMessage = `Install the app on your Home Screen in Safari first, then reopen the dashboard and enable notifications so new appointments alert your phone instantly.`
+  const helpText = isIOS && !isStandalone
+    ? installMessage
+    : `Turn on push notifications so your ${audienceLabel.toLowerCase()} dashboard gets alerted the moment a new appointment is booked.`
+  const actionLabel = isIOS && !isStandalone
+    ? 'Install app to enable alerts'
+    : permission === 'granted'
+      ? 'Retry notification setup'
+      : 'Enable notifications'
 
   return (
     <div className="mx-4 mt-4 rounded-2xl border border-amber-300 bg-white/90 p-4 text-sm text-stone-800 shadow-sm dark:border-amber-700 dark:bg-stone-900/90 dark:text-stone-100">
@@ -157,8 +189,9 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
         <div>
           <p className="font-semibold">Enable instant booking alerts</p>
           <p className="text-stone-600 dark:text-stone-300">
-            Turn on push notifications so your {audienceLabel.toLowerCase()} dashboard gets alerted the moment a new order is booked.
+            {helpText}
           </p>
+          {!supported && !isIOS && permission !== 'granted' ? <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">If this browser does not support web push, install the app or try Chrome, Edge, or Safari on a supported device.</p> : null}
           {error ? <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p> : null}
           {isRegistered ? <p className="mt-2 text-xs text-emerald-600 dark:text-emerald-400">Notifications are enabled on this device.</p> : null}
         </div>
@@ -168,7 +201,7 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
           disabled={isSubmitting}
           className="inline-flex items-center justify-center rounded-full bg-stone-950 px-4 py-2 font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-amber-500 dark:text-stone-950 dark:hover:bg-amber-400"
         >
-          {isSubmitting ? 'Enabling…' : 'Enable notifications'}
+          {isSubmitting ? 'Enabling…' : actionLabel}
         </button>
       </div>
     </div>
