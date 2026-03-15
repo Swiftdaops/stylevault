@@ -5,15 +5,15 @@ import { getRawVisitorCountryCode } from '@/lib/request-country';
 import { getLocalizedPricing } from '@/lib/pricing';
 
 export const metadata = {
-  title: "Global Pricing for Barbers | StyleVault",
-  description: "Compare StyleVault pricing with localized Pro plan pricing based on your country. Choose free or pro plans with booking tools, SEO pages, analytics, and online growth features.",
-  keywords: ["barber pricing", "global barber pricing", "book haircut online", "barber booking platform"],
+  title: "Global Pricing for Beauty Pros | StyleVault",
+  description: "Compare StyleVault pricing with localized Pro plan pricing based on your country. Choose free or Pro plans with booking tools, storefronts, analytics, and online growth features for all beauty niches.",
+  keywords: ["beauty business pricing", "global booking platform pricing", "barber pricing", "makeup artist booking platform", "beauty pro software"],
   alternates: {
     canonical: "/pricing",
   },
   openGraph: {
-    title: "Global Pricing for Barbers | StyleVault",
-    description: "Compare StyleVault pricing with localized Pro plan pricing based on your country. Choose free or pro plans with booking tools, SEO pages, analytics, and online growth features.",
+    title: "Global Pricing for Beauty Pros | StyleVault",
+    description: "Compare StyleVault pricing with localized Pro plan pricing based on your country. Choose free or Pro plans with booking tools, storefronts, analytics, and online growth features.",
     url: absoluteUrl('/pricing'),
   },
 };

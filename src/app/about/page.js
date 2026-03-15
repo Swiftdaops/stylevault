@@ -4,11 +4,14 @@ import { SITE_URL } from '@/lib/seo'
 
 export const metadata = {
   title: 'About | StyleVault',
-  description: 'Learn how StyleVault helps barbers and hair stylists create storefronts, accept bookings, manage customers, and grow modern beauty businesses online.',
+  description: 'Learn how StyleVault helps barbers, hair specialists, nail technicians, lash technicians, and makeup artists create storefronts, accept bookings, manage customers, and grow modern beauty businesses online.',
   keywords: [
     'about StyleVault',
     'barber booking platform',
     'hair stylist booking platform',
+    'lash technician booking platform',
+    'makeup artist booking platform',
+    'nail technician booking platform',
     'beauty business software',
     'digital storefront for barbers',
     'salon booking system',
@@ -18,14 +21,14 @@ export const metadata = {
   },
   openGraph: {
     title: 'About StyleVault',
-    description: 'StyleVault helps barbers and stylists run their businesses online with storefronts, booking tools, customer management, and service listings.',
+    description: 'StyleVault helps beauty professionals run their businesses online with storefronts, booking tools, customer management, and service listings.',
     url: `${SITE_URL}/about`,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About StyleVault',
-    description: 'Discover how StyleVault supports modern barber and beauty businesses online.',
+    description: 'Discover how StyleVault supports barbers, hair, nails, lashes, and makeup businesses online.',
   },
 }
 
@@ -37,7 +40,7 @@ export default function AboutPage() {
     url: SITE_URL,
     sameAs: [SITE_URL],
     description:
-      'StyleVault is a digital platform that helps barbers and stylists create online storefronts, manage bookings, services, and customers.',
+      'StyleVault is a digital platform that helps barbers, hair specialists, nail technicians, lash technicians, and makeup artists create online storefronts, manage bookings, services, and customers.',
   }
 
   return (

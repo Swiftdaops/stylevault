@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { motion } from 'framer-motion'
 
 const startCards = [
   {
@@ -71,66 +72,117 @@ const startCards = [
   },
 ]
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.55,
+      ease: 'easeOut',
+    },
+  },
+}
+
 export default function GetStartedPage() {
   return (
+    <main className="min-h-screen overflow-hidden bg-gradient-to-b from-orange-50 via-white to-orange-50 px-4 py-20 dark:from-neutral-950 dark:via-neutral-950 dark:to-stone-950 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          className="relative overflow-hidden rounded-[2rem] border border-orange-100 bg-white/90 px-6 py-12 shadow-2xl shadow-orange-100/50 backdrop-blur dark:border-stone-800 dark:bg-stone-900/85 dark:shadow-black/20 sm:px-10 lg:px-12"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
+          <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.16),_transparent_55%)] dark:bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.12),_transparent_55%)]" />
 
-    <main className="min-h-screen bg-orange-50 dark:bg-neutral-950 py-24 px-6">
+          <motion.div variants={item} className="relative text-center">
+            <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-orange-700 dark:border-stone-700 dark:bg-stone-950 dark:text-amber-300">
+              Choose your path
+            </span>
 
-      <div className="max-w-6xl mx-auto">
+            <h1 className="mt-6 text-4xl font-black tracking-tight text-neutral-900 dark:text-white sm:text-5xl lg:text-6xl">
+              Get started with the StyleVault experience that fits your niche.
+            </h1>
 
-        {/* HERO */}
+            <p className="mx-auto mt-6 max-w-3xl text-base leading-8 text-neutral-600 dark:text-neutral-300 sm:text-lg">
+              Start with an overview of the platform or jump straight into the
+              registration flow for barbering, hair, nails, lashes, or makeup.
+              Every page is designed to look polished and perform well on mobile.
+            </p>
+          </motion.div>
 
-        <div className="text-center mb-16">
+          <motion.div
+            variants={item}
+            className="relative mt-10 grid gap-4 rounded-3xl border border-orange-100 bg-orange-50/80 p-4 text-center dark:border-stone-800 dark:bg-stone-950 sm:grid-cols-3 sm:p-6"
+          >
+            <div>
+              <p className="text-2xl font-black text-neutral-900 dark:text-white">5</p>
+              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Beauty niches supported</p>
+            </div>
+            <div>
+              <p className="text-2xl font-black text-neutral-900 dark:text-white">Mobile-first</p>
+              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Designed to look great on phones</p>
+            </div>
+            <div>
+              <p className="text-2xl font-black text-neutral-900 dark:text-white">Flexible</p>
+              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Free to start and ready to scale</p>
+            </div>
+          </motion.div>
 
-          <h1 className="text-5xl font-semibold tracking-tight text-neutral-900 dark:text-white">
-            Get Started with StyleVault
-          </h1>
+          <motion.div
+            className="relative mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {startCards.map((card) => (
+              <motion.div key={card.href} variants={item} className="h-full">
+                <Link
+                  href={card.href}
+                  aria-label={card.ariaLabel}
+                  className="group relative block h-full overflow-hidden rounded-[1.75rem] border border-neutral-200 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-neutral-800"
+                >
+                  <div
+                    className="absolute inset-0 scale-105 bg-cover bg-center transition duration-500 group-hover:scale-110"
+                    style={{ backgroundImage: `url('${card.image}')` }}
+                    aria-hidden="true"
+                  />
+                  <div className={`absolute inset-0 ${card.overlay}`} aria-hidden="true" />
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-          <p className="mt-6 text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-            StyleVault helps beauty professionals create their own online
-            storefront to manage bookings, customers, and services.
-          </p>
+                  <div className="relative flex h-full min-h-[320px] flex-col justify-between p-6 text-left sm:min-h-[360px] sm:p-8">
+                    <div>
+                      <h2 className="mb-4 max-w-xs text-2xl font-bold text-neutral-900 dark:text-white">
+                        {card.title}
+                      </h2>
 
-        </div>
+                      <p className="max-w-sm text-sm leading-7 text-neutral-800 dark:text-neutral-100">
+                        {card.description}
+                      </p>
+                    </div>
 
-        {/* CARDS */}
-
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-6">
-          {startCards.map((card) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              aria-label={card.ariaLabel}
-              className="group relative block h-full overflow-hidden rounded-2xl border-2 border-neutral-200 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-neutral-800"
-            >
-              <div
-                className="absolute inset-0 scale-105 bg-cover bg-center transition duration-500 group-hover:scale-110"
-                style={{ backgroundImage: `url('${card.image}')` }}
-                aria-hidden="true"
-              />
-              <div className={`absolute inset-0 ${card.overlay}`} aria-hidden="true" />
-
-              <div className="relative flex h-full min-h-96 flex-col justify-between p-8 text-left">
-                <div>
-                  <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-white">
-                    {card.title}
-                  </h2>
-
-                  <p className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-200">
-                    {card.description}
-                  </p>
-                </div>
-
-                <span className="inline-flex w-fit items-center justify-center rounded-lg bg-black px-5 py-3 text-sm font-medium text-white transition group-hover:bg-neutral-800">
-                  {card.cta}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-
+                    <span className="inline-flex w-fit items-center justify-center rounded-2xl bg-black/90 px-5 py-3 text-sm font-semibold text-white transition group-hover:bg-neutral-800 dark:bg-white/90 dark:text-black dark:group-hover:bg-white">
+                      {card.cta}
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
-
     </main>
   )
 }
