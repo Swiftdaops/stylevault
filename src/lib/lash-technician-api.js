@@ -24,8 +24,10 @@ async function authedJson(path, options = {}) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(error?.message || 'Request failed');
+    const errorBody = await response.json().catch(() => ({ message: 'Request failed' }));
+    const error = new Error(errorBody?.message || 'Request failed');
+    Object.assign(error, errorBody || {});
+    throw error;
   }
 
   return response.json();
@@ -109,6 +111,18 @@ export async function registerLashTechnician(payload) {
     method: 'POST',
     body: JSON.stringify(payload),
   });
+}
+
+export async function checkLashTechnicianEmailAvailability(email) {
+  const searchParams = new URLSearchParams({ email: String(email || '').trim().toLowerCase() })
+  return fetchJson(`/lash-auth/check-email?${searchParams.toString()}`)
+}
+
+export async function changeLashTechnicianPassword({ currentPassword, newPassword }) {
+  return authedJson('/lash-auth/password', {
+    method: 'PATCH',
+    body: JSON.stringify({ currentPassword, newPassword }),
+  })
 }
 
 export async function getMyLashAppointments(query = {}) {

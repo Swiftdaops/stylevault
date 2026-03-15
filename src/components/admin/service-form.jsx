@@ -7,6 +7,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 
 const inputClassName = 'mt-2 h-11 w-full rounded-xl border border-orange-200 bg-white/90 px-4 text-sm shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-amber-500 dark:focus:ring-amber-500/20'
 const textareaClassName = 'mt-2 min-h-24 w-full rounded-xl border border-orange-200 bg-white/90 px-4 py-3 text-sm shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-amber-500 dark:focus:ring-amber-500/20'
+const MAX_IMAGE_SIZE_BYTES = 100 * 1024 * 1024
+const MAX_IMAGE_SIZE_LABEL = '100MB'
 
 const initialForm = {
   catalogId: '',
@@ -79,6 +81,18 @@ export default function ServiceForm({ barber, mode = 'create', initialValue = nu
     setUploadError('')
     const file = e.target.files && e.target.files[0]
     if (!file) return
+
+    if (!file.type?.startsWith('image/')) {
+      setUploadError('Please choose an image file.')
+      e.target.value = ''
+      return
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setUploadError(`Image must be ${MAX_IMAGE_SIZE_LABEL} or smaller.`)
+      e.target.value = ''
+      return
+    }
 
     // immediate local preview
     try {
@@ -189,7 +203,7 @@ export default function ServiceForm({ barber, mode = 'create', initialValue = nu
               </Button>
               {uploading ? <span className="text-sm text-stone-600">Uploading…</span> : null}
             </div>
-            <p className="mt-1 text-xs text-stone-500 dark:text-amber-400">This image is shown on your public barber page.</p>
+            <p className="mt-1 text-xs text-stone-500 dark:text-amber-400">This image is shown on your public barber page. JPG, PNG, WEBP, or SVG up to {MAX_IMAGE_SIZE_LABEL}.</p>
             {uploadError ? <div className="mt-2 text-xs text-red-600">{uploadError}</div> : null}
           </div>
 

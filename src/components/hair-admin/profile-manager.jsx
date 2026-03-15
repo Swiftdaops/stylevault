@@ -3,8 +3,9 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { ExternalLink, ImagePlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import ProviderAccountSettings from '@/components/provider-account-settings'
 import { useHairSpecialistAuth } from '@/components/hair-specialist-auth-provider'
-import { updateMyHairSpecialistProfile, API_BASE_URL } from '@/lib/hair-specialist-api'
+import { changeHairSpecialistPassword, updateMyHairSpecialistProfile, API_BASE_URL } from '@/lib/hair-specialist-api'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { buildWhatsAppUrl, currencyOptions, normalizeCurrencyCode } from '@/lib/profile-options'
 import { getSocialLinksList, normalizeSocialLinks, SOCIAL_PLATFORMS } from '@/lib/social-links'
@@ -21,7 +22,7 @@ function buildSocialState(currentLinks = {}, existingLinks = {}) {
 }
 
 export default function HairProfileManager() {
-  const { hairSpecialist, refresh } = useHairSpecialistAuth()
+  const { hairSpecialist, refresh, user } = useHairSpecialistAuth()
   const [overrides, setOverrides] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -306,6 +307,13 @@ export default function HairProfileManager() {
               {saved ? <span className="text-sm font-medium text-emerald-700">Saved</span> : null}
             </div>
           </section>
+
+          <ProviderAccountSettings
+            email={user?.email || ''}
+            tone="rose"
+            audienceLabel="hair specialist"
+            onChangePassword={changeHairSpecialistPassword}
+          />
         </div>
       </form>
     </div>

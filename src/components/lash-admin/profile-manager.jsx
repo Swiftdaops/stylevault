@@ -3,8 +3,9 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { ExternalLink, ImagePlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import ProviderAccountSettings from '@/components/provider-account-settings'
 import { useLashTechnicianAuth } from '@/components/lash-technician-auth-provider'
-import { updateMyLashTechnicianProfile, API_BASE_URL } from '@/lib/lash-technician-api'
+import { changeLashTechnicianPassword, updateMyLashTechnicianProfile, API_BASE_URL } from '@/lib/lash-technician-api'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { buildWhatsAppUrl, currencyOptions, normalizeCurrencyCode } from '@/lib/profile-options'
 import { getSocialLinksList, normalizeSocialLinks, SOCIAL_PLATFORMS } from '@/lib/social-links'
@@ -21,7 +22,7 @@ function buildSocialState(currentLinks = {}, existingLinks = {}) {
 }
 
 export default function LashProfileManager() {
-  const { lashTechnician, refresh } = useLashTechnicianAuth()
+  const { lashTechnician, refresh, user } = useLashTechnicianAuth()
   const [overrides, setOverrides] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -290,6 +291,13 @@ export default function LashProfileManager() {
               {saved ? <span className="text-sm font-medium text-emerald-700">Saved</span> : null}
             </div>
           </section>
+
+          <ProviderAccountSettings
+            email={user?.email || ''}
+            tone="violet"
+            audienceLabel="lash technician"
+            onChangePassword={changeLashTechnicianPassword}
+          />
         </div>
       </form>
     </div>

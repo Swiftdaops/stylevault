@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getToken, onMessage } from 'firebase/messaging'
 import { firebaseVapidKey, getBrowserMessaging, isFirebaseMessagingConfigured } from '@/lib/firebase-client'
-import { registerPushDeviceToken } from '@/lib/push-notifications'
+import { registerPushDeviceToken, savePushDevicePreference } from '@/lib/push-notifications'
 
 async function registerCurrentBrowser(messaging) {
   const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
@@ -18,7 +18,10 @@ async function registerCurrentBrowser(messaging) {
     throw new Error('No browser push token was returned')
   }
 
-  await registerPushDeviceToken(token)
+  await registerPushDeviceToken(token, {
+    permission: 'granted',
+    scope: 'owner-dashboard',
+  })
   return token
 }
 
@@ -48,6 +51,11 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
       }
 
       setPermission(Notification.permission)
+
+      await savePushDevicePreference({
+        permission: Notification.permission,
+        scope: 'owner-dashboard',
+      }).catch(() => {})
 
       const messaging = await getBrowserMessaging()
       if (isCancelled || !messaging) {
@@ -109,6 +117,11 @@ export default function ProviderPushNotificationPrompt({ enabled = false, audien
     try {
       const nextPermission = await Notification.requestPermission()
       setPermission(nextPermission)
+
+      await savePushDevicePreference({
+        permission: nextPermission,
+        scope: 'owner-dashboard',
+      }).catch(() => {})
 
       if (nextPermission !== 'granted') {
         throw new Error('Browser notifications were not granted')

@@ -3,13 +3,15 @@
 import Link from "next/link"
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import { registerBarber, slugify } from "@/lib/barber-api"
+import { checkBarberEmailAvailability, registerBarber } from "@/lib/barber-api"
+import BrandNameInput from "@/components/brand-name-input"
 import { Button } from "@/components/ui/button"
 import PasswordInput from "@/components/password-input"
 import PhoneNumberInput from "@/components/phone-number-input"
+import useEmailAvailability from "@/hooks/use-email-availability"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { buildInternationalPhoneNumber, countryOptions, getCurrencyDisplayForCountry, getCurrencyForCountry, normalizeCountryCode } from "@/lib/profile-options"
-import { mapSignupRequestErrorToFieldErrors, validateProviderSignup } from "@/lib/signup-validation"
+import { buildBrandSuggestions, mapSignupRequestErrorToFieldErrors, slugifyBrandName, validateProviderSignup } from "@/lib/signup-validation"
 
 export default function BarberSignupForm({ initialCountry = 'CA' }) {
   const router = useRouter()
@@ -22,8 +24,10 @@ export default function BarberSignupForm({ initialCountry = 'CA' }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [fieldErrors, setFieldErrors] = useState({})
+  const [brandSuggestions, setBrandSuggestions] = useState([])
   const currency = getCurrencyForCountry(country)
   const currencyDisplay = getCurrencyDisplayForCountry(country)
+  const slugPreview = slugifyBrandName(name)
 
   const values = { name, email, password, confirmPassword, whatsapp, country }
 
@@ -42,9 +46,15 @@ export default function BarberSignupForm({ initialCountry = 'CA' }) {
     return !nextError
   }
 
+  const { emailAvailability, checkEmailAvailability, resetEmailAvailability } = useEmailAvailability({
+    checkAvailability: checkBarberEmailAvailability,
+    setFieldError,
+  })
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
+    setBrandSuggestions([])
 
     const validationErrors = validateProviderSignup(values)
     setFieldErrors(validationErrors)
@@ -53,10 +63,16 @@ export default function BarberSignupForm({ initialCountry = 'CA' }) {
       return
     }
 
+    const emailAvailable = await checkEmailAvailability(email)
+    if (!emailAvailable) {
+      setError('This email address is already registered.')
+      return
+    }
+
     setLoading(true)
 
     try {
-      const slug = slugify(name || email.split('@')[0] || 'barber')
+      const slug = slugifyBrandName(name || email.split('@')[0] || 'barber')
       await registerBarber(name, email, password, slug, buildInternationalPhoneNumber(country, whatsapp), country, currency)
       router.push('/barbers/admin')
     } catch (err) {
@@ -64,6 +80,9 @@ export default function BarberSignupForm({ initialCountry = 'CA' }) {
       const mappedErrors = mapSignupRequestErrorToFieldErrors(message)
       if (Object.keys(mappedErrors).length > 0) {
         setFieldErrors((current) => ({ ...current, ...mappedErrors }))
+      }
+      if ((mappedErrors.name || err?.field === 'name' || err?.field === 'slug') && name) {
+        setBrandSuggestions(Array.isArray(err?.suggestions) && err.suggestions.length > 0 ? err.suggestions : buildBrandSuggestions(name))
       }
       setError(message)
     } finally {
@@ -75,23 +94,31 @@ export default function BarberSignupForm({ initialCountry = 'CA' }) {
     <div className="mx-auto max-w-md rounded-lg border border-orange-200/60 bg-white/80 p-6 shadow-sm dark:border-stone-800 dark:bg-black/70">
       <h2 className="mb-4 text-2xl font-semibold">Barber Sign up</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">Full name</label>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(e) => {
-              const nextValue = e.target.value
-              setName(nextValue)
-              if (fieldErrors.name) validateField('name', { ...values, name: nextValue })
-            }}
-            onBlur={() => validateField('name')}
-            className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
-            aria-invalid={Boolean(fieldErrors.name)}
-          />
-          {fieldErrors.name ? <p className="mt-1 text-xs text-destructive">{fieldErrors.name}</p> : null}
-        </div>
+        <BrandNameInput
+          value={name}
+          onChange={(e) => {
+            const nextValue = e.target.value
+            setName(nextValue)
+            setBrandSuggestions([])
+            if (fieldErrors.name) validateField('name', { ...values, name: nextValue })
+          }}
+          onBlur={() => validateField('name')}
+          errorText={fieldErrors.name}
+          suggestions={brandSuggestions}
+          onSelectSuggestion={(suggestion) => {
+            setName(suggestion.name)
+            setBrandSuggestions([])
+            setFieldError('name', '')
+          }}
+          label="Brand name"
+          labelClassName="block text-sm font-medium text-stone-700 dark:text-amber-200"
+          inputClassName="rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
+          previewClassName="mt-1 text-xs text-stone-500 dark:text-amber-300"
+          suggestionsClassName="mt-2 flex flex-wrap gap-2"
+          suggestionButtonClassName="rounded-full border border-orange-200 px-3 py-1 text-xs font-medium text-stone-700 transition hover:bg-orange-50 dark:border-stone-700 dark:text-amber-200 dark:hover:bg-stone-900"
+          slugPreview={slugPreview || 'your-brand-name'}
+          placeholder="e.g. Obi Fade Studio"
+        />
 
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-amber-200">Email</label>
@@ -102,13 +129,20 @@ export default function BarberSignupForm({ initialCountry = 'CA' }) {
             onChange={(e) => {
               const nextValue = e.target.value
               setEmail(nextValue)
+              resetEmailAvailability()
               if (fieldErrors.email) validateField('email', { ...values, email: nextValue })
             }}
-            onBlur={() => validateField('email')}
+            onBlur={async () => {
+              const isValid = validateField('email')
+              if (isValid) {
+                await checkEmailAvailability(email)
+              }
+            }}
             className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 dark:bg-stone-900 dark:border-stone-700"
             aria-invalid={Boolean(fieldErrors.email)}
           />
           {fieldErrors.email ? <p className="mt-1 text-xs text-destructive">{fieldErrors.email}</p> : null}
+          {!fieldErrors.email && emailAvailability.message ? <p className={`mt-1 text-xs ${emailAvailability.available ? 'text-emerald-600' : 'text-stone-500'}`}>{emailAvailability.message}</p> : null}
         </div>
 
         <PasswordInput

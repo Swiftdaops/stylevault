@@ -27,7 +27,7 @@ function toDateKey(value) {
 
 export default function HairSpecialistDashboard() {
   const router = useRouter()
-  const { hairSpecialist, loading: authLoading, logout } = useHairSpecialistAuth()
+  const { hairSpecialist, loading: authLoading, logout, user } = useHairSpecialistAuth()
   const [loading, setLoading] = useState(true)
   const [appointments, setAppointments] = useState([])
   const [servicesCount, setServicesCount] = useState(0)
@@ -127,6 +127,7 @@ export default function HairSpecialistDashboard() {
         <div>
           <h1 className="text-2xl font-bold">Welcome, {hairSpecialist?.name || 'Hair Specialist'}</h1>
           {hairSpecialist?.slug && <div className="text-sm text-stone-600 dark:text-rose-300">Slug: {hairSpecialist.slug}</div>}
+          {user?.email ? <div className="text-sm text-stone-600 dark:text-rose-300">Email: {user.email}</div> : null}
         </div>
 
         <div className="flex items-center gap-2">

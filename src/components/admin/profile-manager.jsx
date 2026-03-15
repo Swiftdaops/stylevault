@@ -3,7 +3,8 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { ExternalLink, ImagePlus } from 'lucide-react'
 import { useAuth } from '@/components/auth-provider'
-import { API_BASE_URL, updateMyBarberProfile } from '@/lib/barber-api'
+import ProviderAccountSettings from '@/components/provider-account-settings'
+import { API_BASE_URL, changeBarberPassword, updateMyBarberProfile } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { buildWhatsAppUrl, currencyOptions, normalizeCurrencyCode } from '@/lib/profile-options'
@@ -21,7 +22,7 @@ function buildSocialState(currentLinks = {}, existingLinks = {}) {
 }
 
 export default function ProfileManager() {
-  const { barber, refresh } = useAuth()
+  const { barber, refresh, user } = useAuth()
   const [overrides, setOverrides] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -293,6 +294,13 @@ export default function ProfileManager() {
               {saved ? <span className="text-sm font-medium text-emerald-700">Saved</span> : null}
             </div>
           </section>
+
+          <ProviderAccountSettings
+            email={user?.email || ''}
+            tone="orange"
+            audienceLabel="barber"
+            onChangePassword={changeBarberPassword}
+          />
         </div>
       </form>
     </div>

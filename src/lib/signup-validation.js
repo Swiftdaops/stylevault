@@ -6,6 +6,36 @@ import {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+export function normalizeBrandName(value = '') {
+  return String(value || '').trim().replace(/\s+/g, ' ')
+}
+
+export function slugifyBrandName(value = '') {
+  return normalizeBrandName(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+export function buildBrandSuggestions(value = '') {
+  const brandName = normalizeBrandName(value)
+  const slugBase = slugifyBrandName(brandName)
+
+  if (!brandName || !slugBase) return []
+
+  const suggestions = [
+    `${brandName} Lite`,
+    `${brandName} Tech`,
+    `${brandName} Pro`,
+    `Pretty ${brandName}`,
+    `The ${brandName}`,
+  ]
+
+  return suggestions
+    .map((name) => ({ name, slug: slugifyBrandName(name) }))
+    .filter((item, index, collection) => item.slug && item.slug !== slugBase && collection.findIndex((entry) => entry.slug === item.slug) === index)
+}
+
 function normalizedDigits(value = '') {
   return String(value || '').replace(/\D/g, '').replace(/^0+/, '')
 }
@@ -49,7 +79,7 @@ export function validateProviderSignup(values, options = {}) {
     specialties = '',
   } = values || {}
 
-  if (!String(name).trim()) errors.name = 'Enter your full name.'
+  if (!String(name).trim()) errors.name = 'Enter your brand name.'
 
   if (!String(email).trim()) errors.email = 'Enter your email address.'
   else if (!EMAIL_PATTERN.test(String(email).trim())) errors.email = 'Enter a valid email address.'
@@ -87,6 +117,8 @@ export function mapSignupRequestErrorToFieldErrors(message = '') {
   if (normalized.includes('location')) errors.location = message
   if (normalized.includes('special')) errors.specialties = message
   if (normalized.includes('name')) errors.name = message
+  if (normalized.includes('brand')) errors.name = message
+  if (normalized.includes('slug')) errors.name = message
 
   return errors
 }

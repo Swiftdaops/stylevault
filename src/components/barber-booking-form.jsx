@@ -11,6 +11,7 @@ import { format as formatDate } from 'date-fns';
 import DatePickerDemo from './date-picker-demo';
 import TimePickerDemo from './time-picker-demo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
+import { requestCustomerBookingNotificationPreference, showBookingConfirmedNotification } from '@/lib/customer-booking-notifications';
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -25,6 +26,7 @@ export default function BarberBookingForm({ barber, services }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [emailNotice, setEmailNotice] = useState('');
+  const [manageLink, setManageLink] = useState('');
   const [bookingSummary, setBookingSummary] = useState(null);
   const [whatsAppHref, setWhatsAppHref] = useState('');
   const [form, setForm] = useState({
@@ -83,6 +85,7 @@ export default function BarberBookingForm({ barber, services }) {
     setError('');
     setSuccess('');
     setEmailNotice('');
+    setManageLink('');
     setBookingSummary(null);
     setWhatsAppHref('');
 
@@ -101,6 +104,8 @@ export default function BarberBookingForm({ barber, services }) {
         throw new Error('Please choose a time.');
       }
 
+      const notificationPreference = await requestCustomerBookingNotificationPreference().catch(() => null)
+
       const response = await fetch(`${API_BASE_URL}/appointments`, {
         method: 'POST',
         headers: {
@@ -115,6 +120,7 @@ export default function BarberBookingForm({ barber, services }) {
           date: form.date,
           time: form.time,
           price: Number(selectedService.price),
+          notificationPreference,
         }),
       });
 
@@ -131,9 +137,19 @@ export default function BarberBookingForm({ barber, services }) {
         appointmentDate: form.date,
         appointmentTime: form.time,
       });
+      setManageLink(data?.manageLink || '');
       toast.success('Appointment confirmed', {
         description: `${selectedService.name} was booked for ${form.date} at ${form.time}.`,
       })
+
+      if (notificationPreference?.permission === 'granted' && !data?.customerPushResult?.sent) {
+        void showBookingConfirmedNotification({
+          providerName: barber.name,
+          serviceName: selectedService.name,
+          appointmentDate: form.date,
+          appointmentTime: form.time,
+        });
+      }
 
       if (data?.emailError) {
         setEmailNotice(`Your booking was saved, but the confirmation email could not be sent right now: ${data.emailError}`);
@@ -247,6 +263,14 @@ export default function BarberBookingForm({ barber, services }) {
         {emailNotice ? (
           <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-medium ${emailNotice.includes('could not be sent') ? 'border-orange-300 bg-orange-50 text-orange-800 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300' : 'border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300'}`}>
             {emailNotice}
+          </div>
+        ) : null}
+        {manageLink ? (
+          <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+            <p className="font-medium">Need to update this appointment later?</p>
+            <a href={manageLink} className="mt-2 inline-flex font-semibold underline underline-offset-4" target="_blank" rel="noreferrer">
+              Open your booking manager
+            </a>
           </div>
         ) : null}
         {bookingSummary ? (

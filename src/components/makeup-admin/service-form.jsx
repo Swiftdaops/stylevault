@@ -7,6 +7,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 
 const inputClassName = 'mt-2 h-11 w-full rounded-xl border border-rose-200 bg-white/90 px-4 text-sm shadow-sm outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-rose-400 dark:focus:ring-rose-400/20'
 const textareaClassName = 'mt-2 min-h-24 w-full rounded-xl border border-rose-200 bg-white/90 px-4 py-3 text-sm shadow-sm outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-200 dark:border-stone-700 dark:bg-stone-900 dark:focus:border-rose-400 dark:focus:ring-rose-400/20'
+const MAX_IMAGE_SIZE_BYTES = 100 * 1024 * 1024
+const MAX_IMAGE_SIZE_LABEL = '100MB'
 
 const initialForm = {
   catalogId: '',
@@ -132,6 +134,18 @@ export default function MakeupServiceForm({ makeupArtist, mode = 'create', initi
     setUploadError('')
     const file = event.target.files && event.target.files[0]
     if (!file) return
+
+    if (!file.type?.startsWith('image/')) {
+      setUploadError('Please choose an image file.')
+      event.target.value = ''
+      return
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setUploadError(`Image must be ${MAX_IMAGE_SIZE_LABEL} or smaller.`)
+      event.target.value = ''
+      return
+    }
 
     try {
       const objectUrl = URL.createObjectURL(file)
@@ -270,7 +284,7 @@ export default function MakeupServiceForm({ makeupArtist, mode = 'create', initi
               </Button>
               {uploading ? <span className="text-sm text-stone-600">Uploading…</span> : null}
             </div>
-            <p className="mt-1 text-xs text-stone-500 dark:text-rose-400">This image is shown on your public makeup booking page.</p>
+            <p className="mt-1 text-xs text-stone-500 dark:text-rose-400">This image is shown on your public makeup booking page. JPG, PNG, WEBP, or SVG up to {MAX_IMAGE_SIZE_LABEL}.</p>
             {uploadError ? <div className="mt-2 text-xs text-red-600">{uploadError}</div> : null}
           </div>
 

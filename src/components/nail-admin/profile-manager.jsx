@@ -3,8 +3,9 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { ExternalLink, ImagePlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import ProviderAccountSettings from '@/components/provider-account-settings'
 import { useNailTechnicianAuth } from '@/components/nail-technician-auth-provider'
-import { updateMyNailTechnicianProfile, API_BASE_URL } from '@/lib/nail-technician-api'
+import { changeNailTechnicianPassword, updateMyNailTechnicianProfile, API_BASE_URL } from '@/lib/nail-technician-api'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { buildWhatsAppUrl, currencyOptions, normalizeCurrencyCode } from '@/lib/profile-options'
 import { getSocialLinksList, normalizeSocialLinks, SOCIAL_PLATFORMS } from '@/lib/social-links'
@@ -21,7 +22,7 @@ function buildSocialState(currentLinks = {}, existingLinks = {}) {
 }
 
 export default function NailProfileManager() {
-  const { nailTechnician, refresh } = useNailTechnicianAuth()
+  const { nailTechnician, refresh, user } = useNailTechnicianAuth()
   const [overrides, setOverrides] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -290,6 +291,13 @@ export default function NailProfileManager() {
               {saved ? <span className="text-sm font-medium text-emerald-700">Saved</span> : null}
             </div>
           </section>
+
+          <ProviderAccountSettings
+            email={user?.email || ''}
+            tone="fuchsia"
+            audienceLabel="nail technician"
+            onChangePassword={changeNailTechnicianPassword}
+          />
         </div>
       </form>
     </div>

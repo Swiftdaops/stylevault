@@ -24,8 +24,10 @@ async function authedJson(path, options = {}) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(error?.message || 'Request failed');
+    const errorBody = await response.json().catch(() => ({ message: 'Request failed' }));
+    const error = new Error(errorBody?.message || 'Request failed');
+    Object.assign(error, errorBody || {});
+    throw error;
   }
 
   return response.json();
@@ -109,6 +111,18 @@ export async function registerHairSpecialist(payload) {
     method: 'POST',
     body: JSON.stringify(payload),
   });
+}
+
+export async function checkHairSpecialistEmailAvailability(email) {
+  const searchParams = new URLSearchParams({ email: String(email || '').trim().toLowerCase() })
+  return fetchJson(`/hair-auth/check-email?${searchParams.toString()}`)
+}
+
+export async function changeHairSpecialistPassword({ currentPassword, newPassword }) {
+  return authedJson('/hair-auth/password', {
+    method: 'PATCH',
+    body: JSON.stringify({ currentPassword, newPassword }),
+  })
 }
 
 export async function getMyHairAppointments(query = {}) {

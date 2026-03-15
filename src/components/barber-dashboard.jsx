@@ -27,7 +27,7 @@ function toDateKey(value) {
 
 export default function BarberDashboard() {
   const router = useRouter()
-  const { barber, loading: authLoading, logout } = useAuth()
+  const { barber, loading: authLoading, logout, user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [appointments, setAppointments] = useState([])
   const [servicesCount, setServicesCount] = useState(0)
@@ -145,6 +145,7 @@ export default function BarberDashboard() {
         <div>
           <h1 className="text-2xl font-bold">Welcome, {barber?.name || 'Barber'}</h1>
           {barber?.slug && <div className="text-sm text-stone-600 dark:text-amber-300">Slug: {barber.slug}</div>}
+          {user?.email ? <div className="text-sm text-stone-600 dark:text-amber-300">Email: {user.email}</div> : null}
         </div>
 
         <div className="flex items-center gap-2">

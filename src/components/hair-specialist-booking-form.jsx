@@ -10,6 +10,7 @@ import TimePickerDemo from './time-picker-demo';
 import { API_BASE_URL, formatCurrency } from '@/lib/hair-specialist-api';
 import { getHairSpecialistStoreUrl } from '@/lib/seo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
+import { requestCustomerBookingNotificationPreference, showBookingConfirmedNotification } from '@/lib/customer-booking-notifications';
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -24,6 +25,7 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [emailNotice, setEmailNotice] = useState('');
+  const [manageLink, setManageLink] = useState('');
   const [bookingSummary, setBookingSummary] = useState(null);
   const [whatsAppHref, setWhatsAppHref] = useState('');
   const [form, setForm] = useState({
@@ -94,6 +96,7 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
     setError('');
     setSuccess('');
     setEmailNotice('');
+    setManageLink('');
     setBookingSummary(null);
     setWhatsAppHref('');
 
@@ -102,6 +105,8 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
       if (!selectedService?._id) throw new Error('Please choose a service.');
       if (!form.date) throw new Error('Please choose a date.');
       if (!form.time) throw new Error('Please choose a time.');
+
+      const notificationPreference = await requestCustomerBookingNotificationPreference().catch(() => null)
 
       const response = await fetch(`${API_BASE_URL}/hair-appointments`, {
         method: 'POST',
@@ -116,6 +121,7 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
           time: form.time,
           selectedPricingOption: form.selectedPricingOption || undefined,
           selectedAddOns: form.selectedAddOns,
+          notificationPreference,
         }),
       });
 
@@ -129,9 +135,19 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
         appointmentDate: form.date,
         appointmentTime: form.time,
       });
+      setManageLink(data?.manageLink || '');
       toast.success('Appointment confirmed', {
         description: `${selectedService.name} was booked for ${form.date} at ${form.time}.`,
       })
+
+      if (notificationPreference?.permission === 'granted' && !data?.customerPushResult?.sent) {
+        void showBookingConfirmedNotification({
+          providerName: hairSpecialist.name,
+          serviceName: selectedService.name,
+          appointmentDate: form.date,
+          appointmentTime: form.time,
+        });
+      }
 
       if (data?.emailError) {
         setEmailNotice(`Your booking was saved, but the confirmation email could not be sent right now: ${data.emailError}`);
@@ -259,6 +275,14 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
         {error ? <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p> : null}
         {success ? <div className="mt-4 rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">{success}</div> : null}
         {emailNotice ? <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-medium ${emailNotice.includes('could not be sent') ? 'border-orange-300 bg-orange-50 text-orange-800 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300' : 'border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300'}`}>{emailNotice}</div> : null}
+        {manageLink ? (
+          <div className="mt-4 rounded-2xl border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-900 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">
+            <p className="font-medium">Need to update this appointment later?</p>
+            <a href={manageLink} target="_blank" rel="noreferrer" className="mt-2 inline-flex font-semibold underline underline-offset-4">
+              Open your booking manager
+            </a>
+          </div>
+        ) : null}
         {bookingSummary ? (
           <InstallAfterBookingCard
             enabled={Boolean(bookingSummary)}

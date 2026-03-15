@@ -27,7 +27,7 @@ function toDateKey(value) {
 
 export default function MakeupArtistDashboard() {
   const router = useRouter()
-  const { makeupArtist, loading: authLoading, logout } = useMakeupArtistAuth()
+  const { makeupArtist, loading: authLoading, logout, user } = useMakeupArtistAuth()
   const [loading, setLoading] = useState(true)
   const [appointments, setAppointments] = useState([])
   const [servicesCount, setServicesCount] = useState(0)
@@ -127,6 +127,7 @@ export default function MakeupArtistDashboard() {
         <div>
           <h1 className="text-2xl font-bold">Welcome, {makeupArtist?.name || 'Makeup Artist'}</h1>
           {makeupArtist?.slug && <div className="text-sm text-stone-600 dark:text-rose-300">Slug: {makeupArtist.slug}</div>}
+          {user?.email ? <div className="text-sm text-stone-600 dark:text-rose-300">Email: {user.email}</div> : null}
         </div>
 
         <div className="flex items-center gap-2">
