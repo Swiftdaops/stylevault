@@ -48,6 +48,15 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
   const providerType = initialProviderType || tenant?.type || searchParams.get('provider') || ''
   const accessToken = initialAccessToken || searchParams.get('access') || ''
   const theme = themeMap[providerType] || themeMap.barber
+  const managerDisplayUrl = useMemo(() => {
+    try {
+      if (!booking?.manageLink) return ''
+      const url = new URL(booking.manageLink)
+      return `${url.host}${url.pathname}`
+    } catch {
+      return ''
+    }
+  }, [booking?.manageLink])
 
   const loadBooking = useCallback(async () => {
     if (!bookingId || !providerType || !accessToken) {
@@ -186,6 +195,11 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
   const appointment = booking?.appointment
   const provider = appointment?.provider
   const service = appointment?.service
+  const bookingLockedMessage = appointment?.status === 'pending'
+    ? `${provider?.name || 'This provider'} has not confirmed this booking yet. Once it is confirmed, you will be able to update or cancel it from this page.`
+    : appointment?.status === 'cancelled'
+      ? 'This booking has been cancelled and can no longer be changed.'
+      : 'This booking is completed and can no longer be changed.'
 
   return (
     <div className="space-y-6">
@@ -227,6 +241,16 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
               <dt className="text-xs uppercase tracking-[0.2em] text-stone-500">Location</dt>
               <dd className="mt-1 text-sm font-medium">{provider?.location || 'Not provided'}</dd>
             </div>
+            {managerDisplayUrl ? (
+              <div className="sm:col-span-2">
+                <dt className="text-xs uppercase tracking-[0.2em] text-stone-500">Booking manager link</dt>
+                <dd className="mt-1 text-sm font-medium">
+                  <a href={booking.manageLink} className="text-primary underline underline-offset-4">
+                    {managerDisplayUrl}
+                  </a>
+                </dd>
+              </div>
+            ) : null}
             <div>
               <dt className="text-xs uppercase tracking-[0.2em] text-stone-500">Price</dt>
               <dd className="mt-1 text-sm font-medium">{typeof appointment?.price === 'number' ? new Intl.NumberFormat('en-US', { style: 'currency', currency: provider?.currency || 'USD', maximumFractionDigits: 2 }).format(appointment.price / 100) : '—'}</dd>
@@ -261,7 +285,7 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
           <p className="mt-2 text-sm text-stone-600 dark:text-stone-300">Need to move this booking? Pick a new date or time, or cancel it.</p>
 
           {!appointment?.canCustomerEdit ? (
-            <div className="mt-5 rounded-2xl border border-dashed border-stone-300 p-4 text-sm text-stone-600 dark:border-stone-700 dark:text-stone-300">This booking is completed and can no longer be changed.</div>
+            <div className="mt-5 rounded-2xl border border-dashed border-stone-300 p-4 text-sm text-stone-600 dark:border-stone-700 dark:text-stone-300">{bookingLockedMessage}</div>
           ) : (
             <div className="mt-5 space-y-4">
               <div>
