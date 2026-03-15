@@ -5,6 +5,13 @@ import { isIOSBrowser, isStandaloneDisplayMode } from '@/lib/device'
 
 const DEFAULT_MIN_VISITS = 2
 const DEFAULT_COOLDOWN_MS = 24 * 60 * 60 * 1000
+const SHOW_PROMPT_EVENT = 'sv:pwa:show-prompt'
+const DISMISS_PROMPT_EVENT = 'sv:pwa:dismiss-prompt'
+
+function emitPromptEvent(name) {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(new CustomEvent(name))
+}
 
 function getHostKey(prefix) {
   if (typeof window === 'undefined') return prefix
@@ -86,13 +93,35 @@ export function useInstallPrompt({ minVisits = DEFAULT_MIN_VISITS, cooldownMs = 
       }
     }
 
+    const handleShowPrompt = () => {
+      if (isStandaloneDisplayMode()) {
+        setIsStandalone(true)
+        setIsVisible(false)
+        return
+      }
+
+      setIsVisible(true)
+      setCanPrompt(false)
+      setManualRequested(false)
+    }
+
+    const handleDismissPrompt = () => {
+      setIsVisible(false)
+      setCanPrompt(false)
+      setManualRequested(false)
+    }
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     window.addEventListener('appinstalled', handleInstalled)
+    window.addEventListener(SHOW_PROMPT_EVENT, handleShowPrompt)
+    window.addEventListener(DISMISS_PROMPT_EVENT, handleDismissPrompt)
     displayModeQuery.addEventListener?.('change', handleDisplayModeChange)
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleInstalled)
+      window.removeEventListener(SHOW_PROMPT_EVENT, handleShowPrompt)
+      window.removeEventListener(DISMISS_PROMPT_EVENT, handleDismissPrompt)
       displayModeQuery.removeEventListener?.('change', handleDisplayModeChange)
     }
   }, [autoPrompt, cooldownMs, minVisits])
@@ -130,6 +159,7 @@ export function useInstallPrompt({ minVisits = DEFAULT_MIN_VISITS, cooldownMs = 
     if (isIOS || deferredPrompt) {
       setIsVisible(true)
       setCanPrompt(false)
+      emitPromptEvent(SHOW_PROMPT_EVENT)
       markPromptShown()
       return true
     }
@@ -143,6 +173,7 @@ export function useInstallPrompt({ minVisits = DEFAULT_MIN_VISITS, cooldownMs = 
     setIsVisible(false)
     setCanPrompt(false)
     setManualRequested(false)
+    emitPromptEvent(DISMISS_PROMPT_EVENT)
   }, [])
 
   const promptInstall = useCallback(async () => {
@@ -155,6 +186,7 @@ export function useInstallPrompt({ minVisits = DEFAULT_MIN_VISITS, cooldownMs = 
     setDeferredPrompt(null)
     setIsVisible(false)
     setCanPrompt(false)
+    emitPromptEvent(DISMISS_PROMPT_EVENT)
 
     if (choice?.outcome === 'accepted' && typeof window !== 'undefined') {
       window.localStorage.setItem(getHostKey('sv:pwa:installed'), 'true')
