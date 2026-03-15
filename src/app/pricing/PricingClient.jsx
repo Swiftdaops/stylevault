@@ -100,7 +100,12 @@ export default function PricingClient() {
               <li>✔ Email notifications</li>
               <li>✔ Verified badge after 10 satisfied customers</li>
             </ul>
-            <button className="w-full bg-lime-500 dark:bg-stone-800 py-3 rounded-lg">Get Started</button>
+          <button
+            className="w-full bg-lime-500 dark:bg-stone-800 py-3 rounded-lg"
+            onClick={() => window.location.href = "/get-started"}
+          >
+            Get Started
+          </button>
           </article>
 
           <article className="border-2 border-black rounded-xl p-8 shadow-lg bg-fuchsia-50 dark:bg-stone-900">

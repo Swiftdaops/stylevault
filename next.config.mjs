@@ -1,7 +1,21 @@
+import nextPwa from 'next-pwa'
+
+const withPWA = nextPwa({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: false,
+  mode: 'production',
+  cacheOnFrontEndNav: true,
+  dynamicStartUrl: true,
+  fallbacks: {
+    document: '/_offline',
+  },
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   reactCompiler: true,
-};
+}
 
-export default nextConfig;
+export default withPWA(nextConfig)

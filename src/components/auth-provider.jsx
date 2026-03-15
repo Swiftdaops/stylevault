@@ -3,6 +3,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { getMe, loginBarber, logoutBarber } from '@/lib/barber-api'
+import ProviderPushNotificationPrompt from '@/components/provider-push-notification-prompt'
+import ProviderLiveNotifications from '@/components/provider-live-notifications'
+import { unregisterPushDeviceToken } from '@/lib/push-notifications'
+import { connectBarberSocket, disconnectBarberSocket } from '@/lib/barber-socket'
 
 const AuthContext = createContext({})
 
@@ -47,6 +51,14 @@ export function AuthProvider({ children, protect = true }) {
   }
 
   const logout = async () => {
+    try {
+      await unregisterPushDeviceToken()
+    } catch {
+      // ignore push token cleanup failures during logout
+    }
+
+    disconnectBarberSocket()
+
     await logoutBarber()
     setUser(null)
     setBarber(null)
@@ -61,6 +73,15 @@ export function AuthProvider({ children, protect = true }) {
 
   return (
     <AuthContext.Provider value={{ user, barber, loading, login, logout, refresh }}>
+      <ProviderPushNotificationPrompt enabled={Boolean(user)} audienceLabel="Barber" />
+      <ProviderLiveNotifications
+        enabled={Boolean(user && barber?._id)}
+        providerId={barber?._id}
+        audienceLabel="Barber"
+        connectSocket={connectBarberSocket}
+        eventName="barber:data-updated"
+        appointmentsPath="/barbers/admin/appointments"
+      />
       {children}
     </AuthContext.Provider>
   )

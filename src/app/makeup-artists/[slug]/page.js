@@ -1,0 +1,162 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import LiveMakeupArtistCalendar from '@/components/live-makeup-artist-calendar';
+import { formatCurrency, getMakeupArtistBySlug, getMakeupArtists, getServicesForMakeupArtist } from '@/lib/makeup-artist-api';
+import { getSocialLinksList } from '@/lib/social-links';
+import { getMakeupArtistBookingUrl } from '@/lib/seo';
+import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
+
+export async function generateStaticParams() {
+  const artists = await getMakeupArtistsSafe();
+  return artists.map((makeupArtist) => ({ slug: makeupArtist.slug }));
+}
+
+async function getMakeupArtistsSafe() {
+  return getMakeupArtists();
+}
+
+function renderHours(workingHours = {}) {
+  const entries = Object.entries(workingHours || {});
+  if (entries.length === 0) {
+    return <p className="text-sm text-stone-600 dark:text-rose-200">Working hours will be added soon.</p>;
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {entries.map(([day, hours]) => (
+        <div key={day} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
+          <p className="font-medium">{day}</p>
+          <p className="text-sm text-stone-600 dark:text-rose-200">{Array.isArray(hours) ? hours.join(' - ') : 'Closed'}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const makeupArtist = await getMakeupArtistBySlug(slug);
+
+  if (!makeupArtist) {
+    return { title: 'Makeup artist not found | StyleVault' };
+  }
+
+  const services = await getServicesForMakeupArtist(makeupArtist._id);
+
+  return buildTenantMetadata({
+    type: 'makeup-artist',
+    profile: makeupArtist,
+    services,
+  });
+}
+
+export default async function MakeupArtistPage({ params }) {
+  const { slug } = await params;
+  const makeupArtist = await getMakeupArtistBySlug(slug);
+
+  if (!makeupArtist) notFound();
+
+  const services = await getServicesForMakeupArtist(makeupArtist._id);
+  const socialLinks = getSocialLinksList(makeupArtist.socialLinks);
+  const structuredData = buildTenantStructuredData({
+    type: 'makeup-artist',
+    profile: makeupArtist,
+    services,
+  });
+
+  return (
+    <section className="min-h-screen bg-rose-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-rose-400">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <div className="mx-auto max-w-6xl space-y-10">
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="space-y-5">
+            <span className="inline-flex rounded-full border border-rose-300 px-3 py-1 text-sm font-medium dark:border-stone-700">Dedicated makeup storefront</span>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{makeupArtist.name}</h1>
+            <p className="max-w-2xl text-base text-stone-700 dark:text-rose-200">{makeupArtist.bio || 'This makeup artist now has a dedicated storefront where clients can browse services and book appointments directly.'}</p>
+
+            <div className="flex flex-wrap gap-3 text-sm text-stone-600 dark:text-rose-200">
+              {makeupArtist.location ? <span className="rounded-full border border-rose-200 px-3 py-1 dark:border-stone-700">{makeupArtist.location}</span> : null}
+              {(makeupArtist.specialties || []).map((specialty) => (
+                <span key={specialty} className="rounded-full border border-rose-200 px-3 py-1 dark:border-stone-700">{specialty}</span>
+              ))}
+            </div>
+
+            {socialLinks.length ? (
+              <div className="flex flex-wrap gap-3 text-sm">
+                {socialLinks.map((platform) => (
+                  <a key={platform.key} href={platform.href} target="_blank" rel="noreferrer" className="inline-flex rounded-full border border-rose-200 bg-white px-4 py-2 font-medium transition hover:bg-rose-100 dark:border-stone-700 dark:bg-stone-950 dark:hover:bg-stone-900">
+                    {platform.label}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Link href={getMakeupArtistBookingUrl(makeupArtist.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300">Book with {makeupArtist.name}</Link>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-rose-200 bg-white/80 p-6 shadow-sm dark:border-stone-800 dark:bg-stone-950/60">
+            {makeupArtist.profileImage ? (
+              <div className="mb-5 flex items-center justify-center">
+                <div className="w-full max-w-xs overflow-hidden rounded-3xl border border-rose-200 dark:border-stone-800">
+                  <div className="aspect-3/4 w-full">
+                    <img src={makeupArtist.profileImage} alt={`${makeupArtist.name} makeup artist in ${makeupArtist.location || 'Nigeria'}`} className="h-full w-full object-cover" />
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-rose-300">Working hours</p>
+            <div className="mt-4">{renderHours(makeupArtist.workingHours)}</div>
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-rose-300">Services</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">What {makeupArtist.name} offers</h2>
+          </div>
+
+          {services.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-rose-300 bg-white/80 p-8 text-sm text-stone-600 dark:border-stone-700 dark:bg-stone-950/60 dark:text-rose-200">No services are listed yet for this artist.</div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {services.map((service) => (
+                <article key={service._id} className="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm dark:border-stone-800 dark:bg-stone-950">
+                  {(service.sampleImage || service.catalogId?.image) ? (
+                    <div className="mb-5 overflow-hidden rounded-2xl border border-rose-100 dark:border-stone-800">
+                      <div className="aspect-3/4 w-full overflow-hidden">
+                        <img src={service.sampleImage || service.catalogId?.image} alt={service.name} className="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="text-xl font-semibold">{service.name}</h3>
+                    <span className="text-sm font-semibold">from {formatCurrency(service.price, makeupArtist.currency || 'USD')}</span>
+                  </div>
+                  <p className="mt-3 text-sm text-stone-600 dark:text-rose-200">{service.description || 'Premium makeup service ready for online booking.'}</p>
+                  <div className="mt-5 flex flex-wrap gap-3 text-sm text-stone-600 dark:text-rose-200">
+                    <span className="rounded-full bg-rose-50 px-3 py-1 dark:bg-stone-900">{service.duration} min</span>
+                    {service.pricingOptions?.length ? <span className="rounded-full bg-rose-50 px-3 py-1 dark:bg-stone-900">{service.pricingOptions.length} pricing option(s)</span> : null}
+                    {service.addOns?.length ? <span className="rounded-full bg-rose-50 px-3 py-1 dark:bg-stone-900">{service.addOns.length} add-on(s)</span> : null}
+                  </div>
+                  <div className="mt-4">
+                    <Link href={getMakeupArtistBookingUrl(makeupArtist.slug, { service: service._id })} className="inline-flex rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300">Book this service</Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-5">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-rose-300">Availability</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">Book with live availability</h2>
+          </div>
+          <LiveMakeupArtistCalendar makeupArtist={makeupArtist} />
+        </div>
+      </div>
+    </section>
+  );
+}

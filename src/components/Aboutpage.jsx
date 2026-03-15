@@ -12,7 +12,7 @@ export function AboutPlatform() {
           <p className="mb-4">
             StyleVault gives professionals the tools they need to run their
             business online. Instead of relying only on phone calls or social
-            media messages, barbers and stylists can create their own digital
+            media messages, barbers, stylists, and nail technicians can create their own digital
             storefront where customers can book appointments and interact with
             their services.
           </p>
@@ -51,11 +51,11 @@ export function WhoItsFor() {
         </h2>
 
         <p className="mx-auto mb-12 max-w-3xl">
-          StyleVault currently supports two types of professionals in the
+          StyleVault currently supports three types of professionals in the
           beauty and grooming industry.
         </p>
 
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-3">
           <div className="rounded-xl border border-stone-200 p-8 dark:border-stone-800">
             <h3 className="mb-3 text-xl font-semibold">
               Barbers
@@ -87,6 +87,24 @@ export function WhoItsFor() {
 
             <div className="mt-6">
               <Link href="/hair-specialists/register" className="inline-flex items-center rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700">
+                Get Started
+              </Link>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-stone-200 p-8 dark:border-stone-800">
+            <h3 className="mb-3 text-xl font-semibold">
+              Nail Technicians
+            </h3>
+
+            <p>
+              Nail technicians can showcase manicures, pedicures, acrylic sets,
+              and nail art services while accepting bookings through their own
+              personalized StyleVault page.
+            </p>
+
+            <div className="mt-6">
+              <Link href="/nail-technicians/register" className="inline-flex items-center rounded-md bg-fuchsia-600 px-4 py-2 text-sm font-medium text-white hover:bg-fuchsia-700">
                 Get Started
               </Link>
             </div>

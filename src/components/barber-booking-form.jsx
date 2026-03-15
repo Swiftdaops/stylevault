@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner'
 import { API_BASE_URL, formatCurrency } from '@/lib/barber-api';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { getBarberStoreUrl } from '@/lib/seo';
 import { format as formatDate } from 'date-fns';
 import DatePickerDemo from './date-picker-demo';
 import TimePickerDemo from './time-picker-demo';
+import InstallAfterBookingCard from '@/components/install-after-booking-card'
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -23,6 +25,8 @@ export default function BarberBookingForm({ barber, services }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [emailNotice, setEmailNotice] = useState('');
+  const [bookingSummary, setBookingSummary] = useState(null);
+  const [whatsAppHref, setWhatsAppHref] = useState('');
   const [form, setForm] = useState({
     customerName: '',
     customerEmail: '',
@@ -79,6 +83,8 @@ export default function BarberBookingForm({ barber, services }) {
     setError('');
     setSuccess('');
     setEmailNotice('');
+    setBookingSummary(null);
+    setWhatsAppHref('');
 
     try {
       if (!barber?._id) {
@@ -119,17 +125,30 @@ export default function BarberBookingForm({ barber, services }) {
       }
 
       setSuccess(`Booking confirmed for ${barber.name}. A confirmation email will be sent to ${form.customerEmail}.`);
+      setBookingSummary({
+        appName: barber.name,
+        serviceName: selectedService.name,
+        appointmentDate: form.date,
+        appointmentTime: form.time,
+      });
+      toast.success('Appointment confirmed', {
+        description: `${selectedService.name} was booked for ${form.date} at ${form.time}.`,
+      })
+
       if (data?.emailError) {
         setEmailNotice(`Your booking was saved, but the confirmation email could not be sent right now: ${data.emailError}`);
+        toast.warning('Booking saved, but email is pending', {
+          description: data.emailError,
+        })
       } else {
         setEmailNotice(`Confirmation email sent to ${form.customerEmail}.`);
+        toast.info('Confirmation email sent', {
+          description: `A receipt was sent to ${form.customerEmail}.`,
+        })
       }
 
       const whatsappUrl = buildWhatsAppUrl(barber?.whatsapp, form.customerName)
-      if (whatsappUrl) {
-        window.location.assign(whatsappUrl)
-        return
-      }
+      setWhatsAppHref(whatsappUrl)
 
       setForm({
         customerName: '',
@@ -141,6 +160,9 @@ export default function BarberBookingForm({ barber, services }) {
       });
     } catch (submitError) {
       setError(submitError.message || 'Booking failed');
+      toast.error('Booking failed', {
+        description: submitError.message || 'Please try again.',
+      })
     } finally {
       setSubmitting(false);
     }
@@ -225,6 +247,23 @@ export default function BarberBookingForm({ barber, services }) {
         {emailNotice ? (
           <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-medium ${emailNotice.includes('could not be sent') ? 'border-orange-300 bg-orange-50 text-orange-800 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300' : 'border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300'}`}>
             {emailNotice}
+          </div>
+        ) : null}
+        {bookingSummary ? (
+          <InstallAfterBookingCard
+            enabled={Boolean(bookingSummary)}
+            appName={bookingSummary.appName}
+            serviceName={bookingSummary.serviceName}
+            appointmentDate={bookingSummary.appointmentDate}
+            appointmentTime={bookingSummary.appointmentTime}
+          />
+        ) : null}
+        {whatsAppHref ? (
+          <div className="mt-4 rounded-2xl border border-orange-300 bg-orange-50 px-4 py-3 text-sm text-orange-800 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300">
+            <p className="font-medium">Need to message {bookingSummary?.appName || barber.name} directly?</p>
+            <a href={whatsAppHref} target="_blank" rel="noreferrer" className="mt-2 inline-flex rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-stone-950 dark:hover:bg-amber-400">
+              Continue on WhatsApp
+            </a>
           </div>
         ) : null}
 

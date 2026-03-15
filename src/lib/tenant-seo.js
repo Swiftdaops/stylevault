@@ -4,6 +4,9 @@ import {
   buildDescription,
   getBarberStoreUrl,
   getHairSpecialistStoreUrl,
+  getLashTechnicianStoreUrl,
+  getMakeupArtistStoreUrl,
+  getNailTechnicianStoreUrl,
 } from '@/lib/seo';
 
 const defaultShareImage = absoluteUrl('/opengraph-image');
@@ -36,6 +39,30 @@ const typeConfig = {
     catalogName: 'Hair Services',
     defaultDescription: 'Professional hair services available for online booking.',
     defaultKeywords: ['best hair stylist', 'wig installation', 'braids near me', 'salon booking online'],
+  },
+  'nail-technician': {
+    businessLabel: 'nail technician',
+    businessPlural: 'nail technicians',
+    schemaType: 'NailSalon',
+    catalogName: 'Nail Services',
+    defaultDescription: 'Professional nail services available for online booking.',
+    defaultKeywords: ['best nail technician', 'gel nails near me', 'acrylic nail booking', 'pedicure booking online'],
+  },
+  'lash-technician': {
+    businessLabel: 'lash technician',
+    businessPlural: 'lash technicians',
+    schemaType: 'BeautySalon',
+    catalogName: 'Lash Services',
+    defaultDescription: 'Professional lash services available for online booking.',
+    defaultKeywords: ['best lash technician', 'lash extensions near me', 'hybrid lashes booking', 'volume lashes online'],
+  },
+  'makeup-artist': {
+    businessLabel: 'makeup artist',
+    businessPlural: 'makeup artists',
+    schemaType: 'BeautySalon',
+    catalogName: 'Makeup Services',
+    defaultDescription: 'Professional makeup services available for online booking.',
+    defaultKeywords: ['best makeup artist', 'bridal makeup near me', 'soft glam booking', 'book makeup online'],
   },
 };
 
@@ -96,7 +123,11 @@ function getLocationContext(profile = {}) {
 }
 
 function getStoreUrl(type, slug) {
-  return type === 'hair-specialist' ? getHairSpecialistStoreUrl(slug) : getBarberStoreUrl(slug);
+  if (type === 'hair-specialist') return getHairSpecialistStoreUrl(slug);
+  if (type === 'nail-technician') return getNailTechnicianStoreUrl(slug);
+  if (type === 'lash-technician') return getLashTechnicianStoreUrl(slug);
+  if (type === 'makeup-artist') return getMakeupArtistStoreUrl(slug);
+  return getBarberStoreUrl(slug);
 }
 
 function getProfileImage(profile = {}, services = []) {
@@ -113,7 +144,7 @@ function getServiceNames(services = [], limit = 4) {
 }
 
 function getSpecialties(profile = [], type) {
-  if (type !== 'hair-specialist') return [];
+  if (type !== 'hair-specialist' && type !== 'nail-technician' && type !== 'lash-technician' && type !== 'makeup-artist') return [];
   return dedupeStrings(profile?.specialties || []);
 }
 
@@ -223,7 +254,7 @@ export function buildTenantMetadata({ type = 'barber', profile = {}, services = 
     title,
     description,
     keywords,
-    category: type === 'hair-specialist' ? 'Beauty' : 'Barbering',
+    category: type === 'barber' ? 'Barbering' : 'Beauty',
     alternates: {
       canonical: storeUrl,
     },

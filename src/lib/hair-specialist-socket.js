@@ -1,20 +1,20 @@
-import { io } from 'socket.io-client';
 import { API_BASE_URL } from '@/lib/hair-specialist-api';
+import { createProviderSocketHelpers } from '@/lib/provider-socket';
 
 const SOCKET_URL = API_BASE_URL.replace(/\/api\/?$/, '');
 
+const hairSpecialistSocket = createProviderSocketHelpers({
+  socketUrl: SOCKET_URL,
+  subscribeEvent: 'subscribe:hair-specialist',
+  unsubscribeEvent: 'unsubscribe:hair-specialist',
+});
+
 export function connectHairSpecialistSocket(hairSpecialistId) {
-  if (!hairSpecialistId) return null;
+  return hairSpecialistSocket.connect(hairSpecialistId);
+}
 
-  const socket = io(SOCKET_URL, {
-    transports: ['websocket', 'polling'],
-  });
-
-  socket.on('connect', () => {
-    socket.emit('subscribe:hair-specialist', hairSpecialistId);
-  });
-
-  return socket;
+export function disconnectHairSpecialistSocket() {
+  hairSpecialistSocket.disconnect();
 }
 
 export default connectHairSpecialistSocket;

@@ -125,6 +125,66 @@ export function getHairSpecialistBookingUrl(slug, query = {}) {
   return buildTenantSubdomainUrl(slug, '/book', query);
 }
 
+export function getNailTechnicianStoreUrl(slug) {
+  if (!slug) return '/nail-technicians';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('nail-technicians', slug);
+  }
+
+  return buildTenantSubdomainUrl(slug);
+}
+
+export function getNailTechnicianBookingUrl(slug, query = {}) {
+  if (!slug) return '/book';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('nail-technicians', slug, '/book', query);
+  }
+
+  return buildTenantSubdomainUrl(slug, '/book', query);
+}
+
+export function getLashTechnicianStoreUrl(slug) {
+  if (!slug) return '/lash-technicians';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('lash-technicians', slug);
+  }
+
+  return buildTenantSubdomainUrl(slug);
+}
+
+export function getLashTechnicianBookingUrl(slug, query = {}) {
+  if (!slug) return '/book';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('lash-technicians', slug, '/book', query);
+  }
+
+  return buildTenantSubdomainUrl(slug, '/book', query);
+}
+
+export function getMakeupArtistStoreUrl(slug) {
+  if (!slug) return '/makeup-artists';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('makeup-artists', slug);
+  }
+
+  return buildTenantSubdomainUrl(slug);
+}
+
+export function getMakeupArtistBookingUrl(slug, query = {}) {
+  if (!slug) return '/book';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return buildTenantFallbackPath('makeup-artists', slug, '/book', query);
+  }
+
+  return buildTenantSubdomainUrl(slug, '/book', query);
+}
+
 export function buildDescription(text, fallback) {
   const value = String(text || fallback || '').trim();
   return value.length > 160 ? `${value.slice(0, 157)}...` : value;

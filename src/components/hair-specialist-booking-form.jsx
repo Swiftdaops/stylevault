@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner'
 import { format as formatDate } from 'date-fns';
 import DatePickerDemo from './date-picker-demo';
 import TimePickerDemo from './time-picker-demo';
 import { API_BASE_URL, formatCurrency } from '@/lib/hair-specialist-api';
 import { getHairSpecialistStoreUrl } from '@/lib/seo';
+import InstallAfterBookingCard from '@/components/install-after-booking-card'
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -22,6 +24,8 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [emailNotice, setEmailNotice] = useState('');
+  const [bookingSummary, setBookingSummary] = useState(null);
+  const [whatsAppHref, setWhatsAppHref] = useState('');
   const [form, setForm] = useState({
     customerName: '',
     customerEmail: '',
@@ -90,6 +94,8 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
     setError('');
     setSuccess('');
     setEmailNotice('');
+    setBookingSummary(null);
+    setWhatsAppHref('');
 
     try {
       if (!hairSpecialist?._id) throw new Error('Hair specialist profile is unavailable.');
@@ -117,17 +123,30 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
       if (!response.ok) throw new Error(data?.message || 'Booking failed');
 
       setSuccess(`Booking confirmed for ${hairSpecialist.name}. A confirmation email will be sent to ${form.customerEmail}.`);
+      setBookingSummary({
+        appName: hairSpecialist.name,
+        serviceName: selectedService.name,
+        appointmentDate: form.date,
+        appointmentTime: form.time,
+      });
+      toast.success('Appointment confirmed', {
+        description: `${selectedService.name} was booked for ${form.date} at ${form.time}.`,
+      })
+
       if (data?.emailError) {
         setEmailNotice(`Your booking was saved, but the confirmation email could not be sent right now: ${data.emailError}`);
+        toast.warning('Booking saved, but email is pending', {
+          description: data.emailError,
+        })
       } else {
         setEmailNotice(`Confirmation email sent to ${form.customerEmail}.`);
+        toast.info('Confirmation email sent', {
+          description: `A receipt was sent to ${form.customerEmail}.`,
+        })
       }
 
       const whatsappUrl = buildWhatsAppUrl(hairSpecialist?.whatsapp, form.customerName)
-      if (whatsappUrl) {
-        window.location.assign(whatsappUrl)
-        return
-      }
+      setWhatsAppHref(whatsappUrl)
 
       setForm({
         customerName: '',
@@ -141,6 +160,9 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
       });
     } catch (submitError) {
       setError(submitError.message || 'Booking failed');
+      toast.error('Booking failed', {
+        description: submitError.message || 'Please try again.',
+      })
     } finally {
       setSubmitting(false);
     }
@@ -237,6 +259,23 @@ export default function HairSpecialistBookingForm({ hairSpecialist, services }) 
         {error ? <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p> : null}
         {success ? <div className="mt-4 rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">{success}</div> : null}
         {emailNotice ? <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-medium ${emailNotice.includes('could not be sent') ? 'border-orange-300 bg-orange-50 text-orange-800 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300' : 'border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300'}`}>{emailNotice}</div> : null}
+        {bookingSummary ? (
+          <InstallAfterBookingCard
+            enabled={Boolean(bookingSummary)}
+            appName={bookingSummary.appName}
+            serviceName={bookingSummary.serviceName}
+            appointmentDate={bookingSummary.appointmentDate}
+            appointmentTime={bookingSummary.appointmentTime}
+          />
+        ) : null}
+        {whatsAppHref ? (
+          <div className="mt-4 rounded-2xl border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300">
+            <p className="font-medium">Need to message {bookingSummary?.appName || hairSpecialist.name} directly?</p>
+            <a href={whatsAppHref} target="_blank" rel="noreferrer" className="mt-2 inline-flex rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-stone-950 dark:hover:bg-rose-300">
+              Continue on WhatsApp
+            </a>
+          </div>
+        ) : null}
 
         <button type="submit" disabled={submitting || serviceOptions.length === 0} className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-stone-950 px-5 py-3 font-semibold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300">
           {submitting ? 'Confirming booking...' : 'Confirm booking'}

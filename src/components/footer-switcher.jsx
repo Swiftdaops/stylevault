@@ -8,9 +8,9 @@ export default function FooterSwitcher({ isTenantHost = false }) {
 
   if (isTenantHost) return null
 
-  // Hide the global public footer on individual hair-specialist storefronts
-  // so the specialist-specific thank-you footer can be shown instead.
-  if (pathname.startsWith('/hair-specialists/')) return null
+  // Hide the global public footer on individual provider storefronts
+  // so the provider-specific footer can be shown instead.
+  if (pathname.startsWith('/hair-specialists/') || pathname.startsWith('/nail-technicians/') || pathname.startsWith('/lash-technicians/') || pathname.startsWith('/makeup-artists/')) return null
 
   return <PublicFooter />
 }

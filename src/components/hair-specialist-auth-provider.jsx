@@ -3,6 +3,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { getMeHairSpecialist, loginHairSpecialist, logoutHairSpecialist } from '@/lib/hair-specialist-api'
+import ProviderPushNotificationPrompt from '@/components/provider-push-notification-prompt'
+import ProviderLiveNotifications from '@/components/provider-live-notifications'
+import { unregisterPushDeviceToken } from '@/lib/push-notifications'
+import { connectHairSpecialistSocket, disconnectHairSpecialistSocket } from '@/lib/hair-specialist-socket'
 
 const HairSpecialistAuthContext = createContext({})
 
@@ -47,6 +51,14 @@ export function HairSpecialistAuthProvider({ children, protect = true }) {
   }
 
   const logout = async () => {
+    try {
+      await unregisterPushDeviceToken()
+    } catch {
+      // ignore push token cleanup failures during logout
+    }
+
+    disconnectHairSpecialistSocket()
+
     await logoutHairSpecialist()
     setUser(null)
     setHairSpecialist(null)
@@ -61,6 +73,15 @@ export function HairSpecialistAuthProvider({ children, protect = true }) {
 
   return (
     <HairSpecialistAuthContext.Provider value={{ user, hairSpecialist, loading, login, logout, refresh }}>
+      <ProviderPushNotificationPrompt enabled={Boolean(user)} audienceLabel="Hair Specialist" />
+      <ProviderLiveNotifications
+        enabled={Boolean(user && hairSpecialist?._id)}
+        providerId={hairSpecialist?._id}
+        audienceLabel="Hair Specialist"
+        connectSocket={connectHairSpecialistSocket}
+        eventName="hair-specialist:data-updated"
+        appointmentsPath="/hair-specialists/admin/appointments"
+      />
       {children}
     </HairSpecialistAuthContext.Provider>
   )

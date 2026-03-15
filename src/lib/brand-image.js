@@ -82,7 +82,7 @@ export function renderBrandImage({ width, height }) {
 							color: 'rgba(28, 25, 23, 0.86)',
 						}}
 					>
-						Best barbers and hair specialists. Shareable booking pages that look premium on every screen.
+						Best barbers, hair specialists, and nail technicians. Shareable booking pages that look premium on every screen.
 					</div>
 				</div>
 			</div>

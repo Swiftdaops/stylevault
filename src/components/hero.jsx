@@ -48,7 +48,7 @@ export default function Hero() {
               variants={item}
               className="inline-flex rounded-full border border-orange-300 px-3 py-1 text-sm font-medium dark:border-stone-700"
             >
-              Booking platform for barbers & hair stylists
+              Booking platform for barbers, hair stylists & nail technicians
             </motion.span>
 
             <motion.h1
@@ -65,7 +65,7 @@ export default function Hero() {
               variants={item}
               className="max-w-xl text-lg text-stone-700 dark:text-amber-200"
             >
-              StyleVault helps barbers, salons, and hair specialists run their
+              StyleVault helps barbers, salons, hair specialists, and nail technicians run their
               business online. Create your own booking website, manage
               appointments, and showcase your services — all from one platform.
             </motion.p>
@@ -100,7 +100,7 @@ export default function Hero() {
               variants={item}
               className="text-sm text-stone-500 dark:text-amber-300"
             >
-              Trusted by modern barbers and stylists building their brand online.
+              Trusted by modern barbers, stylists, and nail artists building their brand online.
             </motion.p>
 
           </motion.div>

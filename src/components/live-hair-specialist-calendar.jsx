@@ -146,8 +146,6 @@ export default function LiveHairSpecialistCalendar({ hairSpecialist }) {
 
     return () => {
       socket?.off('hair-specialist:data-updated', handleUpdate)
-      socket?.emit('unsubscribe:hair-specialist', hairSpecialist._id)
-      socket?.disconnect()
     }
   }, [hairSpecialist?._id, selectedDateKey])
 

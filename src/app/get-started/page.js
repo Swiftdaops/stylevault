@@ -5,7 +5,7 @@ import Link from "next/link"
 export default function GetStartedPage() {
   return (
 
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950 py-24 px-6">
+    <main className="min-h-screen bg-orange-50 dark:bg-neutral-950 py-24 px-6">
 
       <div className="max-w-6xl mx-auto">
 
@@ -26,7 +26,7 @@ export default function GetStartedPage() {
 
         {/* CARDS */}
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-6">
 
           {/* ABOUT CARD */}
 
@@ -102,6 +102,80 @@ export default function GetStartedPage() {
               className="inline-flex items-center justify-center rounded-lg bg-black text-white px-5 py-3 text-sm font-medium hover:bg-neutral-800 transition"
             >
               Start as Hair Stylist
+            </Link>
+
+          </div>
+
+          {/* NAIL TECH CARD */}
+
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 shadow-sm border border-neutral-200 dark:border-neutral-800 flex flex-col justify-between">
+
+            <div>
+
+              <h2 className="text-xl font-semibold mb-4">
+                Get Started as a Nail Technician
+              </h2>
+
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed mb-6">
+                Launch your own nail booking page, list manicures and pedicures,
+                accept appointments, and grow your beauty brand online.
+              </p>
+
+            </div>
+
+            <Link
+              href="/nail-technicians/register"
+              className="inline-flex items-center justify-center rounded-lg bg-black text-white px-5 py-3 text-sm font-medium hover:bg-neutral-800 transition"
+            >
+              Start as Nail Technician
+            </Link>
+
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 shadow-sm border border-neutral-200 dark:border-neutral-800 flex flex-col justify-between">
+
+            <div>
+
+              <h2 className="text-xl font-semibold mb-4">
+                Get Started as a Lash Technician
+              </h2>
+
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed mb-6">
+                Launch your own lash booking page, list classic, hybrid, and volume sets,
+                accept appointments, and grow your beauty brand online.
+              </p>
+
+            </div>
+
+            <Link
+              href="/lash-technicians/register"
+              className="inline-flex items-center justify-center rounded-lg bg-black text-white px-5 py-3 text-sm font-medium hover:bg-neutral-800 transition"
+            >
+              Start as Lash Technician
+            </Link>
+
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 shadow-sm border border-neutral-200 dark:border-neutral-800 flex flex-col justify-between">
+
+            <div>
+
+              <h2 className="text-xl font-semibold mb-4">
+                Get Started as a Makeup Artist
+              </h2>
+
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed mb-6">
+                Launch your own makeup booking page, list bridal and glam services,
+                accept appointments, and grow your beauty brand online.
+              </p>
+
+            </div>
+
+            <Link
+              href="/makeup-artists/register"
+              className="inline-flex items-center justify-center rounded-lg bg-black text-white px-5 py-3 text-sm font-medium hover:bg-neutral-800 transition"
+            >
+              Start as Makeup Artist
             </Link>
 
           </div>

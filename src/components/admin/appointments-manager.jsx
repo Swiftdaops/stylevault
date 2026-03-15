@@ -61,8 +61,6 @@ export default function AppointmentsManager() {
 
     return () => {
       socket?.off('barber:data-updated', handleUpdate)
-      socket?.emit('unsubscribe:barber', barber._id)
-      socket?.disconnect()
     }
   }, [barber?._id, loadAppointments])
 

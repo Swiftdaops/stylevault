@@ -13,7 +13,7 @@ export default function Navbar({ isTenantHost = false }) {
   if (isTenantHost) return null
 
   // hide the public navbar on admin pages
-  if (pathname && (pathname.startsWith('/barbers/admin') || pathname.startsWith('/hair-specialists/admin'))) return null
+  if (pathname && (pathname.startsWith('/barbers/admin') || pathname.startsWith('/hair-specialists/admin') || pathname.startsWith('/nail-technicians/admin') || pathname.startsWith('/lash-technicians/admin') || pathname.startsWith('/makeup-artists/admin'))) return null
 
   // hide the navbar for barber profile pages like /barbers/nnamdi
   // but keep it for static pages such as /barbers/register or /barbers/login
@@ -31,6 +31,33 @@ export default function Navbar({ isTenantHost = false }) {
     }
 
     if (parts[0] === 'hair-specialists') {
+      if (parts.length === 2) {
+        const exceptions = new Set(['register', 'login', 'admin'])
+        if (!exceptions.has(parts[1])) return null
+      }
+
+      if (parts.length >= 3 && parts[2] === 'book') return null
+    }
+
+    if (parts[0] === 'nail-technicians') {
+      if (parts.length === 2) {
+        const exceptions = new Set(['register', 'login', 'admin'])
+        if (!exceptions.has(parts[1])) return null
+      }
+
+      if (parts.length >= 3 && parts[2] === 'book') return null
+    }
+
+    if (parts[0] === 'lash-technicians') {
+      if (parts.length === 2) {
+        const exceptions = new Set(['register', 'login', 'admin'])
+        if (!exceptions.has(parts[1])) return null
+      }
+
+      if (parts.length >= 3 && parts[2] === 'book') return null
+    }
+
+    if (parts[0] === 'makeup-artists') {
       if (parts.length === 2) {
         const exceptions = new Set(['register', 'login', 'admin'])
         if (!exceptions.has(parts[1])) return null
