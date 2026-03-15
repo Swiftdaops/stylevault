@@ -1,6 +1,18 @@
 import nextPwa from 'next-pwa'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const rawApiTarget = String(process.env.NEXT_PUBLIC_API_URL || '').trim()
+
+function normalizeApiTarget(value) {
+  if (!value) return ''
+
+  const stripped = value.replace(/\/+$/, '')
+  if (/\/api(\/|$)/i.test(stripped)) return stripped
+
+  return `${stripped}/api`
+}
+
+const proxiedApiTarget = normalizeApiTarget(rawApiTarget)
 
 const withPWA = nextPwa({
   dest: 'public',
@@ -18,6 +30,18 @@ const withPWA = nextPwa({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
+  async rewrites() {
+    if (!proxiedApiTarget || proxiedApiTarget.startsWith('/')) {
+      return []
+    }
+
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${proxiedApiTarget}/:path*`,
+      },
+    ]
+  },
 }
 
 export default withPWA(nextConfig)

@@ -1,16 +1,4 @@
-// Use the public NEXT_PUBLIC_API_URL when provided. Do not hardcode a server URL here.
-// If unset, fall back to a same-origin `/api` base so requests target the backend API.
-function normalizeApiBase(raw) {
-  const val = String(raw || '').trim();
-  if (!val) return '';
-  // remove trailing slashes
-  const stripped = val.replace(/\/+$/, '');
-  // if the URL already contains the `/api` segment, keep it as-is; otherwise append `/api`
-  if (/\/api(\/|$)/i.test(stripped)) return stripped;
-  return `${stripped}/api`;
-}
-
-const API_BASE_URL = normalizeApiBase(process.env.NEXT_PUBLIC_API_URL) || '/api';
+import { API_BASE_URL } from '@/lib/api-base';
 
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE_URL}${path}`, {

@@ -1,7 +1,7 @@
-import { API_BASE_URL } from '@/lib/makeup-artist-api';
+import { SOCKET_BASE_URL } from '@/lib/api-base';
 import { createProviderSocketHelpers } from '@/lib/provider-socket';
 
-const SOCKET_URL = API_BASE_URL.replace(/\/api\/?$/, '');
+const SOCKET_URL = SOCKET_BASE_URL;
 
 const makeupArtistSocket = createProviderSocketHelpers({
   socketUrl: SOCKET_URL,

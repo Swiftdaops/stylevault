@@ -1,8 +1,8 @@
 import { io } from 'socket.io-client'
-import { API_BASE_URL } from '@/lib/barber-api'
+import { SOCKET_BASE_URL } from '@/lib/api-base'
 import { createProviderSocketHelpers } from '@/lib/provider-socket'
 
-const SOCKET_URL = API_BASE_URL.replace(/\/api\/?$/, '')
+const SOCKET_URL = SOCKET_BASE_URL
 
 const barberSocket = createProviderSocketHelpers({
   socketUrl: SOCKET_URL,

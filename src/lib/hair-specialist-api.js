@@ -1,12 +1,4 @@
-function normalizeApiBase(raw) {
-  const val = String(raw || '').trim();
-  if (!val) return '';
-  const stripped = val.replace(/\/+$/, '');
-  if (/\/api(\/|$)/i.test(stripped)) return stripped;
-  return `${stripped}/api`;
-}
-
-const API_BASE_URL = normalizeApiBase(process.env.NEXT_PUBLIC_API_URL) || '/api';
+import { API_BASE_URL } from '@/lib/api-base';
 
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE_URL}${path}`, {

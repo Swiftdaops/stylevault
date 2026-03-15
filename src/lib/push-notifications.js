@@ -1,16 +1,6 @@
+import { API_BASE_URL } from '@/lib/api-base';
+
 const STORAGE_KEY = 'stylevault:push-device-token';
-
-function normalizeApiBase(raw) {
-  const value = String(raw || '').trim();
-  if (!value) return '';
-
-  const stripped = value.replace(/\/+$/, '');
-  if (/\/api(\/|$)/i.test(stripped)) return stripped;
-
-  return `${stripped}/api`;
-}
-
-const API_BASE_URL = normalizeApiBase(process.env.NEXT_PUBLIC_API_URL) || '/api';
 
 async function authedJson(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
