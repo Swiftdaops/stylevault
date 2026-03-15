@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatCurrency, getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
+import StorefrontInstallButton from '@/components/storefront-install-button';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getBarberBookingUrl } from '@/lib/seo';
+import { getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 import LiveBarberCalendar from '@/components/live-barber-calendar';
 
@@ -88,7 +89,7 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function BarberShopPage({ params }) {
+export default async function BarberShopPage({ params, installMode }) {
   const { slug } = await params;
   const barber = await getBarberBySlug(slug);
 
@@ -99,6 +100,7 @@ export default async function BarberShopPage({ params }) {
   const services = await getServicesForBarber(barber._id);
   const rating = barber.subscriptionPlan === 'pro' ? 5 : 4.5;
   const socialLinks = getSocialLinksList(barber.socialLinks);
+  const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
     type: 'barber',
     profile: barber,
@@ -142,6 +144,12 @@ export default async function BarberShopPage({ params }) {
               <Link href={getBarberBookingUrl(barber.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
                 Book with {barber.name}
               </Link>
+              <StorefrontInstallButton
+                appName={`${barber.name} Booking App`}
+                storefrontUrl={getBarberStoreUrl(barber.slug)}
+                installMode={resolvedInstallMode}
+                tone="orange"
+              />
             </div>
           </div>
 

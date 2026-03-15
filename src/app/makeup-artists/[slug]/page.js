@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveMakeupArtistCalendar from '@/components/live-makeup-artist-calendar';
+import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getMakeupArtistBySlug, getMakeupArtists, getServicesForMakeupArtist } from '@/lib/makeup-artist-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getMakeupArtistBookingUrl } from '@/lib/seo';
+import { getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function MakeupArtistPage({ params }) {
+export default async function MakeupArtistPage({ params, installMode }) {
   const { slug } = await params;
   const makeupArtist = await getMakeupArtistBySlug(slug);
 
@@ -58,6 +59,7 @@ export default async function MakeupArtistPage({ params }) {
 
   const services = await getServicesForMakeupArtist(makeupArtist._id);
   const socialLinks = getSocialLinksList(makeupArtist.socialLinks);
+  const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
     type: 'makeup-artist',
     profile: makeupArtist,
@@ -93,6 +95,12 @@ export default async function MakeupArtistPage({ params }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getMakeupArtistBookingUrl(makeupArtist.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300">Book with {makeupArtist.name}</Link>
+              <StorefrontInstallButton
+                appName={`${makeupArtist.name} Booking App`}
+                storefrontUrl={getMakeupArtistStoreUrl(makeupArtist.slug)}
+                installMode={resolvedInstallMode}
+                tone="rose"
+              />
             </div>
           </div>
 

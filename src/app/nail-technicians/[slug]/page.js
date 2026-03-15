@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveNailTechnicianCalendar from '@/components/live-nail-technician-calendar';
+import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getNailTechnicianBySlug, getNailTechnicians, getServicesForNailTechnician } from '@/lib/nail-technician-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getNailTechnicianBookingUrl } from '@/lib/seo';
+import { getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function NailTechnicianPage({ params }) {
+export default async function NailTechnicianPage({ params, installMode }) {
   const { slug } = await params;
   const nailTechnician = await getNailTechnicianBySlug(slug);
 
@@ -58,6 +59,7 @@ export default async function NailTechnicianPage({ params }) {
 
   const services = await getServicesForNailTechnician(nailTechnician._id);
   const socialLinks = getSocialLinksList(nailTechnician.socialLinks);
+  const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
     type: 'nail-technician',
     profile: nailTechnician,
@@ -93,6 +95,12 @@ export default async function NailTechnicianPage({ params }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getNailTechnicianBookingUrl(nailTechnician.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-fuchsia-400 dark:text-black dark:hover:bg-fuchsia-300">Book with {nailTechnician.name}</Link>
+              <StorefrontInstallButton
+                appName={`${nailTechnician.name} Booking App`}
+                storefrontUrl={getNailTechnicianStoreUrl(nailTechnician.slug)}
+                installMode={resolvedInstallMode}
+                tone="fuchsia"
+              />
             </div>
           </div>
 

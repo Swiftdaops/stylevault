@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveLashTechnicianCalendar from '@/components/live-lash-technician-calendar';
+import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getLashTechnicianBySlug, getLashTechnicians, getServicesForLashTechnician } from '@/lib/lash-technician-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getLashTechnicianBookingUrl } from '@/lib/seo';
+import { getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function LashTechnicianPage({ params }) {
+export default async function LashTechnicianPage({ params, installMode }) {
   const { slug } = await params;
   const lashTechnician = await getLashTechnicianBySlug(slug);
 
@@ -58,6 +59,7 @@ export default async function LashTechnicianPage({ params }) {
 
   const services = await getServicesForLashTechnician(lashTechnician._id);
   const socialLinks = getSocialLinksList(lashTechnician.socialLinks);
+  const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
     type: 'lash-technician',
     profile: lashTechnician,
@@ -93,6 +95,12 @@ export default async function LashTechnicianPage({ params }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getLashTechnicianBookingUrl(lashTechnician.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-violet-400 dark:text-black dark:hover:bg-violet-300">Book with {lashTechnician.name}</Link>
+              <StorefrontInstallButton
+                appName={`${lashTechnician.name} Booking App`}
+                storefrontUrl={getLashTechnicianStoreUrl(lashTechnician.slug)}
+                installMode={resolvedInstallMode}
+                tone="violet"
+              />
             </div>
           </div>
 

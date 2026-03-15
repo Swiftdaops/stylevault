@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import Navbar from "@/components/navbar";
 import FooterSwitcher from '@/components/footer-switcher'
 import { extractTenantSlugFromHost, SITE_URL } from "@/lib/seo";
+import { resolveTenantProfileBySlug } from '@/lib/tenant';
 import { headers } from 'next/headers'
 
 const geistSans = Geist({
@@ -88,17 +89,20 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
 	const headersList = await headers()
-	const isTenantHost = Boolean(extractTenantSlugFromHost(headersList.get('host') || ''))
+	const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '')
+	const tenant = tenantSlug ? await resolveTenantProfileBySlug(tenantSlug) : null
+	const isTenantHost = Boolean(tenantSlug)
+	const appName = tenant?.profile?.name ? `${tenant.profile.name} Booking App` : 'StyleVault'
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="application-name" content="StyleVault" />
+        <meta name="application-name" content={appName} />
         <meta name="theme-color" content="#0c0a09" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="StyleVault" />
+        <meta name="apple-mobile-web-app-title" content={appName} />
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/apple-icon" />
       </head>

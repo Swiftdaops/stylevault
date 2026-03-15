@@ -65,7 +65,7 @@ export default async function BookPage() {
     if (tenant.type === 'hair-specialist') {
       return (
         <TenantShell tenant={tenant}>
-          <HairSpecialistBookPage params={Promise.resolve({ slug: tenantSlug })} />
+          <HairSpecialistBookPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
@@ -73,7 +73,7 @@ export default async function BookPage() {
     if (tenant.type === 'nail-technician') {
       return (
         <TenantShell tenant={tenant}>
-          <NailTechnicianBookPage params={Promise.resolve({ slug: tenantSlug })} />
+          <NailTechnicianBookPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
@@ -81,7 +81,7 @@ export default async function BookPage() {
     if (tenant.type === 'lash-technician') {
       return (
         <TenantShell tenant={tenant}>
-          <LashTechnicianBookPage params={Promise.resolve({ slug: tenantSlug })} />
+          <LashTechnicianBookPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
@@ -89,14 +89,14 @@ export default async function BookPage() {
     if (tenant.type === 'makeup-artist') {
       return (
         <TenantShell tenant={tenant}>
-          <MakeupArtistBookPage params={Promise.resolve({ slug: tenantSlug })} />
+          <MakeupArtistBookPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
 
     return (
       <TenantShell tenant={tenant}>
-        <BarberBookPage params={Promise.resolve({ slug: tenantSlug })} />
+        <BarberBookPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
       </TenantShell>
     );
   }

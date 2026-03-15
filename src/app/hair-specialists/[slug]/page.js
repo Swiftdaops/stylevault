@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveHairSpecialistCalendar from '@/components/live-hair-specialist-calendar';
+import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getHairSpecialistBySlug, getServicesForHairSpecialist } from '@/lib/hair-specialist-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getHairSpecialistBookingUrl } from '@/lib/seo';
+import { getHairSpecialistBookingUrl, getHairSpecialistStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function HairSpecialistPage({ params }) {
+export default async function HairSpecialistPage({ params, installMode }) {
   const { slug } = await params;
   const hairSpecialist = await getHairSpecialistBySlug(slug);
 
@@ -59,6 +60,7 @@ export default async function HairSpecialistPage({ params }) {
 
   const services = await getServicesForHairSpecialist(hairSpecialist._id);
   const socialLinks = getSocialLinksList(hairSpecialist.socialLinks);
+  const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
     type: 'hair-specialist',
     profile: hairSpecialist,
@@ -100,6 +102,12 @@ export default async function HairSpecialistPage({ params }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getHairSpecialistBookingUrl(hairSpecialist.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300">Book with {hairSpecialist.name}</Link>
+              <StorefrontInstallButton
+                appName={`${hairSpecialist.name} Booking App`}
+                storefrontUrl={getHairSpecialistStoreUrl(hairSpecialist.slug)}
+                installMode={resolvedInstallMode}
+                tone="rose"
+              />
             </div>
           </div>
 

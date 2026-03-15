@@ -29,6 +29,21 @@ export function ModeToggle() {
   const isDark = currentTheme === "dark"
   const isLight = currentTheme === "light"
 
+  if (!mounted) {
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        aria-label="Toggle theme"
+        className="relative bg-transparent transition-colors"
+        disabled
+      >
+        <Sun className="h-[1.2rem] w-[1.2rem]" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    )
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

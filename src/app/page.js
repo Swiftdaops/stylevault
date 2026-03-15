@@ -81,7 +81,7 @@ export default async function Home() {
     if (tenant.type === 'hair-specialist') {
       return (
         <TenantShell tenant={tenant}>
-          <HairSpecialistPage params={Promise.resolve({ slug: tenantSlug })} />
+          <HairSpecialistPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
@@ -89,7 +89,7 @@ export default async function Home() {
     if (tenant.type === 'nail-technician') {
       return (
         <TenantShell tenant={tenant}>
-          <NailTechnicianPage params={Promise.resolve({ slug: tenantSlug })} />
+          <NailTechnicianPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
@@ -97,7 +97,7 @@ export default async function Home() {
     if (tenant.type === 'lash-technician') {
       return (
         <TenantShell tenant={tenant}>
-          <LashTechnicianPage params={Promise.resolve({ slug: tenantSlug })} />
+          <LashTechnicianPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
@@ -105,14 +105,14 @@ export default async function Home() {
     if (tenant.type === 'makeup-artist') {
       return (
         <TenantShell tenant={tenant}>
-          <MakeupArtistPage params={Promise.resolve({ slug: tenantSlug })} />
+          <MakeupArtistPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
         </TenantShell>
       );
     }
 
     return (
       <TenantShell tenant={tenant}>
-        <BarberShopPage params={Promise.resolve({ slug: tenantSlug })} />
+        <BarberShopPage params={Promise.resolve({ slug: tenantSlug })} installMode="install" />
       </TenantShell>
     );
   }
