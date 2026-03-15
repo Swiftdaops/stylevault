@@ -11,7 +11,7 @@ import { format as formatDate } from 'date-fns';
 import DatePickerDemo from './date-picker-demo';
 import TimePickerDemo from './time-picker-demo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
-import { requestCustomerBookingNotificationPreference, showBookingConfirmedNotification } from '@/lib/customer-booking-notifications';
+import { requestCustomerBookingNotificationPreference, showBookingStatusNotification } from '@/lib/customer-booking-notifications';
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -130,7 +130,9 @@ export default function BarberBookingForm({ barber, services }) {
         throw new Error(data?.message || 'Booking failed');
       }
 
-      setSuccess(`Booking confirmed for ${barber.name}. A confirmation email will be sent to ${form.customerEmail}.`);
+      const bookingStatus = data?.appointment?.status || 'pending'
+
+      setSuccess(`Your request has been sent to ${barber.name}. We will notify ${form.customerEmail} once the booking is confirmed.`);
       setBookingSummary({
         appName: barber.name,
         serviceName: selectedService.name,
@@ -138,12 +140,13 @@ export default function BarberBookingForm({ barber, services }) {
         appointmentTime: form.time,
       });
       setManageLink(data?.manageLink || '');
-      toast.success('Appointment confirmed', {
-        description: `${selectedService.name} was booked for ${form.date} at ${form.time}.`,
+      toast.success('Booking request sent', {
+        description: `${selectedService.name} request sent to ${barber.name} for ${form.date} at ${form.time}.`,
       })
 
       if (notificationPreference?.permission === 'granted' && !data?.customerPushResult?.sent) {
-        void showBookingConfirmedNotification({
+        void showBookingStatusNotification({
+          status: bookingStatus,
           providerName: barber.name,
           serviceName: selectedService.name,
           appointmentDate: form.date,
@@ -152,14 +155,14 @@ export default function BarberBookingForm({ barber, services }) {
       }
 
       if (data?.emailError) {
-        setEmailNotice(`Your booking was saved, but the confirmation email could not be sent right now: ${data.emailError}`);
+        setEmailNotice(`Your booking was saved, but the booking email could not be sent right now: ${data.emailError}`);
         toast.warning('Booking saved, but email is pending', {
           description: data.emailError,
         })
       } else {
-        setEmailNotice(`Confirmation email sent to ${form.customerEmail}.`);
-        toast.info('Confirmation email sent', {
-          description: `A receipt was sent to ${form.customerEmail}.`,
+        setEmailNotice(`Booking email sent to ${form.customerEmail}.`);
+        toast.info('Booking email sent', {
+          description: `A booking update was sent to ${form.customerEmail}.`,
         })
       }
 
@@ -191,7 +194,7 @@ export default function BarberBookingForm({ barber, services }) {
           <p className="text-sm uppercase tracking-[0.2em] text-stone-500 dark:text-amber-300">Booking details</p>
           <h1 className="text-3xl font-bold tracking-tight">Book with {barber.name}</h1>
           <p className="text-sm text-stone-600 dark:text-amber-200">
-            Fill in your details below to reserve your appointment and receive a confirmation email.
+            Fill in your details below to reserve your appointment and receive a booking update email.
           </p>
         </div>
 

@@ -97,7 +97,42 @@ export async function requestCustomerBookingNotificationPreference() {
   }
 }
 
-export async function showBookingConfirmedNotification({ providerName = 'StyleVault', serviceName = 'Appointment', appointmentDate = '', appointmentTime = '' }) {
+function getStatusNotificationContent(status = 'confirmed', providerName = 'StyleVault', serviceName = 'Appointment', appointmentDate = '', appointmentTime = '') {
+  const normalizedStatus = String(status || 'confirmed').toLowerCase()
+  const when = [appointmentDate, appointmentTime].filter(Boolean).join(' at ')
+
+  if (normalizedStatus === 'pending') {
+    return {
+      title: 'Booking request sent',
+      body: `Your booking request has been sent to ${providerName}. We will notify you when it is confirmed.`,
+      tag: `booking-pending:${providerName}:${appointmentDate}:${appointmentTime}`,
+    }
+  }
+
+  if (normalizedStatus === 'completed') {
+    return {
+      title: 'Thank you for coming',
+      body: `Thank you for visiting ${providerName}. We hope you enjoyed your appointment.`,
+      tag: `booking-completed:${providerName}:${appointmentDate}:${appointmentTime}`,
+    }
+  }
+
+  if (normalizedStatus === 'cancelled') {
+    return {
+      title: 'Booking cancelled',
+      body: `Your booking with ${providerName} has been cancelled.${when ? ` It was scheduled for ${when}.` : ''}`,
+      tag: `booking-cancelled:${providerName}:${appointmentDate}:${appointmentTime}`,
+    }
+  }
+
+  return {
+    title: 'Booking confirmed',
+    body: `${serviceName} with ${providerName}${when ? ` on ${when}` : ''} is confirmed.`,
+    tag: `booking-confirmed:${providerName}:${appointmentDate}:${appointmentTime}`,
+  }
+}
+
+export async function showBookingStatusNotification({ status = 'confirmed', providerName = 'StyleVault', serviceName = 'Appointment', appointmentDate = '', appointmentTime = '' }) {
   if (typeof window === 'undefined' || !('Notification' in window)) {
     return { shown: false, reason: 'unsupported' }
   }
@@ -120,12 +155,12 @@ export async function showBookingConfirmedNotification({ providerName = 'StyleVa
   }
 
   try {
-    const when = [appointmentDate, appointmentTime].filter(Boolean).join(' at ')
-    new Notification('Booking confirmed', {
-      body: `${serviceName} with ${providerName}${when ? ` on ${when}` : ''}.`,
+    const content = getStatusNotificationContent(status, providerName, serviceName, appointmentDate, appointmentTime)
+    new Notification(content.title, {
+      body: content.body,
       icon: '/icon',
       badge: '/icon',
-      tag: `booking-confirmed:${providerName}:${appointmentDate}:${appointmentTime}`,
+      tag: content.tag,
     })
 
     return { shown: true }
@@ -134,4 +169,8 @@ export async function showBookingConfirmedNotification({ providerName = 'StyleVa
   }
 }
 
-export default showBookingConfirmedNotification
+export async function showBookingConfirmedNotification(options = {}) {
+  return showBookingStatusNotification({ status: 'confirmed', ...options })
+}
+
+export default showBookingStatusNotification

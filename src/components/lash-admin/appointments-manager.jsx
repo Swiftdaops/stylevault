@@ -29,7 +29,7 @@ export default function LashAppointmentsManager() {
   const [filter, setFilter] = useState('all')
   const [selectedDate, setSelectedDate] = useState(undefined)
   const [editingId, setEditingId] = useState(null)
-  const [draft, setDraft] = useState({ date: '', time: '', status: 'confirmed' })
+  const [draft, setDraft] = useState({ date: '', time: '', status: 'pending' })
 
   const loadAppointments = useCallback(async () => {
     setLoading(true)
@@ -100,6 +100,7 @@ export default function LashAppointmentsManager() {
 
         <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-md border px-3 py-2 dark:bg-stone-900">
           <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
           <option value="confirmed">Confirmed</option>
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
@@ -152,6 +153,7 @@ export default function LashAppointmentsManager() {
                   <input type="date" className="rounded-md border px-3 py-2 dark:bg-stone-900" value={draft.date} onChange={(e) => setDraft((current) => ({ ...current, date: e.target.value }))} />
                   <input type="time" className="rounded-md border px-3 py-2 dark:bg-stone-900" value={draft.time} onChange={(e) => setDraft((current) => ({ ...current, time: e.target.value }))} />
                   <select className="rounded-md border px-3 py-2 dark:bg-stone-900" value={draft.status} onChange={(e) => setDraft((current) => ({ ...current, status: e.target.value }))}>
+                    <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>

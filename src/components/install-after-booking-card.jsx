@@ -51,7 +51,7 @@ export default function InstallAfterBookingCard({
 
         <div className="min-w-0 flex-1 space-y-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Booking confirmed</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Booking request sent</p>
             <h3 className="mt-1 text-base font-semibold text-stone-950 dark:text-white">Install {appName}&apos;s booking app</h3>
             <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">{buildDescription({ serviceName, appointmentDate, appointmentTime })}</p>
           </div>

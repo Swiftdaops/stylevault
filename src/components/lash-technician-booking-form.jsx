@@ -10,7 +10,7 @@ import TimePickerDemo from './time-picker-demo';
 import { API_BASE_URL, formatCurrency } from '@/lib/lash-technician-api';
 import { getLashTechnicianStoreUrl } from '@/lib/seo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
-import { requestCustomerBookingNotificationPreference, showBookingConfirmedNotification } from '@/lib/customer-booking-notifications';
+import { requestCustomerBookingNotificationPreference, showBookingStatusNotification } from '@/lib/customer-booking-notifications';
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -128,7 +128,9 @@ export default function LashTechnicianBookingForm({ lashTechnician, services }) 
       const data = await response.json();
       if (!response.ok) throw new Error(data?.message || 'Booking failed');
 
-      setSuccess(`Booking confirmed for ${lashTechnician.name}. A confirmation email will be sent to ${form.customerEmail}.`);
+      const bookingStatus = data?.appointment?.status || 'pending'
+
+      setSuccess(`Your request has been sent to ${lashTechnician.name}. We will notify ${form.customerEmail} once the booking is confirmed.`);
       setBookingSummary({
         appName: lashTechnician.name,
         serviceName: selectedService.name,
@@ -136,12 +138,13 @@ export default function LashTechnicianBookingForm({ lashTechnician, services }) 
         appointmentTime: form.time,
       });
       setManageLink(data?.manageLink || '');
-      toast.success('Appointment confirmed', {
-        description: `${selectedService.name} was booked for ${form.date} at ${form.time}.`,
+      toast.success('Booking request sent', {
+        description: `${selectedService.name} request sent to ${lashTechnician.name} for ${form.date} at ${form.time}.`,
       })
 
       if (notificationPreference?.permission === 'granted' && !data?.customerPushResult?.sent) {
-        void showBookingConfirmedNotification({
+        void showBookingStatusNotification({
+          status: bookingStatus,
           providerName: lashTechnician.name,
           serviceName: selectedService.name,
           appointmentDate: form.date,
@@ -150,14 +153,14 @@ export default function LashTechnicianBookingForm({ lashTechnician, services }) 
       }
 
       if (data?.emailError) {
-        setEmailNotice(`Your booking was saved, but the confirmation email could not be sent right now: ${data.emailError}`);
+        setEmailNotice(`Your booking was saved, but the booking email could not be sent right now: ${data.emailError}`);
         toast.warning('Booking saved, but email is pending', {
           description: data.emailError,
         })
       } else {
-        setEmailNotice(`Confirmation email sent to ${form.customerEmail}.`);
-        toast.info('Confirmation email sent', {
-          description: `A receipt was sent to ${form.customerEmail}.`,
+        setEmailNotice(`Booking email sent to ${form.customerEmail}.`);
+        toast.info('Booking email sent', {
+          description: `A booking update was sent to ${form.customerEmail}.`,
         })
       }
 

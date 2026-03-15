@@ -42,7 +42,7 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-  const [draft, setDraft] = useState({ date: '', time: '', status: 'confirmed' })
+  const [draft, setDraft] = useState({ date: '', time: '', status: 'pending' })
   const [bookedTimes, setBookedTimes] = useState([])
 
   const providerType = initialProviderType || tenant?.type || searchParams.get('provider') || ''
@@ -74,7 +74,7 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
       setDraft({
         date: data?.appointment?.date || '',
         time: data?.appointment?.time || '',
-        status: data?.appointment?.status || 'confirmed',
+        status: data?.appointment?.status || 'pending',
       })
     } catch (loadError) {
       setError(loadError?.message || 'Unable to load this booking right now.')
@@ -135,7 +135,7 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
       setDraft({
         date: updated?.appointment?.date || '',
         time: updated?.appointment?.time || '',
-        status: updated?.appointment?.status || 'confirmed',
+        status: updated?.appointment?.status || 'pending',
       })
       toast.success('Booking updated', {
         description: updated?.appointment?.status === 'cancelled'
@@ -211,7 +211,7 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
             <p className="mt-2 text-sm text-stone-600 dark:text-stone-300">Review your booking, change the date or time, or cancel it from this page.</p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
-            <span className={`rounded-full px-3 py-1 font-medium ${theme.badge}`}>{appointment?.status || 'confirmed'}</span>
+            <span className={`rounded-full px-3 py-1 font-medium ${theme.badge}`}>{appointment?.status || 'pending'}</span>
             {provider?.label ? <span className="rounded-full bg-stone-100 px-3 py-1 font-medium text-stone-800 dark:bg-stone-900 dark:text-stone-200">{provider.label}</span> : null}
           </div>
         </div>
