@@ -12,6 +12,8 @@ export default function Navbar({ isTenantHost = false }) {
 
   if (isTenantHost) return null
 
+  if (pathname?.startsWith('/demo')) return null
+
   // hide the public navbar on admin pages
   if (pathname && (pathname.startsWith('/barbers/admin') || pathname.startsWith('/hair-specialists/admin') || pathname.startsWith('/nail-technicians/admin') || pathname.startsWith('/lash-technicians/admin') || pathname.startsWith('/makeup-artists/admin'))) return null
 
