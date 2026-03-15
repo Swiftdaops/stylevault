@@ -54,9 +54,7 @@ export async function requestCustomerBookingNotificationPreference() {
       }
     }
 
-    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-      scope: '/firebase-cloud-messaging-push-scope',
-    })
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
 
     const token = await getToken(messaging, {
       vapidKey: firebaseVapidKey,

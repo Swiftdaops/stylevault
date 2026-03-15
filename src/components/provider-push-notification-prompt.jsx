@@ -6,9 +6,7 @@ import { firebaseVapidKey, getBrowserMessaging, isFirebaseMessagingConfigured } 
 import { registerPushDeviceToken, savePushDevicePreference } from '@/lib/push-notifications'
 
 async function registerCurrentBrowser(messaging) {
-  const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-    scope: '/firebase-cloud-messaging-push-scope',
-  })
+  const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
   const token = await getToken(messaging, {
     vapidKey: firebaseVapidKey,
     serviceWorkerRegistration: registration,
