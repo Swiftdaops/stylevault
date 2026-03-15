@@ -10,6 +10,7 @@ import TenantShell from '@/components/tenant-shell';
 import { extractTenantSlugFromHost } from '@/lib/seo';
 import { resolveTenantProfileBySlug } from '@/lib/tenant';
 import Hero from '@/components/hero';
+import HomeInstallActions from '@/components/home-install-actions';
 
 export async function generateMetadata() {
   const headersList = await headers();
@@ -120,6 +121,11 @@ export default async function Home() {
   return (
     <div>
     <Hero />
+    <div className="bg-orange-50 px-4 pb-20 text-stone-950 dark:bg-black dark:text-amber-500">
+      <div className="mx-auto max-w-6xl">
+        <HomeInstallActions className="pt-6" />
+      </div>
+    </div>
     </div>
   );
 }
