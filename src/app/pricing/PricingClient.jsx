@@ -4,13 +4,13 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/components/auth-provider"
 import { API_BASE_URL } from "@/lib/barber-api"
 
-export default function PricingClient() {
+export default function PricingClient({ initialPricing }) {
   const [billing, setBilling] = useState("monthly")
   const { barber } = useAuth()
 
   const price = {
-    monthly: "₦35,000",
-    yearly: "₦350,000",
+    monthly: initialPricing?.monthlyDisplay || "$30",
+    yearly: initialPricing?.yearlyDisplay || "$100",
   }
 
   const [showForm, setShowForm] = useState(false)
@@ -68,7 +68,8 @@ export default function PricingClient() {
     <section className="py-20 bg-orange-50 dark:bg-stone-950 text-center">
       <div className="max-w-5xl mx-auto px-4">
         <h1 className="text-4xl font-bold mb-4 text-stone-900 dark:text-amber-50">StyleVault Pricing</h1>
-        <p className="text-sm text-stone-600 dark:text-amber-300 mb-8">Start free and upgrade when your barber business grows.</p>
+        <p className="text-sm text-stone-600 dark:text-amber-300 mb-2">Start free and upgrade when your barber business grows.</p>
+       
 
         <div className="flex justify-center gap-4 mb-10">
           <button
@@ -84,7 +85,7 @@ export default function PricingClient() {
             aria-pressed={billing === "yearly"}
             className={`px-6 py-2 rounded-full ${billing === "yearly" ? "bg-stone-950 text-white dark:bg-amber-500 dark:text-black" : "bg-gray-200 dark:bg-stone-800"}`}
           >
-            Yearly (Save ₦260k)
+            Yearly (Save {initialPricing?.yearlySavingsDisplay || '$260'})
           </button>
         </div>
 
@@ -111,6 +112,13 @@ export default function PricingClient() {
           <article className="border-2 border-black rounded-xl p-8 shadow-lg bg-fuchsia-50 dark:bg-stone-900">
             <h2 className="text-2xl font-semibold mb-2 text-stone-900 dark:text-amber-50">Pro</h2>
             <p className="text-3xl font-bold mb-6 text-lime-500">{price[billing]} {billing === 'monthly' ? '/ month' : '/ year'}</p>
+            <p className="mb-6 text-xs text-stone-500 dark:text-amber-300">
+              {initialPricing?.countryCode === 'NG'
+                ? 'Nigeria pricing applied.'
+                : initialPricing?.countryCode === 'US'
+                  ? 'United States pricing applied.'
+                  : `Equivalent local pricing applied for ${initialPricing?.countryLabel || 'your region'}.`}
+            </p>
             <ul className="text-left space-y-2 mb-8 text-stone-700 dark:text-amber-200">
               <li>✔ Everything in Free</li>
               <li>✔ Custom barber domain</li>
