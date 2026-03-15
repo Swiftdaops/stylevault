@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { getPublicBooking, getPublicBookingAvailability, updatePublicBooking } from '@/lib/customer-booking-api'
+import { buildICS, downloadICS, buildGoogleCalendarUrl, parseDateTime } from '@/lib/calendar'
 
 const themeMap = {
   barber: {
@@ -139,6 +140,41 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
     }
   }
 
+  const handleSetReminder = useCallback(() => {
+    if (!appointment) {
+      toast.error('Booking details not loaded')
+      return
+    }
+
+    const start = parseDateTime(appointment?.date, appointment?.time)
+    if (!start) {
+      toast.error('Booking date/time not available')
+      return
+    }
+
+    const durationMinutes = Number(appointment?.duration || appointment?.length || 60)
+    const end = new Date(start.getTime() + durationMinutes * 60000)
+
+    const title = `${service?.name || 'Appointment'} with ${provider?.name || 'StyleVault'}`
+    const description = `Booking reference: ${bookingId}`
+    const location = provider?.location || ''
+    const uid = `stylevault-${bookingId}@stylevault.app`
+
+    try {
+      const ics = buildICS({ uid, title, description, location, startDate: start, endDate: end, alarmMinutes: 30 })
+      downloadICS(ics, `stylevault-booking-${bookingId}.ics`)
+
+      if (typeof window !== 'undefined' && window.confirm('Open Google Calendar to add this event there as well?')) {
+        const url = buildGoogleCalendarUrl({ title, details: description, location, start, end })
+        window.open(url, '_blank')
+      }
+
+      toast.success('Reminder file downloaded to your device')
+    } catch (err) {
+      toast.error('Unable to create calendar reminder')
+    }
+  }, [appointment, bookingId, provider, service])
+
   if (loading) {
     return <div className={`rounded-3xl border p-6 shadow-sm ${theme.panel}`}>Loading booking…</div>
   }
@@ -209,10 +245,14 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
             ) : null}
           </dl>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3 items-center">
             {booking?.storeUrl ? (
               <Link href={booking.storeUrl} className="text-sm font-medium text-primary underline underline-offset-4">Back to storefront</Link>
             ) : null}
+
+            <Button type="button" className="ml-2 rounded-xl" onClick={handleSetReminder} disabled={!appointment?.date || !appointment?.time}>
+              Set reminder
+            </Button>
           </div>
         </section>
 
