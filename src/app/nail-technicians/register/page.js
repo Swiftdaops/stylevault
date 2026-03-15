@@ -1,4 +1,6 @@
 import NailTechnicianSignupForm from '@/components/nail-technician-signup-form'
+import { headers } from 'next/headers'
+import { getVisitorCountryCode } from '@/lib/request-country'
 
 export const metadata = {
   title: 'Nail Technician Sign Up | StyleVault',
@@ -9,7 +11,9 @@ export const metadata = {
   },
 }
 
-export default function NailTechnicianRegisterPage() {
+export default async function NailTechnicianRegisterPage() {
+  const visitorCountry = getVisitorCountryCode(await headers())
+
   return (
     <div className="min-h-screen bg-fuchsia-50 dark:bg-black">
       <main className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-4 py-24">
@@ -19,7 +23,7 @@ export default function NailTechnicianRegisterPage() {
             <p className="text-sm text-stone-700 dark:text-fuchsia-300">Create an account to manage bookings and nail services.</p>
           </div>
 
-          <NailTechnicianSignupForm />
+          <NailTechnicianSignupForm initialCountry={visitorCountry} />
         </div>
       </main>
     </div>

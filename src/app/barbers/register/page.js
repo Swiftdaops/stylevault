@@ -1,4 +1,6 @@
 import BarberSignupForm from '@/components/barber-signup-form'
+import { headers } from 'next/headers'
+import { getVisitorCountryCode } from '@/lib/request-country'
 
 export const metadata = {
   title: 'Barber Sign Up | StyleVault',
@@ -9,7 +11,9 @@ export const metadata = {
   },
 }
 
-export default function BarberRegisterPage() {
+export default async function BarberRegisterPage() {
+  const visitorCountry = getVisitorCountryCode(await headers())
+
   return (
     <div className="min-h-screen bg-orange-50 dark:bg-black">
       <main className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-4 py-24">
@@ -19,7 +23,7 @@ export default function BarberRegisterPage() {
             <p className="text-sm text-stone-700 dark:text-amber-300">Create an account to manage bookings and services.</p>
           </div>
 
-          <BarberSignupForm />
+          <BarberSignupForm initialCountry={visitorCountry} />
         </div>
       </main>
     </div>

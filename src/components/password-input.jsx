@@ -7,6 +7,7 @@ export default function PasswordInput({
   label,
   value,
   onChange,
+  onBlur,
   labelClassName = '',
   inputClassName = '',
   required = true,
@@ -14,6 +15,7 @@ export default function PasswordInput({
   autoComplete = 'new-password',
   placeholder = 'Enter password',
   helpText = '',
+  errorText = '',
 }) {
   const [visible, setVisible] = useState(false)
 
@@ -27,8 +29,10 @@ export default function PasswordInput({
           minLength={minLength}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           autoComplete={autoComplete}
           placeholder={placeholder}
+          aria-invalid={Boolean(errorText)}
           className={`${inputClassName} pr-12`}
         />
         <button
@@ -40,7 +44,8 @@ export default function PasswordInput({
           {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
       </div>
-      {helpText ? <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{helpText}</p> : null}
+      {errorText ? <p className="mt-1 text-xs text-destructive">{errorText}</p> : null}
+      {!errorText && helpText ? <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{helpText}</p> : null}
     </div>
   )
 }
