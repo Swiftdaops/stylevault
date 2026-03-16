@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import AdminUpgradeButton from '@/components/admin-upgrade-button'
 import { Button } from '@/components/ui/button'
 import { useLashTechnicianAuth } from '@/components/lash-technician-auth-provider'
 import { getLashTechnicianStoreUrl } from '@/lib/seo'
@@ -25,6 +26,7 @@ export default function LashAdminHeader({ isSidebarOpen = false, onMenuToggle })
         </div>
 
         <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+          <AdminUpgradeButton niche="lash" />
           <Button asChild variant="outline">
             <Link href={getLashTechnicianStoreUrl(lashTechnician?.slug)}>View profile</Link>
           </Button>

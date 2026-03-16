@@ -1,4 +1,4 @@
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://stylevault.site';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.stylevault.site';
 export const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || new URL(SITE_URL).hostname.replace(/^www\./, '');
 
 const RESERVED_SUBDOMAINS = new Set(['www']);

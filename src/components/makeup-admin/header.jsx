@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import AdminUpgradeButton from '@/components/admin-upgrade-button'
 import { Button } from '@/components/ui/button'
 import { useMakeupArtistAuth } from '@/components/makeup-artist-auth-provider'
 import { getMakeupArtistStoreUrl } from '@/lib/seo'
@@ -25,6 +26,7 @@ export default function MakeupAdminHeader({ isSidebarOpen = false, onMenuToggle 
         </div>
 
         <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+          <AdminUpgradeButton niche="makeup" />
           <Button asChild variant="outline">
             <Link href={getMakeupArtistStoreUrl(makeupArtist?.slug)}>View profile</Link>
           </Button>

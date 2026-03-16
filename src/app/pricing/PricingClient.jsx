@@ -188,6 +188,7 @@ export default function PricingClient({ initialPricing = {} }) {
 
             <UpgradeToProButton
               defaultPlan={billing === 'monthly' ? 'Pro Monthly' : 'Pro Yearly'}
+              defaultCountryCode={initialPricing.countryCode}
               countryLabel={countryLabel}
               pricing={price}
               className="w-full rounded-2xl bg-linear-to-r from-orange-600 to-amber-500 py-4 font-bold text-white shadow-lg transition hover:opacity-90"

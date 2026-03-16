@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from '@/components/ui/sonner'
@@ -105,6 +106,9 @@ export default async function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-title" content={appName} />
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/apple-icon" />
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-4SGMQ2QXJ2"></script>
+        <script dangerouslySetInnerHTML={{ __html: "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-4SGMQ2QXJ2');" }} />
       </head>
       <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} bg-orange-50 text-stone-950 antialiased dark:bg-stone-950 dark:text-amber-600`}>
         <ThemeProvider
@@ -119,6 +123,7 @@ export default async function RootLayout({ children }) {
           </div>
           <FooterSwitcher isTenantHost={isTenantHost} />
           <Toaster richColors position="top-right" />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>

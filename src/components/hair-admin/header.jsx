@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import AdminUpgradeButton from '@/components/admin-upgrade-button'
 import { Button } from '@/components/ui/button'
 import { useHairSpecialistAuth } from '@/components/hair-specialist-auth-provider'
 import { getHairSpecialistStoreUrl } from '@/lib/seo'
@@ -35,6 +36,7 @@ export default function HairAdminHeader({ isSidebarOpen = false, onMenuToggle })
         </div>
 
         <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+          <AdminUpgradeButton niche="hair" />
           <Button asChild variant="outline">
             <Link href={getHairSpecialistStoreUrl(hairSpecialist?.slug)}>View profile</Link>
           </Button>

@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import AdminUpgradeButton from '@/components/admin-upgrade-button'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { getBarberStoreUrl } from '@/lib/seo'
@@ -35,6 +36,7 @@ export default function AdminHeader({ isSidebarOpen = false, onMenuToggle }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+          <AdminUpgradeButton niche="barber" />
           <Button asChild variant="outline">
             <Link href={getBarberStoreUrl(barber?.slug)}>View profile</Link>
           </Button>
