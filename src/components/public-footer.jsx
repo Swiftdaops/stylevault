@@ -28,6 +28,7 @@ export default function PublicFooter() {
         <div className="flex items-center gap-4">
           <Link href="/about" className="hover:underline">About</Link>
           <Link href="/pricing" className="hover:underline">Pricing</Link>
+          <Link href="/privacy-policy" className="hover:underline">Privacy</Link>
           <Link href="/contact" className="hover:underline">Contact</Link>
         </div>
       </div>

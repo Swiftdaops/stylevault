@@ -14,6 +14,7 @@ export default async function sitemap() {
     '/about',
     '/get-started',
     '/pricing',
+    '/privacy-policy',
     '/barbers',
     '/hair-specialists',
     '/nail-technicians',

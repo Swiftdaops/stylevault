@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import PhoneNumberInput from '@/components/phone-number-input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { API_BASE_URL } from '@/lib/api-base'
+import { getLocalizedPricing } from '@/lib/pricing'
 import { buildInternationalPhoneNumber, countryOptions, normalizeCountryCode } from '@/lib/profile-options'
 
 const PRO_NICHES = [
@@ -141,10 +142,21 @@ export default function UpgradeToProButton({
     [countryLabel, selectedCountryCode],
   )
 
+  const localizedPricing = useMemo(() => {
+    if (!selectedCountryCode) return null
+    return getLocalizedPricing(selectedCountryCode)
+  }, [selectedCountryCode])
+
   const currentPlanPrice = useMemo(() => {
+    if (localizedPricing) {
+      return formState.plan === 'Pro Yearly'
+        ? localizedPricing.yearlyDisplay
+        : localizedPricing.monthlyDisplay
+    }
+
     if (!pricing) return null
     return formState.plan === 'Pro Yearly' ? pricing.yearly : pricing.monthly
-  }, [formState.plan, pricing])
+  }, [formState.plan, localizedPricing, pricing])
 
   const inputClassName = 'mt-2 h-12 w-full rounded-2xl border border-white/20 bg-white/70 px-4 text-sm text-stone-950 outline-none transition placeholder:text-stone-400 focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-stone-500 dark:focus:border-amber-400 dark:focus:ring-amber-500/10'
 
