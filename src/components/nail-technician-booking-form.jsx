@@ -11,6 +11,7 @@ import { API_BASE_URL, formatCurrency } from '@/lib/nail-technician-api';
 import { getNailTechnicianStoreUrl } from '@/lib/seo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
 import { requestCustomerBookingNotificationPreference, showBookingStatusNotification } from '@/lib/customer-booking-notifications';
+import { withBookingManagerFeedback } from '@/lib/customer-booking-links'
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -129,6 +130,10 @@ export default function NailTechnicianBookingForm({ nailTechnician, services }) 
       if (!response.ok) throw new Error(data?.message || 'Booking failed');
 
       const bookingStatus = data?.appointment?.status || 'pending'
+      const nextManageLink = withBookingManagerFeedback(data?.manageLink || '', {
+        created: '1',
+        email: data?.emailError ? 'pending' : 'sent',
+      })
 
       setSuccess(`Your request has been sent to ${nailTechnician.name}. We will notify ${form.customerEmail} once the booking is confirmed.`);
       setBookingSummary({
@@ -137,9 +142,9 @@ export default function NailTechnicianBookingForm({ nailTechnician, services }) 
         appointmentDate: form.date,
         appointmentTime: form.time,
       });
-      setManageLink(data?.manageLink || '');
+      setManageLink(nextManageLink);
       toast.success('Booking request sent', {
-        description: `${selectedService.name} request sent to ${nailTechnician.name} for ${form.date} at ${form.time}.`,
+        description: `${selectedService.name} request sent to ${nailTechnician.name}. Redirecting you to your booking details.`,
       })
 
       if (notificationPreference?.permission === 'granted' && !data?.customerPushResult?.sent) {
@@ -166,6 +171,13 @@ export default function NailTechnicianBookingForm({ nailTechnician, services }) 
 
       const whatsappUrl = buildWhatsAppUrl(nailTechnician?.whatsapp, form.customerName)
       setWhatsAppHref(whatsappUrl)
+
+      if (nextManageLink && typeof window !== 'undefined') {
+        window.setTimeout(() => {
+          window.location.assign(nextManageLink)
+        }, 150)
+        return
+      }
 
       setForm({
         customerName: '',

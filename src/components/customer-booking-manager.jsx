@@ -47,6 +47,8 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
 
   const providerType = initialProviderType || tenant?.type || searchParams.get('provider') || ''
   const accessToken = initialAccessToken || searchParams.get('access') || ''
+  const bookingCreated = searchParams.get('created') === '1'
+  const emailStatus = searchParams.get('email') || ''
   const theme = themeMap[providerType] || themeMap.barber
   const managerDisplayUrl = useMemo(() => {
     try {
@@ -203,6 +205,17 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
 
   return (
     <div className="space-y-6">
+      {bookingCreated ? (
+        <section className={`rounded-3xl border p-4 shadow-sm ${theme.panel}`}>
+          <p className={`text-sm font-semibold uppercase tracking-[0.2em] ${theme.accent}`}>Booking received</p>
+          <p className="mt-2 text-sm text-stone-700 dark:text-stone-200">
+            {emailStatus === 'pending'
+              ? 'Your booking was saved successfully. Email delivery is still pending, but you can manage this appointment from this page right now.'
+              : 'Your booking was saved successfully. A booking email was sent, and you can manage this appointment from this page right now.'}
+          </p>
+        </section>
+      ) : null}
+
       <section className={`rounded-3xl border p-6 shadow-sm ${theme.panel}`}>
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>

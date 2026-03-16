@@ -1,33 +1,24 @@
 import { headers } from 'next/headers'
-import CustomerBookingManager from '@/components/customer-booking-manager'
+import CustomerBookingPageShell, { customerBookingPageMetadata } from '@/components/customer-booking-page-shell'
 import { extractTenantSlugFromHost } from '@/lib/seo'
 import { resolveTenantProfileBySlug } from '@/lib/tenant'
 
-export const metadata = {
-  title: 'Manage Booking | StyleVault',
-  robots: {
-    index: false,
-    follow: false,
-  },
-}
+export const metadata = customerBookingPageMetadata
 
 export default async function CustomerBookingPage({ params, searchParams }) {
   const { id } = await params
   const resolvedSearchParams = await searchParams
   const headersList = await headers()
-  const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '')
+  const tenantSlug = extractTenantSlugFromHost(headersList.get('host') || '') || String(resolvedSearchParams?.slug || '').trim().toLowerCase()
   const tenant = tenantSlug ? await resolveTenantProfileBySlug(tenantSlug) : null
 
   return (
-    <section className="min-h-screen bg-orange-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-stone-100">
-      <div className="mx-auto max-w-5xl">
-        <CustomerBookingManager
-          bookingId={id}
-          tenant={tenant}
-          initialProviderType={resolvedSearchParams?.provider || ''}
-          initialAccessToken={resolvedSearchParams?.access || ''}
-        />
-      </div>
-    </section>
+    <CustomerBookingPageShell
+      bookingId={id}
+      tenant={tenant}
+      initialProviderType={resolvedSearchParams?.provider || ''}
+      initialAccessToken={resolvedSearchParams?.access || ''}
+      tone="orange"
+    />
   )
 }
