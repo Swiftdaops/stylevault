@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ModeToggle from '@/components/mode-toggle'
 import { Check, Sparkles } from 'lucide-react'
-import { getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo'
+import { getCustomerBookingsUrl, getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo'
 
 const messages = [
   'Luxury gel sets — polished finishes for every mood',
@@ -17,6 +17,7 @@ export default function NailTechnicianNavbar({ nailTechnician }) {
   const [index, setIndex] = useState(0)
   const displayName = nailTechnician?.name || nailTechnician?.businessName || nailTechnician?.slug || 'Nail Technician'
   const bookingUrl = getNailTechnicianBookingUrl(nailTechnician?.slug)
+  const myBookingsUrl = getCustomerBookingsUrl(nailTechnician?.slug, 'nail-technician')
   const storefrontUrl = getNailTechnicianStoreUrl(nailTechnician?.slug)
 
   useEffect(() => {
@@ -51,6 +52,9 @@ export default function NailTechnicianNavbar({ nailTechnician }) {
         <div className="flex items-center gap-3">
           <div className="hidden text-sm font-medium text-stone-700 dark:text-fuchsia-200 sm:block">{displayName}</div>
           <ModeToggle />
+          <Link href={myBookingsUrl} className="rounded-full border border-fuchsia-200 px-3 py-2 text-xs font-semibold text-fuchsia-700 transition hover:bg-fuchsia-100 dark:border-stone-700 dark:text-fuchsia-100 dark:hover:bg-stone-900 sm:px-4 sm:text-sm">
+            My bookings
+          </Link>
           <Link href={bookingUrl} className="rounded-full bg-fuchsia-900 px-4 py-2 text-sm text-white dark:bg-fuchsia-400 dark:text-black">
             Book
           </Link>

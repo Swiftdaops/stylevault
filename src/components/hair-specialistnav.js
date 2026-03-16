@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ModeToggle from '@/components/mode-toggle'
 import { Check, Star } from 'lucide-react'
-import { getHairSpecialistBookingUrl, getHairSpecialistStoreUrl } from '@/lib/seo'
+import { getCustomerBookingsUrl, getHairSpecialistBookingUrl, getHairSpecialistStoreUrl } from '@/lib/seo'
 
 const messages = [
   "Silk Glaze — restore sumptuous, mirror-like shine to your unit",
@@ -17,6 +17,7 @@ export default function HairSpecialistNavbar({ hairSpecialist }) {
   const [index, setIndex] = useState(0)
   const displayName = hairSpecialist?.name || hairSpecialist?.businessName || hairSpecialist?.slug || 'Hair Specialist'
   const bookingUrl = getHairSpecialistBookingUrl(hairSpecialist?.slug)
+  const myBookingsUrl = getCustomerBookingsUrl(hairSpecialist?.slug, 'hair-specialist')
   const storefrontUrl = getHairSpecialistStoreUrl(hairSpecialist?.slug)
 
   useEffect(() => {
@@ -52,6 +53,12 @@ export default function HairSpecialistNavbar({ hairSpecialist }) {
         <div className="flex items-center gap-3">
           <div className="hidden sm:block text-sm text-stone-700 dark:text-rose-200 font-medium">{displayName}</div>
           <ModeToggle />
+          <Link
+            href={myBookingsUrl}
+            className="rounded-full border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 dark:border-stone-700 dark:text-rose-100 dark:hover:bg-stone-900 sm:px-4 sm:text-sm"
+          >
+            My bookings
+          </Link>
           <Link
             href={bookingUrl}
             className="rounded-full bg-rose-900 px-4 py-2 text-white text-sm dark:bg-rose-400 dark:text-black"

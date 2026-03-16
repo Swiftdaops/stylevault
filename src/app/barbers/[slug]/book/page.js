@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import BarberBookingForm from '@/components/barber-booking-form';
 import { getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
 import StorefrontInstallButton from '@/components/storefront-install-button';
-import { buildDescription, getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
+import { buildDescription, getBarberBookingUrl, getBarberStoreUrl, getCustomerBookingsUrl } from '@/lib/seo';
 
 export async function generateStaticParams() {
   const { getBarbers } = await import('@/lib/barber-api');
@@ -49,7 +49,10 @@ export default async function BarberBookPage({ params, installMode }) {
   return (
     <section className="min-h-screen bg-orange-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-amber-500">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex flex-wrap justify-end gap-3">
+          <Link href={getCustomerBookingsUrl(barber.slug, 'barber')} className="inline-flex items-center rounded-full border border-orange-300 bg-white px-4 py-2 text-sm font-semibold text-stone-900 transition hover:bg-orange-100 dark:border-stone-700 dark:bg-stone-950 dark:text-amber-100 dark:hover:bg-stone-900">
+            My bookings
+          </Link>
           <StorefrontInstallButton
             appName={`${barber.name} Booking App`}
             storefrontUrl={getBarberStoreUrl(barber.slug)}

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import LashTechnicianBookingForm from '@/components/lash-technician-booking-form';
 import { getLashTechnicianBySlug, getLashTechnicians, getServicesForLashTechnician } from '@/lib/lash-technician-api';
 import StorefrontInstallButton from '@/components/storefront-install-button';
-import { buildDescription, getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo';
+import { buildDescription, getCustomerBookingsUrl, getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo';
 
 export async function generateStaticParams() {
   const lashTechnicians = await getLashTechnicians();
@@ -38,7 +38,10 @@ export default async function LashTechnicianBookPage({ params, installMode }) {
   return (
     <section className="min-h-screen bg-violet-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-violet-400">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex flex-wrap justify-end gap-3">
+          <Link href={getCustomerBookingsUrl(lashTechnician.slug, 'lash-technician')} className="inline-flex items-center rounded-full border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-900 transition hover:bg-violet-100 dark:border-stone-700 dark:bg-stone-950 dark:text-violet-100 dark:hover:bg-stone-900">
+            My bookings
+          </Link>
           <StorefrontInstallButton
             appName={`${lashTechnician.name} Booking App`}
             storefrontUrl={getLashTechnicianStoreUrl(lashTechnician.slug)}

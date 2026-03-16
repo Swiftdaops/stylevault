@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ModeToggle from '@/components/mode-toggle'
 import { Check, Sparkles } from 'lucide-react'
-import { getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo'
+import { getCustomerBookingsUrl, getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo'
 
 const messages = [
   'Classic sets — soft definition with clean lash mapping',
@@ -17,6 +17,7 @@ export default function LashTechnicianNavbar({ lashTechnician }) {
   const [index, setIndex] = useState(0)
   const displayName = lashTechnician?.name || lashTechnician?.businessName || lashTechnician?.slug || 'Lash Technician'
   const bookingUrl = getLashTechnicianBookingUrl(lashTechnician?.slug)
+  const myBookingsUrl = getCustomerBookingsUrl(lashTechnician?.slug, 'lash-technician')
   const storefrontUrl = getLashTechnicianStoreUrl(lashTechnician?.slug)
 
   useEffect(() => {
@@ -51,6 +52,9 @@ export default function LashTechnicianNavbar({ lashTechnician }) {
         <div className="flex items-center gap-3">
           <div className="hidden text-sm font-medium text-stone-700 dark:text-violet-200 sm:block">{displayName}</div>
           <ModeToggle />
+          <Link href={myBookingsUrl} className="rounded-full border border-violet-200 px-3 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-100 dark:border-stone-700 dark:text-violet-100 dark:hover:bg-stone-900 sm:px-4 sm:text-sm">
+            My bookings
+          </Link>
           <Link href={bookingUrl} className="rounded-full bg-violet-900 px-4 py-2 text-sm text-white dark:bg-violet-400 dark:text-black">
             Book
           </Link>

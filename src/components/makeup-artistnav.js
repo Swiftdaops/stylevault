@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ModeToggle from '@/components/mode-toggle'
 import { Check, Sparkles } from 'lucide-react'
-import { getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo'
+import { getCustomerBookingsUrl, getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo'
 
 const messages = [
   'Bridal glam — polished looks for unforgettable moments',
@@ -17,6 +17,7 @@ export default function MakeupArtistNavbar({ makeupArtist }) {
   const [index, setIndex] = useState(0)
   const displayName = makeupArtist?.name || makeupArtist?.businessName || makeupArtist?.slug || 'Makeup Artist'
   const bookingUrl = getMakeupArtistBookingUrl(makeupArtist?.slug)
+  const myBookingsUrl = getCustomerBookingsUrl(makeupArtist?.slug, 'makeup-artist')
   const storefrontUrl = getMakeupArtistStoreUrl(makeupArtist?.slug)
 
   useEffect(() => {
@@ -51,6 +52,9 @@ export default function MakeupArtistNavbar({ makeupArtist }) {
         <div className="flex items-center gap-3">
           <div className="hidden text-sm font-medium text-stone-700 dark:text-rose-200 sm:block">{displayName}</div>
           <ModeToggle />
+          <Link href={myBookingsUrl} className="rounded-full border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 dark:border-stone-700 dark:text-rose-100 dark:hover:bg-stone-900 sm:px-4 sm:text-sm">
+            My bookings
+          </Link>
           <Link href={bookingUrl} className="rounded-full bg-rose-900 px-4 py-2 text-sm text-white dark:bg-rose-400 dark:text-black">
             Book
           </Link>

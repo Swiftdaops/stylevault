@@ -11,7 +11,7 @@ import { API_BASE_URL, formatCurrency } from '@/lib/makeup-artist-api';
 import { getMakeupArtistStoreUrl } from '@/lib/seo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
 import { requestCustomerBookingNotificationPreference, showBookingStatusNotification } from '@/lib/customer-booking-notifications';
-import { withBookingManagerFeedback } from '@/lib/customer-booking-links'
+import { saveStoredCustomerBooking, withBookingManagerFeedback } from '@/lib/customer-booking-links'
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -133,6 +133,19 @@ export default function MakeupArtistBookingForm({ makeupArtist, services }) {
       const nextManageLink = withBookingManagerFeedback(data?.manageLink || '', {
         created: '1',
         email: data?.emailError ? 'pending' : 'sent',
+      })
+
+      saveStoredCustomerBooking({
+        bookingId: data?.appointment?._id || data?.appointment?.id,
+        manageLink: data?.manageLink,
+        storeUrl: getMakeupArtistStoreUrl(makeupArtist?.slug),
+        providerType: 'makeup-artist',
+        providerName: makeupArtist?.name,
+        providerSlug: makeupArtist?.slug,
+        serviceName: selectedService.name,
+        appointmentDate: form.date,
+        appointmentTime: form.time,
+        status: bookingStatus,
       })
 
       setSuccess(`Your request has been sent to ${makeupArtist.name}. We will notify ${form.customerEmail} once the booking is confirmed.`);

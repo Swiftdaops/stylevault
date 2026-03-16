@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import ModeToggle from '@/components/mode-toggle'
 import { Check } from 'lucide-react'
-import { getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo'
+import { getBarberBookingUrl, getBarberStoreUrl, getCustomerBookingsUrl } from '@/lib/seo'
 
 const messages = [
   "Clean. Precise. Professional.",
@@ -15,6 +15,7 @@ const messages = [
 
 export default function BarberNavbar({ barber }) {
   const [index, setIndex] = useState(0)
+  const myBookingsUrl = getCustomerBookingsUrl(barber?.slug, 'barber')
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,6 +46,12 @@ export default function BarberNavbar({ barber }) {
 
         <div className="flex items-center gap-3">
           <ModeToggle />
+          <Link
+            href={myBookingsUrl}
+            className="rounded-full border border-stone-300 px-3 py-2 text-xs font-semibold text-stone-700 transition hover:bg-stone-100 dark:border-stone-700 dark:text-amber-100 dark:hover:bg-stone-900 sm:px-4 sm:text-sm"
+          >
+            My bookings
+          </Link>
           <Link
             href={getBarberBookingUrl(barber?.slug)}
             className="rounded-full bg-black px-4 py-2 text-white text-sm dark:bg-amber-500 dark:text-black"

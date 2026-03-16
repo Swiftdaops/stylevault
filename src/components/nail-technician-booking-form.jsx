@@ -11,7 +11,7 @@ import { API_BASE_URL, formatCurrency } from '@/lib/nail-technician-api';
 import { getNailTechnicianStoreUrl } from '@/lib/seo';
 import InstallAfterBookingCard from '@/components/install-after-booking-card'
 import { requestCustomerBookingNotificationPreference, showBookingStatusNotification } from '@/lib/customer-booking-notifications';
-import { withBookingManagerFeedback } from '@/lib/customer-booking-links'
+import { saveStoredCustomerBooking, withBookingManagerFeedback } from '@/lib/customer-booking-links'
 
 function buildWhatsAppUrl(rawPhone, customerName) {
   const phone = String(rawPhone || '').replace(/\D/g, '');
@@ -133,6 +133,19 @@ export default function NailTechnicianBookingForm({ nailTechnician, services }) 
       const nextManageLink = withBookingManagerFeedback(data?.manageLink || '', {
         created: '1',
         email: data?.emailError ? 'pending' : 'sent',
+      })
+
+      saveStoredCustomerBooking({
+        bookingId: data?.appointment?._id || data?.appointment?.id,
+        manageLink: data?.manageLink,
+        storeUrl: getNailTechnicianStoreUrl(nailTechnician?.slug),
+        providerType: 'nail-technician',
+        providerName: nailTechnician?.name,
+        providerSlug: nailTechnician?.slug,
+        serviceName: selectedService.name,
+        appointmentDate: form.date,
+        appointmentTime: form.time,
+        status: bookingStatus,
       })
 
       setSuccess(`Your request has been sent to ${nailTechnician.name}. We will notify ${form.customerEmail} once the booking is confirmed.`);

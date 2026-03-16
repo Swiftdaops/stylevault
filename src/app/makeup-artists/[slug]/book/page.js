@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import MakeupArtistBookingForm from '@/components/makeup-artist-booking-form';
 import { getMakeupArtistBySlug, getMakeupArtists, getServicesForMakeupArtist } from '@/lib/makeup-artist-api';
 import StorefrontInstallButton from '@/components/storefront-install-button';
-import { buildDescription, getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo';
+import { buildDescription, getCustomerBookingsUrl, getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo';
 
 export async function generateStaticParams() {
   const makeupArtists = await getMakeupArtists();
@@ -38,7 +38,10 @@ export default async function MakeupArtistBookPage({ params, installMode }) {
   return (
     <section className="min-h-screen bg-rose-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-rose-400">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex flex-wrap justify-end gap-3">
+          <Link href={getCustomerBookingsUrl(makeupArtist.slug, 'makeup-artist')} className="inline-flex items-center rounded-full border border-rose-300 bg-white px-4 py-2 text-sm font-semibold text-rose-900 transition hover:bg-rose-100 dark:border-stone-700 dark:bg-stone-950 dark:text-rose-100 dark:hover:bg-stone-900">
+            My bookings
+          </Link>
           <StorefrontInstallButton
             appName={`${makeupArtist.name} Booking App`}
             storefrontUrl={getMakeupArtistStoreUrl(makeupArtist.slug)}

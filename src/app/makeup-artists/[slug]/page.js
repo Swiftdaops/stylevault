@@ -4,7 +4,7 @@ import LiveMakeupArtistCalendar from '@/components/live-makeup-artist-calendar';
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getMakeupArtistBySlug, getMakeupArtists, getServicesForMakeupArtist } from '@/lib/makeup-artist-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo';
+import { getCustomerBookingsUrl, getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -95,6 +95,7 @@ export default async function MakeupArtistPage({ params, installMode }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getMakeupArtistBookingUrl(makeupArtist.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-rose-400 dark:text-black dark:hover:bg-rose-300">Book with {makeupArtist.name}</Link>
+              <Link href={getCustomerBookingsUrl(makeupArtist.slug, 'makeup-artist')} className="inline-flex rounded-full border border-rose-300 bg-white px-5 py-3 text-sm font-semibold text-rose-900 transition hover:bg-rose-100 dark:border-stone-700 dark:bg-stone-950 dark:text-rose-100 dark:hover:bg-stone-900">My bookings</Link>
               <StorefrontInstallButton
                 appName={`${makeupArtist.name} Booking App`}
                 storefrontUrl={getMakeupArtistStoreUrl(makeupArtist.slug)}

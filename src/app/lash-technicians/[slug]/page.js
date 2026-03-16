@@ -4,7 +4,7 @@ import LiveLashTechnicianCalendar from '@/components/live-lash-technician-calend
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getLashTechnicianBySlug, getLashTechnicians, getServicesForLashTechnician } from '@/lib/lash-technician-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo';
+import { getCustomerBookingsUrl, getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -95,6 +95,7 @@ export default async function LashTechnicianPage({ params, installMode }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getLashTechnicianBookingUrl(lashTechnician.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-violet-400 dark:text-black dark:hover:bg-violet-300">Book with {lashTechnician.name}</Link>
+              <Link href={getCustomerBookingsUrl(lashTechnician.slug, 'lash-technician')} className="inline-flex rounded-full border border-violet-300 bg-white px-5 py-3 text-sm font-semibold text-violet-900 transition hover:bg-violet-100 dark:border-stone-700 dark:bg-stone-950 dark:text-violet-100 dark:hover:bg-stone-900">My bookings</Link>
               <StorefrontInstallButton
                 appName={`${lashTechnician.name} Booking App`}
                 storefrontUrl={getLashTechnicianStoreUrl(lashTechnician.slug)}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { CheckCircle2, Crown, MapPin, Sparkles, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import PhoneNumberInput from '@/components/phone-number-input'
@@ -85,6 +86,7 @@ export default function UpgradeToProButton({
     [countryLabel, defaultCountryCode],
   )
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [submitSuccess, setSubmitSuccess] = useState(null)
@@ -96,6 +98,10 @@ export default function UpgradeToProButton({
     plan: defaultPlan,
     niche: defaultNiche,
   })
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     setFormState((current) => ({
@@ -121,9 +127,18 @@ export default function UpgradeToProButton({
 
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+        setSubmitError('')
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
 
     return () => {
       document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleEscape)
     }
   }, [open])
 
@@ -223,14 +238,9 @@ export default function UpgradeToProButton({
     }
   }
 
-  return (
-    <>
-      <button type="button" onClick={openModal} className={className}>
-        {label}
-      </button>
-
-      {open ? (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 p-3 backdrop-blur-md sm:p-4">
+  const modalContent = open ? (
+    <div className="fixed inset-0 z-120 overflow-y-auto bg-black/60 p-3 backdrop-blur-md sm:p-4">
+      <div className="min-h-full">
           <motion.div
             initial={{ opacity: 0, y: 28, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -459,8 +469,17 @@ export default function UpgradeToProButton({
               </div>
             </div>
           </motion.div>
-        </div>
-      ) : null}
+      </div>
+    </div>
+  ) : null
+
+  return (
+    <>
+      <button type="button" onClick={openModal} className={className}>
+        {label}
+      </button>
+
+      {mounted && modalContent ? createPortal(modalContent, document.body) : null}
     </>
   )
 }

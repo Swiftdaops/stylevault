@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import NailTechnicianBookingForm from '@/components/nail-technician-booking-form';
 import { getNailTechnicianBySlug, getNailTechnicians, getServicesForNailTechnician } from '@/lib/nail-technician-api';
 import StorefrontInstallButton from '@/components/storefront-install-button';
-import { buildDescription, getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo';
+import { buildDescription, getCustomerBookingsUrl, getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo';
 
 export async function generateStaticParams() {
   const nailTechnicians = await getNailTechnicians();
@@ -38,7 +38,10 @@ export default async function NailTechnicianBookPage({ params, installMode }) {
   return (
     <section className="min-h-screen bg-fuchsia-50 px-4 py-12 text-stone-950 dark:bg-black dark:text-fuchsia-400">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex flex-wrap justify-end gap-3">
+          <Link href={getCustomerBookingsUrl(nailTechnician.slug, 'nail-technician')} className="inline-flex items-center rounded-full border border-fuchsia-300 bg-white px-4 py-2 text-sm font-semibold text-fuchsia-900 transition hover:bg-fuchsia-100 dark:border-stone-700 dark:bg-stone-950 dark:text-fuchsia-100 dark:hover:bg-stone-900">
+            My bookings
+          </Link>
           <StorefrontInstallButton
             appName={`${nailTechnician.name} Booking App`}
             storefrontUrl={getNailTechnicianStoreUrl(nailTechnician.slug)}

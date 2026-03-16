@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { formatCurrency, getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getBarberBookingUrl, getBarberStoreUrl } from '@/lib/seo';
+import { getBarberBookingUrl, getBarberStoreUrl, getCustomerBookingsUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 import LiveBarberCalendar from '@/components/live-barber-calendar';
 
@@ -143,6 +143,9 @@ export default async function BarberShopPage({ params, installMode }) {
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getBarberBookingUrl(barber.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-amber-500 dark:text-black dark:hover:bg-amber-400">
                 Book with {barber.name}
+              </Link>
+              <Link href={getCustomerBookingsUrl(barber.slug, 'barber')} className="inline-flex rounded-full border border-orange-300 bg-white px-5 py-3 text-sm font-semibold text-stone-900 transition hover:bg-orange-100 dark:border-stone-700 dark:bg-stone-950 dark:text-amber-100 dark:hover:bg-stone-900">
+                My bookings
               </Link>
               <StorefrontInstallButton
                 appName={`${barber.name} Booking App`}

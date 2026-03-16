@@ -4,7 +4,7 @@ import LiveNailTechnicianCalendar from '@/components/live-nail-technician-calend
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getNailTechnicianBySlug, getNailTechnicians, getServicesForNailTechnician } from '@/lib/nail-technician-api';
 import { getSocialLinksList } from '@/lib/social-links';
-import { getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo';
+import { getCustomerBookingsUrl, getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
 
 export async function generateStaticParams() {
@@ -95,6 +95,7 @@ export default async function NailTechnicianPage({ params, installMode }) {
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href={getNailTechnicianBookingUrl(nailTechnician.slug)} className="inline-flex rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-fuchsia-400 dark:text-black dark:hover:bg-fuchsia-300">Book with {nailTechnician.name}</Link>
+              <Link href={getCustomerBookingsUrl(nailTechnician.slug, 'nail-technician')} className="inline-flex rounded-full border border-fuchsia-300 bg-white px-5 py-3 text-sm font-semibold text-fuchsia-900 transition hover:bg-fuchsia-100 dark:border-stone-700 dark:bg-stone-950 dark:text-fuchsia-100 dark:hover:bg-stone-900">My bookings</Link>
               <StorefrontInstallButton
                 appName={`${nailTechnician.name} Booking App`}
                 storefrontUrl={getNailTechnicianStoreUrl(nailTechnician.slug)}

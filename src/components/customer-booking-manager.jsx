@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { getPublicBooking, getPublicBookingAvailability, updatePublicBooking } from '@/lib/customer-booking-api'
 import { buildICS, downloadICS, buildGoogleCalendarUrl, parseDateTime } from '@/lib/calendar'
+import { syncStoredCustomerBookingFromPayload } from '@/lib/customer-booking-links'
 
 const themeMap = {
   barber: {
@@ -111,9 +112,24 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
     loadAvailability()
   }, [booking?.appointment?.date, booking?.appointment?.provider?.id, booking?.appointment?.time, draft.date, providerType])
 
+  const appointment = booking?.appointment
+  const provider = appointment?.provider
+  const service = appointment?.service
+
+  useEffect(() => {
+    if (!booking?.manageLink) return
+    syncStoredCustomerBookingFromPayload(booking)
+  }, [booking])
+
   const canSave = useMemo(() => (
     Boolean(booking?.appointment?.canCustomerEdit) && !saving && draft.date && draft.time
   ), [booking?.appointment?.canCustomerEdit, draft.date, draft.time, saving])
+
+  const bookingLockedMessage = appointment?.status === 'pending'
+    ? `${provider?.name || 'This provider'} has not confirmed this booking yet. Once it is confirmed, you will be able to update or cancel it from this page.`
+    : appointment?.status === 'cancelled'
+      ? 'This booking has been cancelled and can no longer be changed.'
+      : 'This booking is completed and can no longer be changed.'
 
   const handleSave = async () => {
     if (!canSave) return
@@ -163,7 +179,7 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
       return
     }
 
-    const durationMinutes = Number(appointment?.duration || appointment?.length || 60)
+    const durationMinutes = Number(appointment?.duration || appointment?.length || service?.duration || 60)
     const end = new Date(start.getTime() + durationMinutes * 60000)
 
     const title = `${service?.name || 'Appointment'} with ${provider?.name || 'StyleVault'}`
@@ -193,15 +209,6 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
   if (error && !booking) {
     return <div className={`rounded-3xl border p-6 shadow-sm ${theme.panel}`}><p className="text-sm text-red-600">{error}</p></div>
   }
-
-  const appointment = booking?.appointment
-  const provider = appointment?.provider
-  const service = appointment?.service
-  const bookingLockedMessage = appointment?.status === 'pending'
-    ? `${provider?.name || 'This provider'} has not confirmed this booking yet. Once it is confirmed, you will be able to update or cancel it from this page.`
-    : appointment?.status === 'cancelled'
-      ? 'This booking has been cancelled and can no longer be changed.'
-      : 'This booking is completed and can no longer be changed.'
 
   return (
     <div className="space-y-6">

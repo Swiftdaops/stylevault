@@ -85,6 +85,16 @@ export function isTenantBrowserHost() {
   return Boolean(extractTenantSlugFromHost(window.location.host));
 }
 
+export function getCustomerBookingsUrl(slug = '', providerType = '') {
+  if (!slug) return '/my-bookings';
+
+  if (process.env.NODE_ENV !== 'production') {
+    return `/my-bookings${buildQueryString({ slug, provider: providerType })}`;
+  }
+
+  return buildTenantSubdomainUrl(slug, '/my-bookings', providerType ? { provider: providerType } : {});
+}
+
 export function getBarberStoreUrl(slug) {
   if (!slug) return '/barbers';
 
