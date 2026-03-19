@@ -5,6 +5,7 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { Eye, Sparkles, Droplets, Heart, ArrowRight } from "lucide-react"
 import DemoBookingNotice from "./DemoBookingNotice"
+import UpgradeToProButton from "@/components/pro-upgrade-button"
 
 const lashServices = [
   {
@@ -147,9 +148,10 @@ export default function LashTechServices() {
             <p className="mb-12 max-w-xl mx-auto text-pink-100/70 text-lg font-light">
                 Manage your lash inventory, send automatic aftercare SMS, and showcase your portfolio with Pro.
             </p>
-            <button className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-pink-500 px-12 py-5 font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-pink-600 hover:scale-105 shadow-2xl shadow-pink-500/50">
-                Upgrade to Pro
-            </button>
+            <UpgradeToProButton
+              defaultNiche="Lash Technician"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-pink-500 px-12 py-5 font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-pink-600 hover:scale-105 shadow-2xl shadow-pink-500/50"
+            />
         </motion.div>
       </div>
     </section>

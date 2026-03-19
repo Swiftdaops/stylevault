@@ -41,7 +41,7 @@ export default function DemoFooter() {
   const brandData = brandMessages[pathname]
 
   return (
-    <footer className="border-t border-stone-200  dark:border-white/10 dark:bg-stone-950/90">
+    <footer className="border-t border-stone-200  dark:border-white/10 dark:bg-stone-950">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
 
         {/* LEFT */}
@@ -60,18 +60,18 @@ export default function DemoFooter() {
                     A message from {brandData.brand}
                   </div>
 
-                  <h2 className="mt-5 text-3xl font-black tracking-tight text-stone-950 dark:text-white sm:text-4xl">
+                  <h2 className="mt-5 text-3xl font-black tracking-tight text-stone-950 dark:text-gray-300 sm:text-4xl">
                     {brandData.message}
                   </h2>
 
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-600 dark:text-stone-300 sm:text-base">
+                  <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400 dark:text-black-300 sm:text-base">
                     This is what a premium storefront feels like — designed to
                     attract clients, build trust, and grow your business effortlessly.
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="inline-flex items-center rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-orange-700 dark:text-orange-300">
+                  <div className="inline-flex items-center rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-stone-700 dark:text-black-300">
                     StyleVault Pro Preview
                   </div>
 
@@ -106,10 +106,10 @@ export default function DemoFooter() {
 
           {/* DEMO LINKS */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-stone-400">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-500 dark:text-stone-400">
               Demo routes
             </h3>
-            <ul className="mt-4 space-y-3 text-sm text-stone-600 dark:text-stone-300">
+            <ul className="mt-4 space-y-3 text-sm text-orange-50 dark:text-stone-300">
               {demoLinks.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -125,10 +125,10 @@ export default function DemoFooter() {
 
           {/* VALUE */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-stone-400">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-500 dark:text-stone-400">
               Why Pro works
             </h3>
-            <ul className="mt-4 space-y-3 text-sm text-stone-600 dark:text-stone-300">
+            <ul className="mt-4 space-y-3 text-sm text-orange-50 dark:text-stone-300">
               <li>Custom professional domain</li>
               <li>SEO-optimized storefront</li>
               <li>Reviews and social proof</li>

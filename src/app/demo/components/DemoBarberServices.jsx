@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Scissors, Sparkles, Zap, ShieldCheck } from "lucide-react"
+import UpgradeToProButton from "@/components/pro-upgrade-button"
 
 const barberServices = [
   {
@@ -87,9 +88,10 @@ export default function BarberServices() {
           <p className="mx-auto mb-10 max-w-xl text-lg opacity-70">
             Unlock advanced booking, custom SMS alerts, and personalized client profiles with our Pro Barber suite.
           </p>
-          <button className="rounded-full bg-yellow-800 px-12 py-5 text-lg font-black uppercase tracking-[0.2em] shadow-2xl shadow-pink-500/40 transition hover:bg-pink-600 hover:scale-105 active:scale-95">
-            Upgrade to Pro
-          </button>
+          <UpgradeToProButton
+            defaultNiche="Barber"
+            className="rounded-full bg-yellow-800 px-12 py-5 text-lg font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-pink-500/40 transition hover:bg-pink-600 hover:scale-105 active:scale-95"
+          />
         </motion.div>
 
       </div>

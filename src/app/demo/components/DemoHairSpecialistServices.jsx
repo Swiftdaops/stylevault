@@ -3,27 +3,28 @@
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles } from "lucide-react"
+import UpgradeToProButton from "@/components/pro-upgrade-button"
 
 const servicesList = [
   {
     title: "Wig Revamp & Styling",
     description: "Breath new life into your favorite units with professional cleaning, plucking, and restyling.",
-    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773873328/%D0%A3%D0%BA%D0%BB%D0%B0%D0%B4%D0%BA%D0%B8_dennuk.jpg",
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773922171/jpg_1_fvwwzy.jpg",
   },
   {
-    title: "Custom Wig Install",
+    title: "Wig Install",
     description: "Flawless, melt-into-skin lace installations tailored to your unique hairline and face shape.",
-    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545567/When_y_uc2gp4.jpg",
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773922396/photoshoot_inspo_qrne6q.jpg",
   },
   {
     title: "Silk Press & Blowouts",
     description: "Get that signature glass-hair finish without compromising the health of your natural curls.",
-    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773873328/%D0%A3%D0%BA%D0%BB%D0%B0%D0%B4%D0%BA%D0%B8_dennuk.jpg",
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773922652/jpg_2_zwlucs.jpg",
   },
   {
     title: "Color Correction & Highlights",
     description: "From subtle balayage to bold transformations, we prioritize hair integrity and vibrant results.",
-    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545567/When_y_uc2gp4.jpg",
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773922650/jpg_3_edmngf.jpg",
   },
 ]
 
@@ -57,7 +58,7 @@ export default function RedesignedServices() {
             >
               {/* Image Side */}
               <div className="w-full md:w-1/2">
-                <div className="group relative aspect-[4/3] overflow-hidden rounded-3xl border-4 border-white/20 dark:border-stone-800 shadow-2xl">
+                <div className="group relative aspect-4/3 overflow-hidden rounded-3xl border-4 border-white/20 dark:border-stone-800 shadow-2xl">
                   <Image
                     src={service.image}
                     alt={service.title}
@@ -102,9 +103,10 @@ export default function RedesignedServices() {
             <p className="mb-8 max-w-md opacity-70">
                 Get access to advanced analytics, custom branding, and priority booking features.
             </p>
-            <button className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-pink-500 px-10 py-4 font-black uppercase tracking-widest text-white transition-all hover:bg-pink-600 hover:scale-105 active:scale-95 shadow-xl shadow-pink-500/30">
-                Upgrade to Pro
-            </button>
+            <UpgradeToProButton
+              defaultNiche="Hair Specialist"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-pink-500 px-10 py-4 font-black uppercase tracking-widest text-white transition-all hover:bg-pink-600 hover:scale-105 active:scale-95 shadow-xl shadow-pink-500/30"
+            />
         </motion.div>
       </div>
     </section>

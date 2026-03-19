@@ -31,11 +31,12 @@ export default function JennieHero() {
         className="relative min-h-screen w-full flex items-center justify-center bg-stone-950 text-white overflow-hidden"
         style={{
           backgroundImage:
-            "url('https://res.cloudinary.com/dnitzkowt/image/upload/v1773906368/Creative_branding_session_w__euphoricstylez_%EF%B8%8F____._._Studio__areafourtwelve__.__saviom.jpg')",
+            "url('https://res.cloudinary.com/dnitzkowt/image/upload/v1773921830/jpg_mwkyrr.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
         <div className="relative z-10 max-w-6xl px-6 w-full">
           <motion.div
@@ -108,7 +109,7 @@ export default function JennieHero() {
                   <li>✔ Exclusive hair care kits</li>
                 </ul>
 
-                <div className="pt-4">
+                <div className="pt-4 mb-10">
                   <button
                     onClick={openDemoBookingNotice}
                     className="w-full py-3 rounded-xl bg-pink-500 text-black font-medium hover:bg-pink-300 transition"
