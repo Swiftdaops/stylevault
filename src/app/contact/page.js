@@ -1,7 +1,11 @@
-export const metadata = {
+import { buildPageMetadata } from '@/lib/page-metadata'
+
+export const metadata = buildPageMetadata({
   title: 'Contact | StyleVault',
-  description: 'Contact StyleVault support and partnership inquiries.',
-};
+  description: 'Contact StyleVault for support, partnerships, platform questions, and business inquiries.',
+  path: '/contact',
+  keywords: ['contact StyleVault', 'StyleVault support', 'StyleVault partnerships'],
+});
 
 export default function ContactPage() {
   return (

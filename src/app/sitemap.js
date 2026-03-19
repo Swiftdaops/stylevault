@@ -12,6 +12,13 @@ export default async function sitemap() {
   const staticRoutes = [
     '/',
     '/about',
+    '/contact',
+    '/demo',
+    '/demo/barber-pro',
+    '/demo/hair-specialist-pro',
+    '/demo/lash-tech-pro',
+    '/demo/makeup-artist-pro',
+    '/demo/nail-tech-pro',
     '/get-started',
     '/pricing',
     '/privacy-policy',

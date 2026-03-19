@@ -49,7 +49,7 @@ export const metadata = {
   },
   title: {
     default: "StyleVault | Find the Best Barbers, Hair Specialists, Nail Technicians, Lash Technicians and Makeup Artists Worldwide",
-    template: "%s",
+    template: "%s | StyleVault",
   },
   description: "Discover barbers, hair specialists, nail technicians, lash technicians, and makeup artists across multiple countries, compare services and pricing, and book appointments online through dedicated storefronts on StyleVault.",
   keywords: [
@@ -82,6 +82,20 @@ export const metadata = {
     title: "StyleVault | Find the Best Barbers, Hair Specialists, Nail Technicians, Lash Technicians and Makeup Artists Worldwide",
     description: "Discover barbers, hair specialists, nail technicians, lash technicians, and makeup artists across multiple countries, compare services and pricing, and book appointments online through dedicated storefronts on StyleVault.",
     images: ['/twitter-image'],
+  },
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      maxSnippet: -1,
+      maxImagePreview: 'large',
+      maxVideoPreview: -1,
+    },
   },
   other: {
     'mobile-web-app-capable': 'yes',

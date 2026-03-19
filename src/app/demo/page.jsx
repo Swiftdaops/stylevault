@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Brush, HeartHandshake, Palette, Scissors, Sparkles } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/page-metadata'
 
 const demos = [
   {
@@ -39,10 +40,12 @@ const demos = [
   },
 ]
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: 'StyleVault Demo Gallery',
   description: 'Browse StyleVault Pro demo pages for barbers, hair specialists, nail techs, lash techs, and makeup artists.',
-}
+  path: '/demo',
+  keywords: ['StyleVault demos', 'beauty storefront demos', 'booking website demos'],
+})
 
 export default function DemoHomePage() {
   return (
