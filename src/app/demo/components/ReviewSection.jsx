@@ -67,7 +67,7 @@ const ROUTE_REVIEW_CONFIG = {
     ],
   },
   '/demo/makeup-artist-pro': {
-    heading: 'Velvet Canvas — Client Feedback',
+    heading: 'Aura Beauty — Client Feedback',
     summary: 'High-trust client feedback that helps bridal, event, and editorial bookings feel premium from the first click.',
     rating: '5.0',
     reviewCount: '140+',
@@ -254,13 +254,7 @@ export default function ReviewSection({
           </div>
 
           <div className="rounded-4xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8">
-            <p className="text-sm uppercase tracking-[0.26em] text-stone-200">
-              Live rotation
-            </p>
-            <p className="mt-3 text-sm leading-7 text-stone-200 sm:text-base">
-              Reviews rotate one at a time to keep the section calm, premium, and easy to scan while preserving social proof.
-            </p>
-
+           
             <div className="mt-6 flex flex-wrap gap-2">
               {resolvedReviews.map((review, index) => (
                 <button
@@ -277,12 +271,7 @@ export default function ReviewSection({
               ))}
             </div>
 
-            <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/8 pt-5 text-sm text-stone-300">
-              <span>
-                Review {activeReviewIndex + 1} of {resolvedReviews.length}
-              </span>
-              <span className="text-stone-200">Auto-advances every 4.2s</span>
-            </div>
+            
           </div>
         </div>
       </div>

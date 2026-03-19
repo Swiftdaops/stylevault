@@ -1,53 +1,133 @@
-import ProDemoShowcase from '../components/ProDemoShowcase'
+"use client"
 
-export const metadata = {
-  title: 'Makeup Artist Pro Demo | StyleVault',
-  description: 'See what makeup artists unlock on the StyleVault Pro plan with a premium storefront demo.',
+import { useEffect, useRef, useState } from "react"
+import MakeupServicesSection from "@/components/makeup-services-section"
+import DemoBookingNotice from "../components/DemoBookingNotice"
+import ReviewSection from "../components/ReviewSection"
+import { motion } from "framer-motion"
+import { Sparkles, ArrowRight, Paintbrush } from "lucide-react"
+
+export function MakeupHero({ onOpenDemoBookingNotice, showDemoBookingNotice, demoNoticeRef }) {
+  return (
+    <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-white dark:bg-slate-900">
+      {/* Background Image with Icy Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://res.cloudinary.com/dnitzkowt/image/upload/v1773935722/makeup_artist_model_ngfjdb.jpg')" }}
+      />
+      {/* Red tinted glass backdrop overlay */}
+      <div className="absolute inset-0 bg-red-100/40 backdrop-blur-md dark:bg-slate-700/80" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-20">
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.3em] text-sky-600 shadow-lg backdrop-blur-md dark:bg-slate-800/80 dark:text-sky-400"
+          >
+            <Sparkles size={14} className="animate-pulse" />
+            The Gold Standard of Glam
+          </motion.div>
+
+          <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-6xl font-black uppercase tracking-tighter text-slate-900 dark:text-white sm:text-8xl lg:text-9xl"
+          >
+            AURA <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500 dark:from-red-400 dark:to-red-300">
+              BEAUTY
+            </span>
+          </motion.h1>
+
+          <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-8 max-w-xl text-lg font-medium leading-relaxed text-slate-700 dark:text-slate-200"
+          >
+            Redefining luxury artistry through luminous skin and precision techniques. Your face is our canvas; your confidence is our masterpiece.
+          </motion.p>
+
+          <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 flex flex-wrap justify-center gap-4 lg:justify-start"
+          >
+            <button
+              type="button"
+              onClick={onOpenDemoBookingNotice}
+              className="rounded-full bg-red-900 px-10 py-4 font-black uppercase tracking-widest text-white transition-all hover:scale-105 hover:bg-red-600 dark:bg-red-500 dark:text-slate-900 dark:hover:bg-red-400"
+            >
+              Book the Look
+            </button>
+            <button
+              type="button"
+              onClick={onOpenDemoBookingNotice}
+              className="group flex items-center gap-3 rounded-full border border-slate-300 bg-white/20 px-10 py-4 font-black uppercase tracking-widest backdrop-blur-xl transition hover:bg-black dark:border-white/10"
+            >
+              Portfolio <ArrowRight className="transition-transform group-hover:translate-x-1" />
+            </button>
+          </motion.div>
+
+          <div ref={demoNoticeRef} className="mt-6 w-full max-w-2xl">
+            <DemoBookingNotice isOpen={showDemoBookingNotice} niche="Makeup Artist" />
+          </div>
+
+          {/* Floating Professional Badge */}
+          <motion.div 
+            animate={{ y: [0, -15, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="mt-16 flex items-center gap-4 rounded-2xl border border-white/40 bg-white/30 p-4 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-800/40"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500 text-white">
+              <Paintbrush />
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Certified Artist</p>
+              <p className="font-bold">Bridal & Editorial Specialist</p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
 }
 
-export default function MakeupArtistProDemoPage() {
+export default function Page() {
+  const [showDemoBookingNotice, setShowDemoBookingNotice] = useState(false)
+  const demoNoticeRef = useRef(null)
+
+  useEffect(() => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    }
+  }, [showDemoBookingNotice])
+
+  const openDemoBookingNotice = () => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+      return
+    }
+
+    setShowDemoBookingNotice(true)
+  }
+
   return (
-    <ProDemoShowcase
-      theme={{
-        accentClass: 'from-pink-500 to-rose-500',
-        glowClass: 'from-pink-500 to-rose-500',
-        rating: '5.0',
-        reviewCount: '140+',
-      }}
-      roleTitle="Velvet Canvas Beauty"
-      shortLabel="Makeup Artist Pro"
-      heroBadge="Makeup artist storefront demo"
-      heroTitle="Make every bridal, editorial, and glam booking feel premium before the first brush stroke."
-      heroDescription="This demo shows how makeup artists can turn a visual brand into a polished digital storefront with stronger trust, premium positioning, and smarter monetization."
-      intro="Makeup artists on Pro can position themselves like premium beauty brands with custom storefront presentation, search visibility, review-driven trust, booking control, tip options, and product upsells for beauty essentials."
-      stats={[
-        { label: 'Bridal leads', value: '34', note: 'High-value inquiries' },
-        { label: 'Average booking value', value: '$185', note: 'Higher-ticket services' },
-        { label: 'Beauty retail sales', value: '$1.2k', note: 'Monthly add-on revenue' },
-      ]}
-      services={['Soft Glam', 'Bridal Preview', 'Event Makeup', 'Editorial Beat']}
-      featureHighlights={[
-        { icon: 'domain', title: 'Premium beauty branding', description: 'Create a storefront that feels editorial, polished, and worthy of bridal or event clients.' },
-        { icon: 'seo', title: 'Better niche discovery', description: 'Show up for searches tied to bridal makeup, event glam, photoshoots, and city-specific services.' },
-        { icon: 'reviews', title: 'Trust for high-ticket clients', description: 'Feature rave reviews that help premium clients feel confident enough to book without hesitation.' },
-        { icon: 'bookings', title: 'Controlled appointment approval', description: 'Accept requests first so you can manage prep time, travel, and premium bookings more carefully.' },
-        { icon: 'tips', title: 'Post-appointment gratuity', description: 'Let happy clients add a tip immediately after service with a polished, integrated checkout moment.' },
-        { icon: 'shop', title: 'Beauty retail built in', description: 'Sell lip kits, setting sprays, touch-up essentials, and curated bundles inside the storefront.' },
-      ]}
-      reviews={[
-        { name: 'Chioma R.', title: 'Bride', stars: 5, quote: 'The storefront felt premium and calming. I booked because everything looked clear, luxurious, and trustworthy.' },
-        { name: 'Jade M.', title: 'Event glam client', stars: 5, quote: 'I loved seeing real reviews and polished service details before booking. It matched the artist’s quality instantly.' },
-        { name: 'Ada O.', title: 'Photoshoot client', stars: 5, quote: 'The whole page looked like a beauty brand website, not a basic booking form. That made the decision easy.' },
-      ]}
-      products={[
-        { name: 'Touch-Up Lip Kit', price: '$22', category: 'Retail', visual: 'Lip liner + mini gloss', description: 'Offer easy event-day add-ons that complement your makeup services.' },
-        { name: 'Longwear Setting Spray', price: '$18', category: 'Aftercare', visual: 'Humidity-resistant finish', description: 'A natural upsell for bridal and long-event clients.' },
-        { name: 'Bridal Prep Bundle', price: '$42', category: 'Bundle', visual: 'Mist + blot + lip touch-up', description: 'Package beauty essentials into a Pro storefront bundle for bigger basket sizes.' },
-      ]}
-      tipConfig={{
-        baseAmount: '$150',
-        tipOptions: ['$10', '$25', '$40'],
-      }}
-    />
+    <>
+      <MakeupHero
+        onOpenDemoBookingNotice={openDemoBookingNotice}
+        showDemoBookingNotice={showDemoBookingNotice}
+        demoNoticeRef={demoNoticeRef}
+      />
+      <MakeupServicesSection />
+      <div className="px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl pt-16">
+          <ReviewSection />
+        </div>
+      </div>
+    </>
   )
 }

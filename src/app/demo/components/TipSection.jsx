@@ -40,7 +40,7 @@ const TIP_CONFIG_BY_ROUTE = {
   "/demo/makeup-artist-pro": {
     heading: "Tips for premium glam bookings",
     description: "Create a refined tipping experience for bridal, event, and editorial clients at the end of service.",
-    providerName: "Velvet Canvas Beauty",
+    providerName: "Aura Beauty",
     baseAmount: "$150",
     tipOptions: ["$10", "$20", "$50", "$100"],
     accentClass: "from-pink-500 to-rose-500",

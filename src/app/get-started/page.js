@@ -10,9 +10,28 @@ import {
   Fingerprint, 
   Eye, 
   Palette, 
-  Info,
-  ChevronRight
+  Lock,
 } from "lucide-react"
+
+const STYLEVAULT_LOGO_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg width="1200" height="1600" viewBox="0 0 1200 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1600" rx="96" fill="#0F172A"/>
+  <circle cx="600" cy="520" r="340" fill="url(#glow)" fill-opacity="0.78"/>
+  <rect x="320" y="360" width="560" height="700" rx="88" fill="#111827" stroke="#FDE68A" stroke-width="24"/>
+  <path d="M430 620V500C430 406.112 506.112 330 600 330C693.888 330 770 406.112 770 500V620" stroke="#FACC15" stroke-width="48" stroke-linecap="round"/>
+  <rect x="420" y="620" width="360" height="340" rx="64" fill="#FACC15"/>
+  <circle cx="600" cy="760" r="58" fill="#92400E"/>
+  <rect x="576" y="760" width="48" height="118" rx="24" fill="#92400E"/>
+  <text x="600" y="1155" text-anchor="middle" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="700">StyleVault</text>
+  <text x="600" y="1240" text-anchor="middle" fill="#FDE68A" font-family="Arial, Helvetica, sans-serif" font-size="42" letter-spacing="12">SECURE BEAUTY PLATFORM</text>
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 520) rotate(90) scale(340)">
+      <stop stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#FDE68A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+`)}`
 
 const startCards = [
   {
@@ -20,60 +39,54 @@ const startCards = [
     href: "/about",
     title: "The Vision",
     label: "About StyleVault",
-    description: "StyleVault is a premium digital ecosystem allowing beauty professionals to host high-conversion storefronts.",
-    icon: <Info size={20} />,
-    image: "https://placehold.co/1200x1600/e0f2fe/0369a1?text=StyleVault+Pro",
-    color: "sky"
+    description: "A premium digital ecosystem allowing beauty professionals to host high-conversion storefronts.",
+    icon: <Lock size={20} className="text-yellow-400" />,
+    image: STYLEVAULT_LOGO_IMAGE,
   },
   {
     id: "barber",
     href: "/barbers/register",
-    title: "Master Barber",
+    title: "Barber",
     label: "Precision & Craft",
-    description: "Accept bookings, manage walk-ins, and showcase your best fades with a custom barber storefront.",
+    description: "Accept bookings, manage walk-ins, and showcase your best fades with a custom storefront.",
     icon: <Scissors size={20} />,
     image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545564/Chaps_Co_Barbershop_on_Instagram__All_heroes_wear_capes__chapsandcobarbershop_KeepItHandsome_ewwk4w.jpg",
-    color: "blue"
   },
   {
     id: "hair",
     href: "/hair-specialists/register",
     title: "Hair Specialist",
     label: "Color & Style",
-    description: "From silk presses to custom installs, give your clients a luxury booking experience that matches your art.",
+    description: "From silk presses to custom installs, give your clients a luxury booking experience.",
     icon: <Sparkles size={20} />,
     image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545567/When_y_uc2gp4.jpg",
-    color: "indigo"
   },
   {
     id: "nails",
     href: "/nail-technicians/register",
-    title: "Nail Tech",
+    title: "Nail Technician",
     label: "Detail & Design",
-    description: "Launch your manicuring empire. Handle set-durations and add-ons effortlessly with our Pro tools.",
+    description: "Launch your manicuring empire. Handle set-durations and add-ons effortlessly.",
     icon: <Fingerprint size={20} />,
     image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574960/Professional_Manicure_Process_Step_by_Step_Nail_Care_Inspiration_es8rop.jpg",
-    color: "rose"
   },
   {
     id: "lashes",
     href: "/lash-technicians/register",
-    title: "Lash Artist",
+    title: "Lash Technician",
     label: "Volume & Care",
-    description: "Manage refills and full-sets. StyleVault helps you maintain a high-end portfolio for your lash brand.",
+    description: "Manage refills and full-sets while maintaining a high-end digital portfolio.",
     icon: <Eye size={20} />,
     image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574325/LASH_MASTER_hvouog.jpg",
-    color: "pink"
   },
   {
     id: "makeup",
     href: "/makeup-artists/register",
     title: "Makeup Artist",
     label: "Glamour & Bridal",
-    description: "Organize bridal party bookings and event glam. Professional tools for the modern makeup professional.",
+    description: "Organize bridal party bookings and event glam with professional artist tools.",
     icon: <Palette size={20} />,
     image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574318/q3bs23hkql7gl8q1c4g0.jpg",
-    color: "amber"
   },
 ]
 
@@ -82,142 +95,133 @@ export default function GetStartedPage() {
 
   return (
     <main className="min-h-screen bg-sky-50 transition-colors duration-500 dark:bg-stone-950">
-      {/* Animated Background Aura */}
+      {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[10%] -left-[10%] h-[40%] w-[40%] rounded-full bg-sky-200/40 blur-[120px] dark:bg-sky-900/20" />
-        <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-blue-200/40 blur-[120px] dark:bg-indigo-900/20" />
+        <div className="absolute -top-[10%] -left-[10%] h-[40%] w-[50%] rounded-full bg-sky-200/30 blur-[120px] dark:bg-sky-900/10" />
+        <div className="absolute bottom-0 right-0 h-[30%] w-[30%] rounded-full bg-blue-100/40 blur-[100px] dark:bg-indigo-900/10" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-12 lg:py-20">
         
-        {/* Header Section */}
+        {/* Header Section - Improved Vertical Spacing */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-16 text-center lg:text-left"
+          className="mb-12 lg:mb-20 text-center lg:text-left"
         >
-          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-sky-700 dark:bg-sky-500/10 dark:text-sky-400">
+          <span className="inline-flex rounded-full bg-sky-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-sky-600 dark:text-sky-400">
             StyleVault Ecosystem
           </span>
           <h1 className="mt-6 text-4xl font-black tracking-tighter text-stone-900 dark:text-white sm:text-6xl lg:text-7xl">
-            Choose Your <br />
+            Choose Your <br className="hidden lg:block" />
             <span className="text-sky-600 dark:text-sky-400">Professional Path.</span>
           </h1>
         </motion.div>
 
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+        {/* Main Grid - Increased Gap for Desktop */}
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:items-start">
           
-          {/* LEFT SIDE: The "Unique Card" Visualizer (Sticky on Desktop) */}
-          <div className="sticky top-32 hidden lg:block">
+          {/* LEFT SIDE: Visualizer Card */}
+          <div className="sticky top-28 hidden lg:block">
             <motion.div 
-              layoutId="unique-card"
-              className="relative aspect-[4/5] overflow-hidden rounded-[3rem] border border-white/40 bg-white/20 p-4 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-white/5"
+              layoutId="visualizer"
+              className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] border border-white/50 bg-white/30 p-3 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-white/5"
             >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab.id}
-                  initial={{ opacity: 0, scale: 1.1 }}
+                  initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative h-full w-full overflow-hidden rounded-[2.2rem]"
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="relative h-full w-full overflow-hidden rounded-[2rem]"
                 >
-                  <img 
-                    src={activeTab.image} 
-                    alt={activeTab.title} 
-                    className="h-full w-full object-cover"
-                  />
-                  {/* Glassy Overlay Info */}
-                  <div className="absolute inset-0 bg-linear-to-t from-stone-950/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-8 left-8 right-8">
-                    <p className="text-xs font-bold uppercase tracking-widest text-sky-400">{activeTab.label}</p>
-                    <h2 className="mt-2 text-3xl font-bold text-white">{activeTab.title}</h2>
+                  <img src={activeTab.image} alt="" className="h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-linear-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
+                  <div className="absolute bottom-10 left-10 right-10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-400">{activeTab.label}</p>
+                    <h2 className="mt-2 text-4xl font-bold text-white tracking-tight">{activeTab.title}</h2>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </motion.div>
-
-            {/* Floating Stats Label */}
-            <motion.div 
-               animate={{ y: [0, -10, 0] }}
-               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute -right-8 top-20 rounded-2xl border border-white/50 bg-white/80 p-4 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-stone-900/80"
-            >
-                <p className="text-[10px] font-black uppercase text-stone-500 dark:text-stone-400">Live Demo</p>
-                <p className="text-sm font-bold dark:text-white">Pro Interface v3.0</p>
-            </motion.div>
           </div>
 
-          {/* RIGHT SIDE: Interactive Path Selection */}
-          <div className="space-y-4">
+          {/* RIGHT SIDE: Path List */}
+          <div className="flex flex-col gap-3 sm:gap-4">
             {startCards.map((card) => {
               const isActive = activeTab.id === card.id
               return (
                 <motion.div
                   key={card.id}
                   onMouseEnter={() => setActiveTab(card)}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="relative h-full"
+                  className="relative"
                 >
                   <Link
                     href={card.href}
-                    className={`group relative flex items-center gap-6 rounded-[2rem] border p-6 transition-all duration-300 ${
+                    className={`group relative flex flex-col gap-5 rounded-[2rem] border p-5 transition-all duration-500 sm:flex-row sm:items-center sm:p-7 ${
                       isActive 
-                      ? "border-sky-200 bg-white shadow-xl dark:border-sky-500/30 dark:bg-white/5" 
-                      : "border-transparent bg-transparent hover:bg-sky-100/50 dark:hover:bg-white/5"
+                      ? "border-sky-200 bg-white shadow-2xl shadow-sky-200/20 dark:border-sky-500/30 dark:bg-white/5" 
+                      : "border-transparent bg-transparent hover:bg-white/40 dark:hover:bg-white/5"
                     }`}
                   >
-                    {/* Icon Circle */}
-                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${
-                      isActive ? "bg-sky-600 text-white" : "bg-stone-200 text-stone-500 dark:bg-stone-800 dark:text-stone-400"
+                    {/* Icon Container */}
+                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-500 ${
+                      isActive 
+                        ? "bg-sky-600 text-white rotate-0 shadow-lg shadow-sky-600/30" 
+                        : "bg-stone-200/50 text-stone-500 dark:bg-stone-800 dark:text-stone-400 group-hover:bg-sky-100"
                     }`}>
                       {card.icon}
                     </div>
 
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className={`text-xl font-bold transition-colors ${isActive ? "text-stone-900 dark:text-white" : "text-stone-500 dark:text-stone-400"}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-4">
+                        <h3 className={`text-xl font-bold tracking-tight transition-colors ${isActive ? "text-stone-900 dark:text-white" : "text-stone-400 dark:text-stone-500"}`}>
                           {card.title}
                         </h3>
-                        {isActive && (
-                          <motion.div layoutId="arrow">
-                            <ArrowRight className="text-sky-600 dark:text-sky-400" size={20} />
-                          </motion.div>
-                        )}
+                        <ArrowRight 
+                          className={`transition-all duration-300 ${isActive ? "opacity-100 translate-x-0 text-sky-600" : "opacity-0 -translate-x-4 text-stone-300"}`} 
+                          size={20} 
+                        />
                       </div>
-                      <p className={`mt-1 text-sm leading-relaxed transition-opacity ${isActive ? "opacity-100" : "opacity-0 h-0 overflow-hidden lg:h-auto lg:opacity-60"}`}>
+                      
+                      {/* Animated height for the description */}
+                      <motion.p 
+                        initial={false}
+                        animate={{ height: isActive ? "auto" : 0, opacity: isActive ? 1 : 0 }}
+                        className="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-300 overflow-hidden pr-6"
+                      >
                         {card.description}
-                      </p>
+                      </motion.p>
                     </div>
 
-                    {/* Mobile Only Image Preview */}
-                    <div className="lg:hidden h-16 w-16 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-white/10">
-                        <img src={card.image} className="h-full w-full object-cover" />
+                    {/* Mobile Image Preview - Compact & Neat */}
+                    <div className={`lg:hidden overflow-hidden rounded-2xl transition-all duration-500 ${isActive ? "h-32 opacity-100 mt-2" : "h-0 opacity-0"}`}>
+                        <img src={card.image} className="h-full w-full object-cover" alt="" />
                     </div>
                   </Link>
                 </motion.div>
               )
             })}
           </div>
-
         </div>
 
-        {/* Footer Minimal Stats */}
+        {/* Footer Stats - Standardized Spacing */}
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="mt-24 grid grid-cols-2 gap-4 border-t border-stone-200 pt-12 dark:border-white/5 lg:grid-cols-4"
+          viewport={{ once: true }}
+          className="mt-24 grid grid-cols-2 gap-8 border-t border-stone-200 pt-12 dark:border-white/10 lg:grid-cols-4 lg:gap-12"
         >
           {[
-            { val: "5+", lab: "Industry Niches" },
-            { val: "Pro", lab: "Storefront UI" },
-            { val: "24/7", lab: "Booking Engine" },
-            { val: "Free", lab: "To Get Started" },
+            { val: "5+", lab: "Niches" },
+            { val: "Pro", lab: "Interface" },
+            { val: "24/7", lab: "Booking" },
+            { val: "Active", lab: "Support" },
           ].map((stat, i) => (
-            <div key={i} className="text-center lg:text-left">
-              <p className="text-2xl font-black text-stone-900 dark:text-white">{stat.val}</p>
-              <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">{stat.lab}</p>
+            <div key={i} className="space-y-1">
+              <p className="text-3xl font-black text-stone-900 dark:text-white tracking-tighter">{stat.val}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sky-600 dark:text-sky-400">{stat.lab}</p>
             </div>
           ))}
         </motion.div>
