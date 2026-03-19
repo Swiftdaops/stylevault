@@ -1,53 +1,121 @@
-import ProDemoShowcase from '../components/ProDemoShowcase'
+"use client"
 
-export const metadata = {
-  title: 'Nail Tech Pro Demo | StyleVault',
-  description: 'See what nail technicians unlock on the StyleVault Pro plan with a premium storefront demo.',
-}
+import { useEffect, useRef, useState } from "react"
+import { motion } from "framer-motion"
+import DemoBookingNotice from "../components/DemoBookingNotice"
 
-export default function NailTechProDemoPage() {
+export default function NailTechHero() {
+  const [showDemoBookingNotice, setShowDemoBookingNotice] = useState(false)
+  const demoNoticeRef = useRef(null)
+
+  useEffect(() => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    }
+  }, [showDemoBookingNotice])
+
+  const openDemoBookingNotice = () => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+      return
+    }
+
+    setShowDemoBookingNotice(true)
+  }
+
   return (
-    <ProDemoShowcase
-      theme={{
-        accentClass: 'from-fuchsia-500 to-pink-500',
-        glowClass: 'from-fuchsia-500 to-pink-500',
-        rating: '4.96',
-        reviewCount: '210+',
+    <section
+      className="relative min-h-screen w-full flex items-center justify-center bg-stone-950 text-white overflow-hidden"
+      style={{
+        backgroundImage:
+          "url('https://res.cloudinary.com/dnitzkowt/image/upload/v1773877500/nail-tech-demo-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
-      roleTitle="Studio Gloss Nail Bar"
-      shortLabel="Nail Technician Pro"
-      heroBadge="Nail tech storefront demo"
-      heroTitle="A polished nail storefront that makes every set feel premium before the appointment starts."
-      heroDescription="This demo shows how nail technicians can present services beautifully, collect trust-building reviews, accept tips, and turn aftercare into extra revenue with a Pro storefront."
-      intro="Nail technicians on Pro get a premium digital storefront with stronger branding, booking control, reviews, tipping, product add-ons, and conversion-focused service presentation."
-      stats={[
-        { label: 'Monthly bookings', value: '97', note: 'Strong repeat demand' },
-        { label: 'Average ticket', value: '$88', note: 'Boosted by add-ons' },
-        { label: 'Retail sales', value: '$1.1k', note: 'Aftercare and bundles' },
-      ]}
-      services={['Gel Manicure', 'Acrylic Full Set', 'Nail Art Add-on', 'Luxury Pedicure']}
-      featureHighlights={[
-        { icon: 'domain', title: 'Luxury brand presentation', description: 'Own a storefront that feels polished enough for premium manicures, acrylics, and detailed nail art.' },
-        { icon: 'bookings', title: 'Controlled booking flow', description: 'Review and confirm requests so your schedule stays clean, profitable, and easy to manage.' },
-        { icon: 'reviews', title: 'Trust that drives rebooking', description: 'Display glowing client reviews that help first-time visitors feel confident and repeat clients keep returning.' },
-        { icon: 'tips', title: 'Frictionless tipping', description: 'Let happy clients add gratuity directly in the customer journey without extra steps or external links.' },
-        { icon: 'shop', title: 'Aftercare and retail shelf', description: 'Sell cuticle oils, press-ons, files, and nail care kits right inside your storefront.' },
-        { icon: 'analytics', title: 'Smarter service insights', description: 'See which services, sets, and upsells convert best so you can price and promote with confidence.' },
-      ]}
-      reviews={[
-        { name: 'Zara E.', title: 'Gel manicure client', stars: 5, quote: 'The storefront looked premium and made booking so easy. I trusted it instantly because everything felt clean and detailed.' },
-        { name: 'Amina T.', title: 'Acrylic set client', stars: 5, quote: 'I loved seeing reviews, nail art options, and the service menu all in one place before I booked.' },
-        { name: 'Brielle N.', title: 'Repeat pedicure client', stars: 5, quote: 'It felt like booking with a real beauty brand, not just sending a message on social media.' },
-      ]}
-      products={[
-        { name: 'Cuticle Glow Oil', price: '$12', category: 'Aftercare', visual: 'Nourishing daily oil', description: 'Promote easy aftercare upsells that support healthier nails between appointments.' },
-        { name: 'Gloss Maintenance Kit', price: '$24', category: 'Bundle', visual: 'Oil + file + buffer', description: 'Bundle simple care tools into an add-on clients can purchase with one tap.' },
-        { name: 'Press-On Rescue Tabs', price: '$9', category: 'Retail', visual: 'Quick-fix adhesive tabs', description: 'Add affordable retail options that complement press-ons and nail art clients.' },
-      ]}
-      tipConfig={{
-        baseAmount: '$90',
-        tipOptions: ['$8', '$15', '$25'],
-      }}
-    />
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      <div className="relative z-10 max-w-6xl px-6 w-full">
+        <motion.div
+          className="grid gap-10 lg:grid-cols-2 items-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          {/* LEFT: Text */}
+          <div className="space-y-6">
+            <motion.h1
+              className="text-4xl md:text-6xl font-bold leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              Luxe Nail Studio
+            </motion.h1>
+
+            <motion.p
+              className="text-stone-200 text-lg max-w-md"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              Elevate your nail services with a premium storefront that showcases your artistry, styles, and booking options in one polished experience.
+            </motion.p>
+
+            <motion.div
+              className="flex gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <button
+                onClick={openDemoBookingNotice}
+                className="px-6 py-3 rounded-full bg-pink-400 text-black font-medium hover:bg-pink-300 transition"
+              >
+                Book Your Appointment
+              </button>
+
+              <button className="px-6 py-3 rounded-full border border-pink-400 text-white hover:bg-pink-400/10 transition">
+                View Services
+              </button>
+            </motion.div>
+          </div>
+
+          {/* RIGHT: Glass Card */}
+          <motion.div
+            className="backdrop-blur-xl bg-white/5 border border-pink-400/30 rounded-2xl p-6 shadow-xl"
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.5, duration: 0.7 }}
+          >
+            <div className="space-y-4">
+              <h3 className="text-xl font-medium">Why Clients Choose Luxe Nail Studio</h3>
+
+              <ul className="text-sm text-stone-200 space-y-2">
+                <li>✔ Creative nail designs & trends</li>
+                <li>✔ Professional polish & gel techniques</li>
+                <li>✔ Custom nail art & 3D designs</li>
+                <li>✔ Client reviews & testimonials</li>
+                <li>✔ Effortless online booking</li>
+              </ul>
+
+              <div className="pt-4">
+                <button
+                  onClick={openDemoBookingNotice}
+                  className="w-full py-3 rounded-xl bg-pink-400 text-black font-medium hover:bg-pink-300 transition"
+                >
+                  Reserve Your Spot
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <div ref={demoNoticeRef} className="mt-8">
+          <DemoBookingNotice isOpen={showDemoBookingNotice} niche="Nail Technician" />
+        </div>
+      </div>
+    </section>
   )
 }

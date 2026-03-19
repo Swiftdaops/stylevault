@@ -13,7 +13,6 @@ import {
 } from 'lucide-react'
 import MiniShop from './MiniShop'
 import ReviewSection from './ReviewSection'
-import TipSection from './TipSection'
 import UpgradeToProButton from '@/components/pro-upgrade-button'
 
 const iconMap = {
@@ -179,15 +178,7 @@ export default function ProDemoShowcase({
         />
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 pt-16 sm:px-6 lg:grid-cols-2 lg:px-8">
-        <TipSection
-          heading={`Tips feel natural for ${roleTitle}`}
-          description="On Pro, tipping is built directly into the customer journey so appreciation turns into extra income without friction."
-          providerName={roleTitle}
-          baseAmount={tipConfig.baseAmount}
-          tipOptions={tipConfig.tipOptions}
-          accentClass={theme.accentClass}
-        />
+      <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
         <MiniShop
           heading={`Mini shop for ${shortLabel.toLowerCase()} retail`}
           description="Sell your best aftercare products, add-ons, and curated bundles directly from the storefront."

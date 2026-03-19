@@ -1,186 +1,225 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from "framer-motion"
+import { 
+  ArrowRight, 
+  Scissors, 
+  Sparkles, 
+  Fingerprint, 
+  Eye, 
+  Palette, 
+  Info,
+  ChevronRight
+} from "lucide-react"
 
 const startCards = [
   {
+    id: "about",
     href: "/about",
-    ariaLabel: "Learn about StyleVault",
-    title: "About StyleVault",
-    description:
-      "StyleVault is a platform produced and provided by 4TEK.dev. It allows professionals in the grooming and beauty industry to create their own digital storefront where clients can book services and manage appointments online.",
-    cta: "Learn more",
-    image:
-      "https://placehold.co/1200x1600/fff7ed/7c2d12?text=StyleVault",
-    overlay: "bg-white/45 dark:bg-black/50",
+    title: "The Vision",
+    label: "About StyleVault",
+    description: "StyleVault is a premium digital ecosystem allowing beauty professionals to host high-conversion storefronts.",
+    icon: <Info size={20} />,
+    image: "https://placehold.co/1200x1600/e0f2fe/0369a1?text=StyleVault+Pro",
+    color: "sky"
   },
   {
+    id: "barber",
     href: "/barbers/register",
-    ariaLabel: "Start as Barber",
-    title: "Get Started as a Barber",
-    description:
-      "Create your own barber storefront, list your services, accept online bookings, and grow your customer base.",
-    cta: "Start as Barber",
-    image:
-      "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545564/Chaps_Co_Barbershop_on_Instagram__All_heroes_wear_capes__chapsandcobarbershop_KeepItHandsome_ewwk4w.jpg",
-    overlay: "bg-white/30 dark:bg-black/40",
+    title: "Master Barber",
+    label: "Precision & Craft",
+    description: "Accept bookings, manage walk-ins, and showcase your best fades with a custom barber storefront.",
+    icon: <Scissors size={20} />,
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545564/Chaps_Co_Barbershop_on_Instagram__All_heroes_wear_capes__chapsandcobarbershop_KeepItHandsome_ewwk4w.jpg",
+    color: "blue"
   },
   {
+    id: "hair",
     href: "/hair-specialists/register",
-    ariaLabel: "Start as Hair Stylist",
-    title: "Get Started as a Hair Stylist",
-    description:
-      "Build your own stylist page where clients can discover your services, book appointments, and connect with your brand.",
-    cta: "Start as Hair Stylist",
-    image:
-      "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545567/When_y_uc2gp4.jpg",
-    overlay: "bg-white/35 dark:bg-black/45",
+    title: "Hair Specialist",
+    label: "Color & Style",
+    description: "From silk presses to custom installs, give your clients a luxury booking experience that matches your art.",
+    icon: <Sparkles size={20} />,
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773545567/When_y_uc2gp4.jpg",
+    color: "indigo"
   },
   {
+    id: "nails",
     href: "/nail-technicians/register",
-    ariaLabel: "Start as Nail Technician",
-    title: "Get Started as a Nail Technician",
-    description:
-      "Launch your own nail booking page, list manicures and pedicures, accept appointments, and grow your beauty brand online.",
-    cta: "Start as Nail Technician",
-    image:
-      "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574960/Professional_Manicure_Process_Step_by_Step_Nail_Care_Inspiration_es8rop.jpg",
-    overlay: "bg-white/35 dark:bg-black/45",
+    title: "Nail Tech",
+    label: "Detail & Design",
+    description: "Launch your manicuring empire. Handle set-durations and add-ons effortlessly with our Pro tools.",
+    icon: <Fingerprint size={20} />,
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574960/Professional_Manicure_Process_Step_by_Step_Nail_Care_Inspiration_es8rop.jpg",
+    color: "rose"
   },
   {
+    id: "lashes",
     href: "/lash-technicians/register",
-    ariaLabel: "Start as Lash Technician",
-    title: "Get Started as a Lash Technician",
-    description:
-      "Launch your own lash booking page, list classic, hybrid, and volume sets, accept appointments, and grow your beauty brand online.",
-    cta: "Start as Lash Technician",
-    image:
-      "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574325/LASH_MASTER_hvouog.jpg",
-    overlay: "bg-white/35 dark:bg-black/45",
+    title: "Lash Artist",
+    label: "Volume & Care",
+    description: "Manage refills and full-sets. StyleVault helps you maintain a high-end portfolio for your lash brand.",
+    icon: <Eye size={20} />,
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574325/LASH_MASTER_hvouog.jpg",
+    color: "pink"
   },
   {
+    id: "makeup",
     href: "/makeup-artists/register",
-    ariaLabel: "Start as Makeup Artist",
-    title: "Get Started as a Makeup Artist",
-    description:
-      "Launch your own makeup booking page, list bridal and glam services, accept appointments, and grow your beauty brand online.",
-    cta: "Start as Makeup Artist",
-    image:
-      "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574318/q3bs23hkql7gl8q1c4g0.jpg",
-    overlay: "bg-white/35 dark:bg-black/45",
+    title: "Makeup Artist",
+    label: "Glamour & Bridal",
+    description: "Organize bridal party bookings and event glam. Professional tools for the modern makeup professional.",
+    icon: <Palette size={20} />,
+    image: "https://res.cloudinary.com/dnitzkowt/image/upload/v1773574318/q3bs23hkql7gl8q1c4g0.jpg",
+    color: "amber"
   },
 ]
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-}
-
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.55,
-      ease: 'easeOut',
-    },
-  },
-}
-
 export default function GetStartedPage() {
+  const [activeTab, setActiveTab] = useState(startCards[0])
+
   return (
-    <main className="min-h-screen overflow-hidden bg-gradient-to-b from-orange-50 via-white to-orange-50 px-4 py-20 dark:from-neutral-950 dark:via-neutral-950 dark:to-stone-950 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <motion.div
-          className="relative overflow-hidden rounded-[2rem] border border-orange-100 bg-white/90 px-6 py-12 shadow-2xl shadow-orange-100/50 backdrop-blur dark:border-stone-800 dark:bg-stone-900/85 dark:shadow-black/20 sm:px-10 lg:px-12"
-          variants={container}
-          initial="hidden"
-          animate="show"
+    <main className="min-h-screen bg-sky-50 transition-colors duration-500 dark:bg-stone-950">
+      {/* Animated Background Aura */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[10%] -left-[10%] h-[40%] w-[40%] rounded-full bg-sky-200/40 blur-[120px] dark:bg-sky-900/20" />
+        <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-blue-200/40 blur-[120px] dark:bg-indigo-900/20" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-16 text-center lg:text-left"
         >
-          <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.16),_transparent_55%)] dark:bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.12),_transparent_55%)]" />
+          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-sky-700 dark:bg-sky-500/10 dark:text-sky-400">
+            StyleVault Ecosystem
+          </span>
+          <h1 className="mt-6 text-4xl font-black tracking-tighter text-stone-900 dark:text-white sm:text-6xl lg:text-7xl">
+            Choose Your <br />
+            <span className="text-sky-600 dark:text-sky-400">Professional Path.</span>
+          </h1>
+        </motion.div>
 
-          <motion.div variants={item} className="relative text-center">
-            <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-orange-700 dark:border-stone-700 dark:bg-stone-950 dark:text-amber-300">
-              Choose your path
-            </span>
-
-            <h1 className="mt-6 text-4xl font-black tracking-tight text-neutral-900 dark:text-white sm:text-5xl lg:text-6xl">
-              Get started with the StyleVault experience that fits your niche.
-            </h1>
-
-            <p className="mx-auto mt-6 max-w-3xl text-base leading-8 text-neutral-600 dark:text-neutral-300 sm:text-lg">
-              Start with an overview of the platform or jump straight into the
-              registration flow for barbering, hair, nails, lashes, or makeup.
-              Every page is designed to look polished and perform well on mobile.
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={item}
-            className="relative mt-10 grid gap-4 rounded-3xl border border-orange-100 bg-orange-50/80 p-4 text-center dark:border-stone-800 dark:bg-stone-950 sm:grid-cols-3 sm:p-6"
-          >
-            <div>
-              <p className="text-2xl font-black text-neutral-900 dark:text-white">5</p>
-              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Beauty niches supported</p>
-            </div>
-            <div>
-              <p className="text-2xl font-black text-neutral-900 dark:text-white">Mobile-first</p>
-              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Designed to look great on phones</p>
-            </div>
-            <div>
-              <p className="text-2xl font-black text-neutral-900 dark:text-white">Flexible</p>
-              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Free to start and ready to scale</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="relative mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            {startCards.map((card) => (
-              <motion.div key={card.href} variants={item} className="h-full">
-                <Link
-                  href={card.href}
-                  aria-label={card.ariaLabel}
-                  className="group relative block h-full overflow-hidden rounded-[1.75rem] border border-neutral-200 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-neutral-800"
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+          
+          {/* LEFT SIDE: The "Unique Card" Visualizer (Sticky on Desktop) */}
+          <div className="sticky top-32 hidden lg:block">
+            <motion.div 
+              layoutId="unique-card"
+              className="relative aspect-[4/5] overflow-hidden rounded-[3rem] border border-white/40 bg-white/20 p-4 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-white/5"
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab.id}
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative h-full w-full overflow-hidden rounded-[2.2rem]"
                 >
-                  <div
-                    className="absolute inset-0 scale-105 bg-cover bg-center transition duration-500 group-hover:scale-110"
-                    style={{ backgroundImage: `url('${card.image}')` }}
-                    aria-hidden="true"
+                  <img 
+                    src={activeTab.image} 
+                    alt={activeTab.title} 
+                    className="h-full w-full object-cover"
                   />
-                  <div className={`absolute inset-0 ${card.overlay}`} aria-hidden="true" />
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  {/* Glassy Overlay Info */}
+                  <div className="absolute inset-0 bg-linear-to-t from-stone-950/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-8 left-8 right-8">
+                    <p className="text-xs font-bold uppercase tracking-widest text-sky-400">{activeTab.label}</p>
+                    <h2 className="mt-2 text-3xl font-bold text-white">{activeTab.title}</h2>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
 
-                  <div className="relative flex h-full min-h-[320px] flex-col justify-between p-6 text-left sm:min-h-[360px] sm:p-8">
-                    <div>
-                      <h2 className="mb-4 max-w-xs text-2xl font-bold text-neutral-900 dark:text-white">
-                        {card.title}
-                      </h2>
+            {/* Floating Stats Label */}
+            <motion.div 
+               animate={{ y: [0, -10, 0] }}
+               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute -right-8 top-20 rounded-2xl border border-white/50 bg-white/80 p-4 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-stone-900/80"
+            >
+                <p className="text-[10px] font-black uppercase text-stone-500 dark:text-stone-400">Live Demo</p>
+                <p className="text-sm font-bold dark:text-white">Pro Interface v3.0</p>
+            </motion.div>
+          </div>
 
-                      <p className="max-w-sm text-sm leading-7 text-neutral-800 dark:text-neutral-100">
+          {/* RIGHT SIDE: Interactive Path Selection */}
+          <div className="space-y-4">
+            {startCards.map((card) => {
+              const isActive = activeTab.id === card.id
+              return (
+                <motion.div
+                  key={card.id}
+                  onMouseEnter={() => setActiveTab(card)}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="relative h-full"
+                >
+                  <Link
+                    href={card.href}
+                    className={`group relative flex items-center gap-6 rounded-[2rem] border p-6 transition-all duration-300 ${
+                      isActive 
+                      ? "border-sky-200 bg-white shadow-xl dark:border-sky-500/30 dark:bg-white/5" 
+                      : "border-transparent bg-transparent hover:bg-sky-100/50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    {/* Icon Circle */}
+                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${
+                      isActive ? "bg-sky-600 text-white" : "bg-stone-200 text-stone-500 dark:bg-stone-800 dark:text-stone-400"
+                    }`}>
+                      {card.icon}
+                    </div>
+
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className={`text-xl font-bold transition-colors ${isActive ? "text-stone-900 dark:text-white" : "text-stone-500 dark:text-stone-400"}`}>
+                          {card.title}
+                        </h3>
+                        {isActive && (
+                          <motion.div layoutId="arrow">
+                            <ArrowRight className="text-sky-600 dark:text-sky-400" size={20} />
+                          </motion.div>
+                        )}
+                      </div>
+                      <p className={`mt-1 text-sm leading-relaxed transition-opacity ${isActive ? "opacity-100" : "opacity-0 h-0 overflow-hidden lg:h-auto lg:opacity-60"}`}>
                         {card.description}
                       </p>
                     </div>
 
-                    <span className="inline-flex w-fit items-center justify-center rounded-2xl bg-black/90 px-5 py-3 text-sm font-semibold text-white transition group-hover:bg-neutral-800 dark:bg-white/90 dark:text-black dark:group-hover:bg-white">
-                      {card.cta}
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
+                    {/* Mobile Only Image Preview */}
+                    <div className="lg:hidden h-16 w-16 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-white/10">
+                        <img src={card.image} className="h-full w-full object-cover" />
+                    </div>
+                  </Link>
+                </motion.div>
+              )
+            })}
+          </div>
+
+        </div>
+
+        {/* Footer Minimal Stats */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-24 grid grid-cols-2 gap-4 border-t border-stone-200 pt-12 dark:border-white/5 lg:grid-cols-4"
+        >
+          {[
+            { val: "5+", lab: "Industry Niches" },
+            { val: "Pro", lab: "Storefront UI" },
+            { val: "24/7", lab: "Booking Engine" },
+            { val: "Free", lab: "To Get Started" },
+          ].map((stat, i) => (
+            <div key={i} className="text-center lg:text-left">
+              <p className="text-2xl font-black text-stone-900 dark:text-white">{stat.val}</p>
+              <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">{stat.lab}</p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </main>

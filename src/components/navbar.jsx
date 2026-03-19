@@ -1,14 +1,11 @@
 "use client"
 
-import React, { useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
 import ModeToggle from "@/components/mode-toggle"
 import { usePathname } from 'next/navigation'
 
 export default function Navbar({ isTenantHost = false }) {
   const pathname = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   if (isTenantHost) return null
 
@@ -69,63 +66,26 @@ export default function Navbar({ isTenantHost = false }) {
     }
   }
 
-  const navItems = [
-    { label: "Get Started", href: "/get-started" },
-  ]
-
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-orange-200/80 bg-orange-50/95 text-stone-950 shadow-sm backdrop-blur dark:border-stone-800 dark:bg-black/95 dark:text-amber-600">
+    <header className="fixed top-0 z-50 w-full border-b border-black/10 bg-white/60 text-stone-950 shadow-sm shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:bg-stone-950/60 dark:text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="text-xl font-bold tracking-tight text-current">
+        <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <Link href="/" className="justify-self-start text-xl font-bold tracking-tight text-current">
             StyleVault
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="rounded-full px-4 py-1 transition hover:bg-orange-100 hover:text-stone-950 dark:hover:bg-stone-900 dark:hover:text-amber-500"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <Link
+            href="/get-started"
+            className="justify-self-center inline-flex items-center justify-center rounded-full border border-black px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-black hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-stone-950"
+          >
+            Get Started
+          </Link>
 
-          {/* Right-side controls */}
-          <div className="flex items-center gap-2">
+          <div className="justify-self-end flex items-center gap-2 sm:gap-3">
             <ModeToggle />
-            {/* Mobile menu button */}
-            <button
-              className="rounded-full p-2 transition hover:bg-orange-100 hover:text-stone-950 dark:hover:bg-stone-900 dark:hover:text-amber-500 md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="animate-fade-in border-t border-orange-200/80 bg-orange-50 text-stone-950 shadow-md dark:border-stone-800 dark:bg-black dark:text-amber-600 md:hidden">
-          <nav className="flex flex-col gap-2 p-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="rounded-full px-4 py-2 text-center transition hover:bg-orange-100 hover:text-stone-950 dark:hover:bg-stone-900 dark:hover:text-amber-500"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      )}
     </header>
   )
 }

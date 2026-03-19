@@ -1,53 +1,193 @@
-import ProDemoShowcase from '../components/ProDemoShowcase'
+"use client";
 
-export const metadata = {
-  title: 'Barber Pro Demo | StyleVault',
-  description: 'See what barbers unlock on the StyleVault Pro plan with a premium storefront demo.',
-}
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Calendar, Clock, Scissors } from "lucide-react";
+import CrownFadeReviews from "../components/CrownFadeReviews";
+import DemoBookingNotice from "../components/DemoBookingNotice";
+import DemoBarberServices from "../components/DemoBarberServices";
 
-export default function BarberProDemoPage() {
+export default function BarberHero() {
+  const [showDemoBookingNotice, setShowDemoBookingNotice] = useState(false);
+  const demoNoticeRef = useRef(null);
+
+  useEffect(() => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [showDemoBookingNotice]);
+
+  const openDemoBookingNotice = () => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+
+    setShowDemoBookingNotice(true);
+  };
+
   return (
-    <ProDemoShowcase
-      theme={{
-        accentClass: 'from-orange-500 to-amber-500',
-        glowClass: 'from-orange-500 to-amber-500',
-        rating: '4.9',
-        reviewCount: '180+',
-      }}
-      roleTitle="Crown & Fade Studio"
-      shortLabel="Barber Pro"
-      heroBadge="Barber storefront demo"
-      heroTitle="A Pro barber page that turns clean cuts into a clean brand."
-      heroDescription="This demo shows how a barber on StyleVault Pro can present premium services, earn trust fast, and unlock extra revenue through reviews, tips, and a mini grooming shop."
-      intro="Barbers on Pro get a custom-branded storefront, stronger SEO visibility, automated booking communication, reviews that build confidence, easy tipping, a product shelf, and analytics that help them spot growth opportunities."
-      stats={[
-        { label: 'Monthly bookings', value: '84', note: '+21% after Pro' },
-        { label: 'Average review', value: '4.9★', note: 'Trusted social proof' },
-        { label: 'Retail revenue', value: '$1.4k', note: 'Mini shop add-on sales' },
-      ]}
-      services={['Skin Fade', 'Beard Sculpt', 'Kids Cut', 'Hot Towel Shave']}
-      featureHighlights={[
-        { icon: 'domain', title: 'Custom domain', description: 'Look fully professional with a branded storefront URL that feels like your own shop website.' },
-        { icon: 'seo', title: 'SEO storefront', description: 'Rank better for local grooming searches and attract new clients searching by service, city, or style.' },
-        { icon: 'bookings', title: 'Automated booking flow', description: 'Let clients request slots, get updates, and manage bookings from a polished customer experience.' },
-        { icon: 'reviews', title: 'Verified reviews', description: 'Display client ratings and testimonial cards that reduce hesitation and improve conversion.' },
-        { icon: 'tips', title: 'Built-in tips', description: 'Add frictionless gratuity options at checkout so satisfied clients can spend more in one tap.' },
-        { icon: 'shop', title: 'Mini grooming shop', description: 'Sell pomades, beard oils, trimmers, and aftercare right from the storefront.' },
-      ]}
-      reviews={[
-        { name: 'Daniel K.', title: 'Weekly client', stars: 5, quote: 'The reviews sold me first, then the booking page made it ridiculously easy to reserve my fade.' },
-        { name: 'Emeka T.', title: 'Beard service client', stars: 5, quote: 'The storefront feels premium. I even added beard oil after checkout because the product section looked legit.' },
-        { name: 'Chris A.', title: 'New customer', stars: 5, quote: 'I found the shop on Google, checked the ratings, booked online, and tipped straight from the phone.' },
-      ]}
-      products={[
-        { name: 'Matte Pomade', price: '$18', category: 'Styling', visual: 'Premium hold • Matte finish', description: 'A barber-recommended styling product featured right under the service menu.' },
-        { name: 'Beard Conditioning Oil', price: '$24', category: 'Beard care', visual: 'Cedar + citrus blend', description: 'Upsell after beard trims to increase average order value.' },
-        { name: 'Wave Brush Kit', price: '$30', category: 'Retail bundle', visual: 'Brush + durag + cream', description: 'Bundle products into a simple mini storefront offer.' },
-      ]}
-      tipConfig={{
-        baseAmount: '$45',
-        tipOptions: ['$5', '$10', '$15'],
-      }}
-    />
-  )
+    <>
+      <section className="relative overflow-hidden bg-stone-950 text-white">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), transparent 32%), linear-gradient(180deg, rgba(12, 10, 9, 0.92), rgba(12, 10, 9, 1))",
+          }}
+        />
+
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="grid items-center gap-12 lg:min-h-[calc(100vh-8rem)] lg:grid-cols-[minmax(0,1fr)_minmax(420px,540px)]"
+          >
+            <div className="space-y-6 lg:pr-6">
+              <div className="inline-flex items-center rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-sky-300">
+                Elite grooming experience
+              </div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="max-w-xl text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl"
+              >
+                Crown & Fade Studio
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="max-w-xl text-base leading-7 text-stone-300 sm:text-lg"
+              >
+                Precision cuts, clean fades, and a premium grooming experience.
+                Book your next session with confidence.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex flex-col gap-4 sm:flex-row"
+              >
+                <button
+                  onClick={openDemoBookingNotice}
+                  className="rounded-full bg-sky-400 px-6 py-3 font-medium text-black transition hover:bg-sky-300"
+                >
+                  Book Now
+                </button>
+
+                <button
+                  onClick={() =>
+                    document
+                      .getElementById("barber-services")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                  className="rounded-full border border-sky-400 px-6 py-3 text-white transition hover:bg-sky-400/10"
+                >
+                  View Services
+                </button>
+              </motion.div>
+
+              <div className="grid gap-3 pt-2 text-sm text-stone-300 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-2xl font-semibold text-white">12+</p>
+                  <p>Years refining sharp modern cuts</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-2xl font-semibold text-white">5000+</p>
+                  <p>Booked appointments with repeat clients</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-2xl font-semibold text-white">5★</p>
+                  <p>Premium service, clean atmosphere</p>
+                </div>
+              </div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.7 }}
+              className="relative mx-auto w-full max-w-xl"
+            >
+              <div className="absolute -inset-4 -z-10 rounded-4xl bg-sky-500/20 blur-3xl" />
+
+              <div className="relative overflow-hidden rounded-4xl border border-white/10 bg-stone-900/70 p-3 shadow-2xl">
+                <div className="relative aspect-4/5 overflow-hidden rounded-3xl border border-white/10 bg-stone-900">
+                  <Image
+                    src="https://res.cloudinary.com/dnitzkowt/image/upload/v1773867494/qh5pttubqkkkrldyqyyp.jpg"
+                    alt="Barber at Crown & Fade Studio"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 540px"
+                    className="object-cover object-center"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/75 via-black/20 to-transparent p-5 sm:p-6">
+                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
+                      <Scissors className="h-4 w-4" />
+                      Crafted for sharp detail
+                    </div>
+
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-stone-200 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <h3 className="flex items-center gap-2 text-base font-semibold text-white">
+                      <Clock className="h-4 w-4 text-sky-300" />
+                      Opening Hours
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between gap-4">
+                        <span>Mon - Fri</span>
+                        <span>9:00 AM - 7:00 PM</span>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span>Saturday</span>
+                        <span>10:00 AM - 6:00 PM</span>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span>Sunday</span>
+                        <span>Closed</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-between gap-4 rounded-2xl border border-sky-400/20 bg-sky-400/10 p-4">
+                    <div>
+                      <p className="flex items-center gap-2 text-sm font-semibold text-white">
+                        <Calendar className="h-4 w-4 text-sky-300" />
+                        Next available
+                      </p>
+                      <p className="mt-2 text-2xl font-semibold text-white">Today · 2:30 PM</p>
+                    </div>
+                    <button
+                      onClick={openDemoBookingNotice}
+                      className="w-full rounded-xl bg-sky-400 py-3 font-medium text-black transition hover:bg-sky-300"
+                    >
+                      Reserve Appointment
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          <div ref={demoNoticeRef} className="mt-8">
+            <DemoBookingNotice isOpen={showDemoBookingNotice} niche="Barber" />
+          </div>
+        </div>
+      </section>
+
+      <DemoBarberServices />
+
+      <CrownFadeReviews />
+    </>
+  );
 }

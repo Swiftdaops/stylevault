@@ -30,6 +30,14 @@ const withPWA = nextPwa({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
+  },
   async rewrites() {
     if (!proxiedApiTarget || proxiedApiTarget.startsWith('/')) {
       return []

@@ -121,7 +121,7 @@ export default async function Home() {
   return (
     <div>
     <Hero />
-    <div className="bg-orange-50 px-4 pb-20 text-stone-950 dark:bg-black dark:text-amber-500">
+    <div className="bg-olive-100 px-4 pb-20 text-stone-950 dark:bg-black dark:text-amber-500">
       <div className="mx-auto max-w-6xl">
         <HomeInstallActions className="pt-6" />
       </div>

@@ -1,53 +1,128 @@
-import ProDemoShowcase from '../components/ProDemoShowcase'
+"use client"
 
-export const metadata = {
-  title: 'Lash Tech Pro Demo | StyleVault',
-  description: 'See what lash techs unlock on the StyleVault Pro plan with a premium storefront demo.',
-}
+import { useEffect, useRef, useState } from "react"
+import { motion } from "framer-motion"
+import DemoBookingNotice from "../components/DemoBookingNotice"
+import DemoLashServices from "../components/DemoLashServices"
+import ReviewSection from "../components/ReviewSection"
 
-export default function LashTechProDemoPage() {
+export default function LushHero() {
+  const [showDemoBookingNotice, setShowDemoBookingNotice] = useState(false)
+  const demoNoticeRef = useRef(null)
+
+  useEffect(() => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    }
+  }, [showDemoBookingNotice])
+
+  const openDemoBookingNotice = () => {
+    if (showDemoBookingNotice) {
+      demoNoticeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+      return
+    }
+
+    setShowDemoBookingNotice(true)
+  }
+
   return (
-    <ProDemoShowcase
-      theme={{
-        accentClass: 'from-violet-500 to-purple-500',
-        glowClass: 'from-violet-500 to-purple-500',
-        rating: '4.97',
-        reviewCount: '160+',
-      }}
-      roleTitle="Luna Lash Atelier"
-      shortLabel="Lash Tech Pro"
-      heroBadge="Lash tech storefront demo"
-      heroTitle="A lash storefront designed to look as detailed and luxurious as the final set."
-      heroDescription="Show every client that your lash brand is premium before they even book. Pro helps lash techs present services beautifully, build trust, and monetize more than appointments alone."
-      intro="Lash techs on Pro get a polished storefront with branded presentation, discoverability, reviews, appointment management, tipping, and a mini shop for cleansers, brushes, and retention-friendly aftercare."
-      stats={[
-        { label: 'New lash clients', value: '52', note: 'Booked this month' },
-        { label: 'Refill retention', value: '74%', note: 'Repeat refill clients' },
-        { label: 'Add-on revenue', value: '$980', note: 'Retail + tips combined' },
-      ]}
-      services={['Classic Full Set', 'Hybrid Refill', 'Wispy Volume', 'Lash Bath Add-on']}
-      featureHighlights={[
-        { icon: 'domain', title: 'Luxury presentation', description: 'Create a premium online feel with a branded page that matches the aesthetic of your lash business.' },
-        { icon: 'reviews', title: 'Retention-driving reviews', description: 'Let first-time visitors read real client experiences before they book their first full set or refill.' },
-        { icon: 'bookings', title: 'Cleaner booking workflow', description: 'Keep your schedule controlled with request-based bookings that you can confirm on your terms.' },
-        { icon: 'tips', title: 'Simple tipping moments', description: 'Make gratuity feel natural after an appointment without sending clients to a separate app.' },
-        { icon: 'shop', title: 'Aftercare product shelf', description: 'Sell lash cleansers, spoolies, sealants, and touch-up products directly inside your storefront.' },
-        { icon: 'analytics', title: 'Clear service performance', description: 'See which sets, fills, and add-ons convert best so you can price and promote more effectively.' },
-      ]}
-      reviews={[
-        { name: 'Tolu A.', title: 'Hybrid refill client', stars: 5, quote: 'The storefront felt luxe and trustworthy. The reviews made booking super easy for my first visit.' },
-        { name: 'Stephanie L.', title: 'Volume set client', stars: 5, quote: 'I loved being able to review the service menu, book fast, and later grab cleanser from the mini shop.' },
-        { name: 'Amaka E.', title: 'Repeat client', stars: 5, quote: 'Everything looked polished. It felt like a serious beauty brand, not just a booking link.' },
-      ]}
-      products={[
-        { name: 'Foaming Lash Cleanser', price: '$14', category: 'Aftercare', visual: 'Gentle foaming wash', description: 'Feature retention-friendly care products clients should use between fills.' },
-        { name: 'Crystal Lash Sealant', price: '$19', category: 'Retention', visual: 'Retention support formula', description: 'A clean upsell for clients who want their sets to last longer.' },
-        { name: 'Lash Care Mini Kit', price: '$26', category: 'Bundle', visual: 'Cleanser + brush + pouch', description: 'Turn a low-cost aftercare bundle into easy extra revenue.' },
-      ]}
-      tipConfig={{
-        baseAmount: '$95',
-        tipOptions: ['$8', '$15', '$25'],
-      }}
-    />
+    <>
+      <section
+        className="relative min-h-screen w-full flex items-center justify-center bg-stone-950 text-white overflow-hidden"
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/dnitzkowt/image/upload/v1773874778/__21_zgnzz6.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/60" />
+
+        <div className="relative z-10 max-w-6xl px-6 w-full">
+          <motion.div
+            className="grid gap-10 lg:grid-cols-2 items-center"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* LEFT: Text */}
+            <div className="space-y-6">
+              <motion.h1
+                className="text-4xl md:text-6xl font-bold leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Lush Pretty Lash
+              </motion.h1>
+
+              <motion.p
+                className="text-stone-200 text-lg max-w-md"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                Elevate your lash game with premium extensions, lifts, and care that leave every client feeling confident and radiant.
+              </motion.p>
+
+              <motion.div
+                className="flex gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <button
+                  onClick={openDemoBookingNotice}
+                  className="px-6 py-3 rounded-full bg-rose-400 text-black font-medium hover:bg-rose-300 transition"
+                >
+                  Book Your Lash Appointment
+                </button>
+
+                <button className="px-6 py-3 rounded-full border border-rose-400 text-white hover:bg-rose-400/10 transition">
+                  View Services
+                </button>
+              </motion.div>
+            </div>
+
+            {/* RIGHT: Glass Card */}
+            <motion.div
+              className="backdrop-blur-xl bg-white/5 border border-rose-400/30 rounded-2xl p-6 shadow-xl"
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.7 }}
+            >
+              <div className="space-y-4">
+                <h3 className="text-xl font-medium">Why Clients Love Lush Pretty Lash</h3>
+
+                <ul className="text-sm text-stone-200 space-y-2">
+                  <li>✔ Premium lash extensions & lifts</li>
+                  <li>✔ Certified lash technicians</li>
+                  <li>✔ Customized lash designs</li>
+                  <li>✔ Client reviews & testimonials</li>
+                  <li>✔ Easy online booking</li>
+                </ul>
+
+                <div className="pt-4">
+                  <button
+                    onClick={openDemoBookingNotice}
+                    className="w-full py-3 rounded-xl bg-rose-400 text-black font-medium hover:bg-rose-300 transition"
+                  >
+                    Reserve Appointment
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          <div ref={demoNoticeRef} className="mt-8">
+            <DemoBookingNotice isOpen={showDemoBookingNotice} niche="Lash Technician" />
+          </div>
+        </div>
+      </section>
+
+      <DemoLashServices />
+      <ReviewSection />
+    </>
   )
 }

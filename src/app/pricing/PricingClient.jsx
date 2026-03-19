@@ -47,7 +47,7 @@ export default function PricingClient({ initialPricing = {} }) {
         animate="show"
       >
         <motion.div variants={item} className="mx-auto max-w-3xl text-center">
-          <span className="inline-block rounded-full bg-orange-200 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.24em] text-orange-800 dark:bg-amber-900/40 dark:text-amber-400">
+          <span className="inline-block rounded-full bg-lime-200 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.24em] text-orange-800 dark:bg-lime-900/40 dark:text-amber-400">
             StyleVault Pricing
           </span>
 
@@ -138,7 +138,8 @@ export default function PricingClient({ initialPricing = {} }) {
               <li>✔ Online appointment booking</li>
               <li>✔ Service menu and pricing</li>
               <li>✔ Smart booking calendar</li>
-              <li>✔ Email notifications</li>
+              <li>✔ Get your clients feedbacks and review</li>
+              <li>✔ Accept your client's feedbacks and reviews</li>
               <li>✔ Verified badge after 10 satisfied clients</li>
             </ul>
 
@@ -154,11 +155,15 @@ export default function PricingClient({ initialPricing = {} }) {
 
           <motion.div
             variants={item}
-            className="relative rounded-4xl border-2 border-orange-500 bg-stone-900 p-8 text-white shadow-2xl shadow-orange-500/20"
+            className="relative rounded-4xl border-2 border-lime-500 bg-stone-900 p-8 text-white shadow-2xl shadow-orange-500/20"
           >
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-linear-to-r from-orange-600 to-amber-500 px-4 py-1 text-xs font-bold uppercase tracking-widest">
-              Most Popular
-            </div>
+            <button
+              type="button"
+              onClick={() => window.open('https://4tek.dev', '_blank', 'noopener,noreferrer')}
+              className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-linear-to-r from-lime-600 to-lime-800 px-4 py-1 text-xs font-bold uppercase tracking-widest"
+            >
+              Provided By 4Tek.dev
+            </button>
 
             <h2 className="text-xl font-bold">Pro Plan</h2>
 
@@ -176,27 +181,27 @@ export default function PricingClient({ initialPricing = {} }) {
             </p>
 
             <ul className="mb-10 space-y-4 text-sm text-stone-200">
-              <li>✔ Everything in Free</li>
-              <li>✔ Custom professional domain</li>
-              <li>✔ SEO optimized niche page</li>
-              <li>✔ Automated booking confirmations</li>
-              <li>✔ Customer reviews and ratings</li>
-              <li>✔ Accept tips from clients</li>
-              <li>✔ Mini shop to sell products</li>
-              <li>✔ Advanced business analytics</li>
-            </ul>
+  <li>✔ Everything in Free — plus powerful tools to grow faster</li>
+  <li>✔ Your own custom domain yourbrand.store (look professional & build trust)</li>
+  <li>✔ SEO-optimized pages (get discovered on Google by new clients)</li>
+  <li>✔ Automated booking confirmations (save time & reduce no-shows)</li>
+  <li>✔ Verified reviews & ratings (build credibility instantly)</li>
+  <li>✔ Accept tips from clients (increase your earnings effortlessly)</li>
+  <li>✔ Sell products with your mini shop (add a new income stream)</li>
+  <li>✔ Advanced analytics dashboard (track growth & make smarter decisions)</li>
+</ul>
 
             <UpgradeToProButton
               defaultPlan={billing === 'monthly' ? 'Pro Monthly' : 'Pro Yearly'}
               defaultCountryCode={initialPricing.countryCode}
               countryLabel={countryLabel}
               pricing={price}
-              className="w-full rounded-2xl bg-linear-to-r from-orange-600 to-amber-500 py-4 font-bold text-white shadow-lg transition hover:opacity-90"
+              className="w-full rounded-2xl bg-linear-to-r from-lime-600 to-lime-500 py-4 font-bold text-white shadow-lg transition hover:opacity-90"
             />
 
             <button
               onClick={() => window.open('/demo', '_blank')}
-              className="mt-3 w-full rounded-2xl border border-orange-500 bg-transparent py-4 font-semibold text-white transition hover:bg-white/5"
+              className="mt-3 w-full rounded-2xl border border-lime-500 bg-transparent py-4 font-semibold text-white transition hover:bg-white/5"
             >
               View Demo
             </button>

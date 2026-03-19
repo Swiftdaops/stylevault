@@ -5,7 +5,7 @@ const demos = [
   {
     title: 'Barber Pro',
     href: '/demo/barber-pro',
-    description: 'See how a barber storefront can showcase services, collect reviews, accept tips, and sell grooming products.',
+    description: 'See how a barber can showcase services, collect reviews, accept tips, and sell grooming products.',
     icon: Scissors,
     accent: 'from-orange-500 to-amber-500',
   },
@@ -50,13 +50,13 @@ export default function DemoHomePage() {
       <section className="rounded-4xl border border-stone-200 bg-white/85 p-8 shadow-2xl shadow-orange-100/50 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:shadow-black/10 sm:p-12">
         <div className="max-w-4xl">
           <div className="inline-flex rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-orange-700 dark:text-orange-300">
-            Demo showroom
+            Style Vault showroom
           </div>
           <h1 className="mt-5 text-4xl font-black tracking-tight text-stone-950 dark:text-white sm:text-5xl lg:text-6xl">
-            Explore what beauty pros unlock on the StyleVault Pro plan.
+            Explore what beauty you unlock on the StyleVault Pro plan.
           </h1>
           <p className="mt-6 max-w-3xl text-base leading-8 text-stone-600 dark:text-stone-300 sm:text-lg">
-            These demo routes show how each niche can present services, build trust, earn tips, and add product revenue with a premium storefront experience.
+            See how each niche can present services, build trust, earn tips, and add product revenue with a premium storefront experience.
           </p>
         </div>
       </section>
