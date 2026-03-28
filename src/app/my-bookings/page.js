@@ -29,6 +29,12 @@ export default async function MyBookingsPage({ searchParams }) {
     <CustomerBookingsHub
       tenant={tenant}
       initialProviderType={resolvedSearchParams?.provider || tenant?.type || ''}
+      initialReviewRequest={{
+        providerType: resolvedSearchParams?.provider || tenant?.type || '',
+        bookingId: resolvedSearchParams?.bookingId || '',
+        accessToken: resolvedSearchParams?.access || '',
+        focusReview: resolvedSearchParams?.review === '1',
+      }}
     />
   )
 

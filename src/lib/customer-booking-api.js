@@ -84,6 +84,21 @@ export async function updatePublicBooking({ providerType, bookingId, accessToken
   })
 }
 
+export async function submitPublicBookingReview({ providerType, bookingId, accessToken, payload }) {
+  const config = getConfig(providerType)
+  if (!config || !bookingId) {
+    throw new Error('Review route is unavailable')
+  }
+
+  const searchParams = new URLSearchParams()
+  if (accessToken) searchParams.set('access', accessToken)
+
+  return requestJson(`${config.bookingBasePath}/public/${bookingId}/review${searchParams.toString() ? `?${searchParams.toString()}` : ''}`, {
+    method: 'POST',
+    body: JSON.stringify(payload || {}),
+  })
+}
+
 export async function getPublicBookingAvailability({ providerType, providerId, date }) {
   const config = getConfig(providerType)
   if (!config || !providerId || !date) {

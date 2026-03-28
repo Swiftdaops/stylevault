@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveNailTechnicianCalendar from '@/components/live-nail-technician-calendar';
+import StorefrontReviewsSection from '@/components/storefront-reviews-section';
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getNailTechnicianBySlug, getNailTechnicians, getServicesForNailTechnician } from '@/lib/nail-technician-api';
+import { getReviewsForProvider } from '@/lib/reviews-api';
 import { getSocialLinksList } from '@/lib/social-links';
 import { getCustomerBookingsUrl, getNailTechnicianBookingUrl, getNailTechnicianStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
@@ -58,6 +60,7 @@ export default async function NailTechnicianPage({ params, installMode }) {
   if (!nailTechnician) notFound();
 
   const services = await getServicesForNailTechnician(nailTechnician._id);
+  const reviewSummary = await getReviewsForProvider({ providerType: 'nail-technician', providerSlug: nailTechnician.slug, limit: 6 });
   const socialLinks = getSocialLinksList(nailTechnician.socialLinks);
   const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
@@ -165,6 +168,8 @@ export default async function NailTechnicianPage({ params, installMode }) {
           </div>
           <LiveNailTechnicianCalendar nailTechnician={nailTechnician} />
         </div>
+
+        <StorefrontReviewsSection providerName={nailTechnician.name} reviewSummary={reviewSummary} tone="fuchsia" />
       </div>
     </section>
   );

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
+import BookingReviewPanel from '@/components/booking-review-panel'
 import { Button } from '@/components/ui/button'
 import { getPublicBooking, getPublicBookingAvailability, updatePublicBooking } from '@/lib/customer-booking-api'
 import { buildICS, downloadICS, buildGoogleCalendarUrl, parseDateTime } from '@/lib/calendar'
@@ -335,6 +336,20 @@ export default function CustomerBookingManager({ bookingId, tenant = null, initi
             </div>
           )}
         </section>
+
+        <BookingReviewPanel
+          providerType={providerType}
+          bookingId={bookingId}
+          accessToken={accessToken}
+          status={appointment?.status}
+          providerName={provider?.name}
+          serviceName={service?.name}
+          initialReview={booking?.review || null}
+          accentClassName={theme.accent}
+          buttonClassName="border-stone-300 text-stone-900 hover:bg-stone-100 dark:border-stone-700 dark:text-stone-100 dark:hover:bg-stone-900"
+          panelClassName={theme.panel}
+          onReviewSaved={setBooking}
+        />
       </div>
     </div>
   )

@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveHairSpecialistCalendar from '@/components/live-hair-specialist-calendar';
+import StorefrontReviewsSection from '@/components/storefront-reviews-section';
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getHairSpecialistBySlug, getServicesForHairSpecialist } from '@/lib/hair-specialist-api';
+import { getReviewsForProvider } from '@/lib/reviews-api';
 import { getSocialLinksList } from '@/lib/social-links';
 import { getCustomerBookingsUrl, getHairSpecialistBookingUrl, getHairSpecialistStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
@@ -59,6 +61,7 @@ export default async function HairSpecialistPage({ params, installMode }) {
   if (!hairSpecialist) notFound();
 
   const services = await getServicesForHairSpecialist(hairSpecialist._id);
+  const reviewSummary = await getReviewsForProvider({ providerType: 'hair-specialist', providerSlug: hairSpecialist.slug, limit: 6 });
   const socialLinks = getSocialLinksList(hairSpecialist.socialLinks);
   const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
@@ -172,6 +175,8 @@ export default async function HairSpecialistPage({ params, installMode }) {
           </div>
           <LiveHairSpecialistCalendar hairSpecialist={hairSpecialist} />
         </div>
+
+        <StorefrontReviewsSection providerName={hairSpecialist.name} reviewSummary={reviewSummary} tone="rose" />
       </div>
     </section>
   );

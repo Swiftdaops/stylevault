@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveLashTechnicianCalendar from '@/components/live-lash-technician-calendar';
+import StorefrontReviewsSection from '@/components/storefront-reviews-section';
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getLashTechnicianBySlug, getLashTechnicians, getServicesForLashTechnician } from '@/lib/lash-technician-api';
+import { getReviewsForProvider } from '@/lib/reviews-api';
 import { getSocialLinksList } from '@/lib/social-links';
 import { getCustomerBookingsUrl, getLashTechnicianBookingUrl, getLashTechnicianStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
@@ -58,6 +60,7 @@ export default async function LashTechnicianPage({ params, installMode }) {
   if (!lashTechnician) notFound();
 
   const services = await getServicesForLashTechnician(lashTechnician._id);
+  const reviewSummary = await getReviewsForProvider({ providerType: 'lash-technician', providerSlug: lashTechnician.slug, limit: 6 });
   const socialLinks = getSocialLinksList(lashTechnician.socialLinks);
   const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
@@ -165,6 +168,8 @@ export default async function LashTechnicianPage({ params, installMode }) {
           </div>
           <LiveLashTechnicianCalendar lashTechnician={lashTechnician} />
         </div>
+
+        <StorefrontReviewsSection providerName={lashTechnician.name} reviewSummary={reviewSummary} tone="violet" />
       </div>
     </section>
   );

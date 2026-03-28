@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import BarberBookingForm from '@/components/barber-booking-form';
 import { getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
 import StorefrontInstallButton from '@/components/storefront-install-button';

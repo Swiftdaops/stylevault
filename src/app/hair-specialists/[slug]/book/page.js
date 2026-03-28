@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import HairSpecialistBookingForm from '@/components/hair-specialist-booking-form';
 import { getHairSpecialistBySlug, getServicesForHairSpecialist } from '@/lib/hair-specialist-api';

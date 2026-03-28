@@ -3,7 +3,9 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CalendarClock, ExternalLink, MapPin, RefreshCw } from 'lucide-react'
-import { getStoredCustomerBookings, subscribeToStoredCustomerBookings } from '@/lib/customer-booking-links'
+import BookingReviewPanel from '@/components/booking-review-panel'
+import { getPublicBooking } from '@/lib/customer-booking-api'
+import { getStoredCustomerBookings, subscribeToStoredCustomerBookings, syncStoredCustomerBookingFromPayload } from '@/lib/customer-booking-links'
 
 const themeByProvider = {
   barber: {
@@ -57,30 +59,124 @@ function formatStatus(value = '') {
   return normalizedValue.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
-export default function CustomerBookingsHub({ tenant = null, initialProviderType = '' }) {
-  const [bookings, setBookings] = useState([])
+function getAccessTokenFromManageLink(manageLink = '') {
+  try {
+    const url = new URL(manageLink, typeof window !== 'undefined' ? window.location.origin : 'https://www.stylevault.site')
+    return String(url.searchParams.get('access') || '').trim()
+  } catch {
+    return ''
+  }
+}
+
+function buildBookingRecordFromPayload(payload = {}) {
+  const appointment = payload?.appointment || {}
+  const provider = appointment?.provider || {}
+  const service = appointment?.service || {}
+
+  return {
+    bookingId: String(appointment?.id || '').trim(),
+    manageLink: payload?.manageLink || '',
+    storeUrl: payload?.storeUrl || '',
+    providerType: provider?.type || '',
+    providerName: provider?.name || '',
+    providerSlug: provider?.slug || '',
+    serviceName: service?.name || '',
+    appointmentDate: appointment?.date || '',
+    appointmentTime: appointment?.time || '',
+    status: appointment?.status || 'pending',
+    review: payload?.review || null,
+    savedAt: Date.now(),
+    updatedAt: Date.now(),
+  }
+}
+
+export default function CustomerBookingsHub({ tenant = null, initialProviderType = '', initialReviewRequest = null }) {
+  const [bookings, setBookings] = useState(() => getStoredCustomerBookings())
+  const [linkedBooking, setLinkedBooking] = useState(null)
+  const [linkedBookingError, setLinkedBookingError] = useState('')
   const providerType = tenant?.type || initialProviderType || 'barber'
   const tenantSlug = String(tenant?.profile?.slug || '').trim().toLowerCase()
   const theme = themeByProvider[providerType] || themeByProvider.barber
+  const bookingId = String(initialReviewRequest?.bookingId || '').trim()
+  const accessToken = String(initialReviewRequest?.accessToken || '').trim()
+  const linkedProviderType = String(initialReviewRequest?.providerType || tenant?.type || '').trim().toLowerCase()
+  const hasLinkedBookingRequest = Boolean(bookingId && accessToken && linkedProviderType)
 
   const loadBookings = useCallback(() => {
     setBookings(getStoredCustomerBookings())
   }, [])
 
   useEffect(() => {
-    loadBookings()
     return subscribeToStoredCustomerBookings((nextBookings) => {
       setBookings(Array.isArray(nextBookings) ? nextBookings : [])
     })
-  }, [loadBookings])
+  }, [])
+
+  useEffect(() => {
+    if (!hasLinkedBookingRequest) {
+      return undefined
+    }
+
+    let ignore = false
+
+    async function loadLinkedBooking() {
+      try {
+        setLinkedBookingError('')
+        const payload = await getPublicBooking({
+          providerType: linkedProviderType,
+          bookingId,
+          accessToken,
+        })
+
+        if (ignore) return
+
+        syncStoredCustomerBookingFromPayload(payload)
+        setLinkedBooking(buildBookingRecordFromPayload(payload))
+      } catch (error) {
+        if (ignore) return
+        setLinkedBooking(null)
+        setLinkedBookingError(error?.message || 'We could not load that booking link right now.')
+      }
+    }
+
+    loadLinkedBooking()
+
+    return () => {
+      ignore = true
+    }
+  }, [accessToken, bookingId, hasLinkedBookingRequest, linkedProviderType])
 
   const orderedBookings = useMemo(() => {
-    if (!tenantSlug) return bookings
+    const combined = []
+    const seenKeys = new Set()
+
+    if (hasLinkedBookingRequest && linkedBooking) {
+      const linkedKey = linkedBooking.bookingId || linkedBooking.manageLink
+      if (linkedKey) {
+        seenKeys.add(linkedKey)
+      }
+      combined.push(linkedBooking)
+    }
+
+    bookings.forEach((booking) => {
+      const bookingKey = booking.bookingId || booking.manageLink
+      if (bookingKey && seenKeys.has(bookingKey)) {
+        return
+      }
+
+      if (bookingKey) {
+        seenKeys.add(bookingKey)
+      }
+
+      combined.push(booking)
+    })
+
+    if (!tenantSlug) return combined
 
     const matching = []
     const remaining = []
 
-    bookings.forEach((booking) => {
+    combined.forEach((booking) => {
       if (booking.providerSlug === tenantSlug) {
         matching.push(booking)
         return
@@ -90,7 +186,7 @@ export default function CustomerBookingsHub({ tenant = null, initialProviderType
     })
 
     return [...matching, ...remaining]
-  }, [bookings, tenantSlug])
+  }, [bookings, hasLinkedBookingRequest, linkedBooking, tenantSlug])
 
   return (
     <section className={`min-h-screen px-4 py-12 ${theme.shell}`}>
@@ -121,6 +217,12 @@ export default function CustomerBookingsHub({ tenant = null, initialProviderType
           </div>
         </section>
 
+        {hasLinkedBookingRequest && linkedBookingError ? (
+          <section className={`rounded-3xl border p-5 shadow-sm ${theme.panel}`}>
+            <p className="text-sm text-red-600">{linkedBookingError}</p>
+          </section>
+        ) : null}
+
         {orderedBookings.length === 0 ? (
           <section className={`rounded-3xl border border-dashed p-8 text-center shadow-sm ${theme.panel}`}>
             <CalendarClock className={`mx-auto h-10 w-10 ${theme.accent}`} />
@@ -134,6 +236,7 @@ export default function CustomerBookingsHub({ tenant = null, initialProviderType
             {orderedBookings.map((booking) => {
               const isCurrentStorefront = tenantSlug && booking.providerSlug === tenantSlug
               const providerLabel = providerLabelByType[booking.providerType] || 'Booking'
+              const accessToken = getAccessTokenFromManageLink(booking.manageLink)
 
               return (
                 <article key={booking.bookingId || booking.manageLink} className={`rounded-3xl border p-5 shadow-sm ${theme.panel}`}>
@@ -193,6 +296,22 @@ export default function CustomerBookingsHub({ tenant = null, initialProviderType
                       ) : null}
                     </div>
                   </div>
+
+                  {booking.status === 'completed' && accessToken ? (
+                    <div className="mt-5">
+                      <BookingReviewPanel
+                        providerType={booking.providerType}
+                        bookingId={booking.bookingId}
+                        accessToken={accessToken}
+                        status={booking.status}
+                        providerName={booking.providerName}
+                        serviceName={booking.serviceName}
+                        initialReview={booking.review || null}
+                        accentClassName={theme.accent}
+                        buttonClassName={theme.button}
+                      />
+                    </div>
+                  ) : null}
                 </article>
               )
             })}

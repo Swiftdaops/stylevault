@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LiveMakeupArtistCalendar from '@/components/live-makeup-artist-calendar';
+import StorefrontReviewsSection from '@/components/storefront-reviews-section';
 import StorefrontInstallButton from '@/components/storefront-install-button';
 import { formatCurrency, getMakeupArtistBySlug, getMakeupArtists, getServicesForMakeupArtist } from '@/lib/makeup-artist-api';
+import { getReviewsForProvider } from '@/lib/reviews-api';
 import { getSocialLinksList } from '@/lib/social-links';
 import { getCustomerBookingsUrl, getMakeupArtistBookingUrl, getMakeupArtistStoreUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
@@ -58,6 +60,7 @@ export default async function MakeupArtistPage({ params, installMode }) {
   if (!makeupArtist) notFound();
 
   const services = await getServicesForMakeupArtist(makeupArtist._id);
+  const reviewSummary = await getReviewsForProvider({ providerType: 'makeup-artist', providerSlug: makeupArtist.slug, limit: 6 });
   const socialLinks = getSocialLinksList(makeupArtist.socialLinks);
   const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
@@ -165,6 +168,8 @@ export default async function MakeupArtistPage({ params, installMode }) {
           </div>
           <LiveMakeupArtistCalendar makeupArtist={makeupArtist} />
         </div>
+
+        <StorefrontReviewsSection providerName={makeupArtist.name} reviewSummary={reviewSummary} tone="rose" />
       </div>
     </section>
   );

@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatCurrency, getBarberBySlug, getServicesForBarber } from '@/lib/barber-api';
+import StorefrontReviewsSection from '@/components/storefront-reviews-section';
 import StorefrontInstallButton from '@/components/storefront-install-button';
+import { getReviewsForProvider } from '@/lib/reviews-api';
 import { getSocialLinksList } from '@/lib/social-links';
 import { getBarberBookingUrl, getBarberStoreUrl, getCustomerBookingsUrl } from '@/lib/seo';
 import { buildTenantMetadata, buildTenantStructuredData } from '@/lib/tenant-seo';
@@ -98,7 +100,8 @@ export default async function BarberShopPage({ params, installMode }) {
   }
 
   const services = await getServicesForBarber(barber._id);
-  const rating = barber.subscriptionPlan === 'pro' ? 5 : 4.5;
+  const reviewSummary = await getReviewsForProvider({ providerType: 'barber', providerSlug: barber.slug, limit: 6 });
+  const rating = reviewSummary.totalReviews ? reviewSummary.averageRating : (barber.subscriptionPlan === 'pro' ? 5 : 4.5);
   const socialLinks = getSocialLinksList(barber.socialLinks);
   const resolvedInstallMode = installMode || (process.env.NODE_ENV === 'production' ? 'open-storefront' : 'install');
   const structuredData = buildTenantStructuredData({
@@ -222,6 +225,8 @@ export default async function BarberShopPage({ params, installMode }) {
           </div>
           <LiveBarberCalendar barber={barber} />
         </div>
+
+        <StorefrontReviewsSection providerName={barber.name} reviewSummary={reviewSummary} tone="orange" />
 
 
       </div>
