@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useHairSpecialistAuth } from '@/components/hair-specialist-auth-provider'
 import { connectHairSpecialistSocket } from '@/lib/hair-specialist-socket'
-import { createMyHairService, deleteMyHairService, formatCurrency, getMyHairServices, updateMyHairService } from '@/lib/hair-specialist-api'
+import { createMyHairService, deleteMyHairService, formatCurrency, getMyHairServices, updateMyHairService, updateMyHairSpecialistProfile } from '@/lib/hair-specialist-api'
 import HairServiceForm from '@/components/hair-admin/service-form'
+import ProviderWorkingHoursEditor from '@/components/provider-working-hours-editor'
 
 export default function HairServicesManager() {
-  const { hairSpecialist } = useHairSpecialistAuth()
+  const { hairSpecialist, refresh } = useHairSpecialistAuth()
   const [services, setServices] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -89,6 +90,8 @@ export default function HairServicesManager() {
           {showForm ? 'Hide form' : 'Create service'}
         </Button>
       </div>
+
+      <ProviderWorkingHoursEditor provider={hairSpecialist} refresh={refresh} updateProfile={updateMyHairSpecialistProfile} tone="rose" />
 
       {showForm && (
         <HairServiceForm

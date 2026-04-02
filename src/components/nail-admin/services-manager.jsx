@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useNailTechnicianAuth } from '@/components/nail-technician-auth-provider'
 import { connectNailTechnicianSocket } from '@/lib/nail-technician-socket'
-import { createMyNailService, deleteMyNailService, formatCurrency, getMyNailServices, updateMyNailService } from '@/lib/nail-technician-api'
+import { createMyNailService, deleteMyNailService, formatCurrency, getMyNailServices, updateMyNailService, updateMyNailTechnicianProfile } from '@/lib/nail-technician-api'
 import NailServiceForm from '@/components/nail-admin/service-form'
+import ProviderWorkingHoursEditor from '@/components/provider-working-hours-editor'
 
 export default function NailServicesManager() {
-  const { nailTechnician } = useNailTechnicianAuth()
+  const { nailTechnician, refresh } = useNailTechnicianAuth()
   const [services, setServices] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -89,6 +90,8 @@ export default function NailServicesManager() {
           {showForm ? 'Hide form' : 'Create service'}
         </Button>
       </div>
+
+      <ProviderWorkingHoursEditor provider={nailTechnician} refresh={refresh} updateProfile={updateMyNailTechnicianProfile} tone="fuchsia" />
 
       {showForm && (
         <NailServiceForm nailTechnician={nailTechnician} mode={editingId ? 'edit' : 'create'} initialValue={editingService} onSubmit={handleSubmit} onCancel={() => { setShowForm(false); setEditingId(null); setEditingService(null) }} saving={saving} error={error} />

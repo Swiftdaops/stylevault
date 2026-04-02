@@ -1,14 +1,15 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { createMyService, deleteMyService, formatCurrency, getMyServices, updateMyService } from '@/lib/barber-api'
+import { createMyService, deleteMyService, formatCurrency, getMyServices, updateMyBarberProfile, updateMyService } from '@/lib/barber-api'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/components/auth-provider'
 import ServiceForm from '@/components/admin/service-form'
 import { connectBarberSocket } from '@/lib/barber-socket'
+import ProviderWorkingHoursEditor from '@/components/provider-working-hours-editor'
 
 export default function ServicesManager() {
-  const { barber } = useAuth()
+  const { barber, refresh } = useAuth()
   const [services, setServices] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -89,6 +90,8 @@ export default function ServicesManager() {
           {showForm ? 'Hide form' : 'Create service'}
         </Button>
       </div>
+
+      <ProviderWorkingHoursEditor provider={barber} refresh={refresh} updateProfile={updateMyBarberProfile} tone="orange" />
 
       {showForm && (
         <ServiceForm

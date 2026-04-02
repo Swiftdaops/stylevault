@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useLashTechnicianAuth } from '@/components/lash-technician-auth-provider'
 import { connectLashTechnicianSocket } from '@/lib/lash-technician-socket'
-import { createMyLashService, deleteMyLashService, formatCurrency, getMyLashServices, updateMyLashService } from '@/lib/lash-technician-api'
+import { createMyLashService, deleteMyLashService, formatCurrency, getMyLashServices, updateMyLashService, updateMyLashTechnicianProfile } from '@/lib/lash-technician-api'
 import LashServiceForm from '@/components/lash-admin/service-form'
+import ProviderWorkingHoursEditor from '@/components/provider-working-hours-editor'
 
 export default function LashServicesManager() {
-  const { lashTechnician } = useLashTechnicianAuth()
+  const { lashTechnician, refresh } = useLashTechnicianAuth()
   const [services, setServices] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -89,6 +90,8 @@ export default function LashServicesManager() {
           {showForm ? 'Hide form' : 'Create service'}
         </Button>
       </div>
+
+      <ProviderWorkingHoursEditor provider={lashTechnician} refresh={refresh} updateProfile={updateMyLashTechnicianProfile} tone="violet" />
 
       {showForm && (
         <LashServiceForm lashTechnician={lashTechnician} mode={editingId ? 'edit' : 'create'} initialValue={editingService} onSubmit={handleSubmit} onCancel={() => { setShowForm(false); setEditingId(null); setEditingService(null) }} saving={saving} error={error} />

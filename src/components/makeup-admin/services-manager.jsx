@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useMakeupArtistAuth } from '@/components/makeup-artist-auth-provider'
 import { connectMakeupArtistSocket } from '@/lib/makeup-artist-socket'
-import { createMyMakeupService, deleteMyMakeupService, formatCurrency, getMyMakeupServices, updateMyMakeupService } from '@/lib/makeup-artist-api'
+import { createMyMakeupService, deleteMyMakeupService, formatCurrency, getMyMakeupServices, updateMyMakeupService, updateMyMakeupArtistProfile } from '@/lib/makeup-artist-api'
 import MakeupServiceForm from '@/components/makeup-admin/service-form'
+import ProviderWorkingHoursEditor from '@/components/provider-working-hours-editor'
 
 export default function MakeupServicesManager() {
-  const { makeupArtist } = useMakeupArtistAuth()
+  const { makeupArtist, refresh } = useMakeupArtistAuth()
   const [services, setServices] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -89,6 +90,8 @@ export default function MakeupServicesManager() {
           {showForm ? 'Hide form' : 'Create service'}
         </Button>
       </div>
+
+      <ProviderWorkingHoursEditor provider={makeupArtist} refresh={refresh} updateProfile={updateMyMakeupArtistProfile} tone="rose" />
 
       {showForm && (
         <MakeupServiceForm makeupArtist={makeupArtist} mode={editingId ? 'edit' : 'create'} initialValue={editingService} onSubmit={handleSubmit} onCancel={() => { setShowForm(false); setEditingId(null); setEditingService(null) }} saving={saving} error={error} />
